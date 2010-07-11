@@ -9,3 +9,14 @@ _Dicas para programarmos adequadamente este maldito sistema!_
   * Toda mensagem transmitida deverá ter um identificador único do tipo *long* de modo a auxiliar na coleta de estatística do número de colisões.
 
   * Sempre que um evento de geração de quadro for armazenado na lista de eventos, deverá ser invocado o método *coletaQuadroPorMensagem* no coletor de estatísticas.
+
+==Coletor de estatísticas==
+
+Sempre que um evento ocorrer no simulador, um dos métodos do coletor de estatísticas deverá ser invocado:
+
+||coletaColisaoPorMensagem||
+||coletaQuadroPorMensagem||
+||iniciaColetaTap||
+||finalizaColetaTap||
+||iniciaColetaTam||
+||finalizaColetaTam||

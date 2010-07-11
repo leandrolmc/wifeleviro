@@ -5,3 +5,7 @@
 O projeto foi criado como um web project que necessitava ser executado sobre o container web Tomcat. Como nosso objetivo é ter um arquivo executável, que o professor possa simplesment executar e avaliar com diversos parâmetros, excluí o atual projeto e o migrei para um projeto java padrão.
 
 Agora existe um executável na pasta *release* com o nome do projeto que pode ser executador via terminal.
+
+Gerei um guia do programador que está disponível no wiki.
+
+Também gerei a parte inicial do coletor de estatísticas e mostrei como utilizá-lo no guia do programador.

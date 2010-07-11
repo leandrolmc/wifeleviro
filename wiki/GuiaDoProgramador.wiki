@@ -5,3 +5,5 @@ _Dicas para programarmos adequadamente este maldito sistema!_
   * Todo tempo será simulado. Sendo assim, o ideal é trabalharmos com o tempo como sendo um valor *double* ao invés de um mero *Calendar*. Lembrando que milissegundos é tempo pra caramba! Vamos trabalhar com precisão muito baixa.
 
   * Todo quadro transmitido dentro do sistema deverá ser identificado por um número *long* de identificação única para auxiliar na coleta de estatísticas de tempo.
+
+  * Toda mensagem transmitida deverá ter um identificador único do tipo *long* de modo a auxiliar na coleta de estatística do número de colisões.

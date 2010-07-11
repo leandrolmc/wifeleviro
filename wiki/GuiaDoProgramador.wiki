@@ -1,0 +1,5 @@
+_Dicas para programarmos adequadamente este maldito sistema!_
+
+  * Uma vez que os números que iremos tratar serão muito grandes, o ideal é abrirmos mão das variáveis do tipo *int* em detrimento do tipo *long*, de modo que não tenhamos problemas com grandes números.
+
+  * Todo tempo será simulado. Sendo assim, o ideal é trabalharmos com o tempo como sendo um valor *double* ao invés de um mero *Calendar*. Lembrando que milissegundos é tempo pra caramba! Vamos trabalhar com precisão muito baixa.

@@ -12,11 +12,13 @@ _Dicas para programarmos adequadamente este maldito sistema!_
 
 ==Coletor de estatísticas==
 
+O *ColetorEstatisticasSingleton*, como o próprio nome já diz, é um singleton. Ou seja, ele não é instanciável, portanto sempre deverá ser acessado via seu próprio método *getInstance()*. Este método é capaz de instanciá-lo, caso seja necessário, ou simplesmente recuperar a instância única do mesmo no programa.
+
 Sempre que um evento ocorrer no simulador, um dos métodos do coletor de estatísticas deverá ser invocado:
 
-||coletaColisaoPorMensagem||
-||coletaQuadroPorMensagem||
-||iniciaColetaTap||
-||finalizaColetaTap||
-||iniciaColetaTam||
-||finalizaColetaTam||
+||*coletaQuadroPorMensagem*||Invocado no evento de geração de um quadro. Irá registrar a qual mensagem este pertence.||
+||*coletaColisaoPorMensagem*||Invocado no evento de geração de colisão. Irá registrar a qual mensagem esta colisão pertence.||
+||*iniciaColetaTap*||Invocado no evento transmissão do quadro, independente da situação.||
+||*finalizaColetaTap*||Invocado no evento de transmissão do quadro. Caso encontre o meio livre, este deverá conter o mesmo valor que informado para o método *iniciaColetaTap*. Caso contrário, deverá conter o instante de tempo em que o quadro encontrou o meio livre e foi, finalmente, transmitido.||
+||*iniciaColetaTam*||Invocado junto com o *iniciaColetaTap* do primeiro quadro da mensagem que está sendo transmitida.||
+||*finalizaColetaTam*||Invocado junto com o *finalizaColetaTap* do último quadro da mensagem que está sendo transmitida.||

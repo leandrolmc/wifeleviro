@@ -7,3 +7,5 @@ _Dicas para programarmos adequadamente este maldito sistema!_
   * Todo quadro transmitido dentro do sistema deverá ser identificado por um número *long* de identificação única para auxiliar na coleta de estatísticas de tempo.
 
   * Toda mensagem transmitida deverá ter um identificador único do tipo *long* de modo a auxiliar na coleta de estatística do número de colisões.
+
+  * Sempre que um evento de geração de quadro for armazenado na lista de eventos, deverá ser invocado o método *coletaQuadroPorMensagem* no coletor de estatísticas.

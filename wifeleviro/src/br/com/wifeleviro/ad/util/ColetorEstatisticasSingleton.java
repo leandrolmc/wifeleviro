@@ -28,7 +28,7 @@ public class ColetorEstatisticasSingleton {
 	// Metódo capaz de gerar a instância única do coletor de estatísticas, caso
 	// esta ainda não exista. Caso exista, simplesmente retorna uma referência
 	// para a mesma.
-	public static ColetorEstatisticasSingleton getInstance() {
+	public static synchronized ColetorEstatisticasSingleton getInstance() {
 		if (_instance == null) {
 			_instance = new ColetorEstatisticasSingleton();
 		}

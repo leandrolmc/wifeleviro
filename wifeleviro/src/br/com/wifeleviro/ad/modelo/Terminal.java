@@ -1,43 +1,84 @@
 package br.com.wifeleviro.ad.modelo;
 
-public class Terminal extends Thread {
+import java.util.GregorianCalendar;
+import java.util.Random;
+
+public class Terminal{
+
+	public static final int TIPO_DETERMINISTICO = 0;
+	public static final int TIPO_EXPONENCIAL = 1;
+	
+	private long semente;
+	private Random geradorRandomico;
+	
+	private int tipo;
+	private double taxa;
+	
+	private double pMensagens;
+	
 	private int id;
-	private Porta porta;
+	private double distanciaHub;
 	
-	public Terminal(int id) {
-		System.out.println("Terminal ["+id+"] criado.");
+	private double instanteTempoInicial;
+	private double instanteTempoAtual;
+	
+	public Terminal(int id, double distanciaHub, int tipo, double taxa, double pMensagens) {
 		this.id = id;
-		porta = new Porta();
+		this.distanciaHub = distanciaHub;
+		this.semente = new GregorianCalendar().getTimeInMillis();
+		this.geradorRandomico = new Random(this.semente);
+		this.instanteTempoAtual = 0;
+		if(this.tipo == TIPO_EXPONENCIAL)
+			this.instanteTempoAtual = this.gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.geradorRandomico, this.taxa);
+		this.instanteTempoInicial = this.instanteTempoAtual;
+		this.setpMensagens(pMensagens);
 	}
 	
-	public void run() {
-		System.out.println("Terminal ["+id+"] iniciado.");
-		while (true) {
-			int lambda = 500;
-			try {
-				Thread.sleep(lambda);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Terminal ["+id+"] iniciando envio de quadro.");
-			Quadro quadro = new Quadro(id, 4);
-			porta.enviar(quadro);
-		}
+	public double getInstanteTempoInicial(){
+		return this.instanteTempoInicial;
 	}
+	
+	public double gerarProximoInstanteDeTempoDeMensagem(){
+		if(this.tipo == Terminal.TIPO_DETERMINISTICO)
+			return gerarInstanteTempoProximoEventoDeterministico(this.instanteTempoAtual, this.taxa);
+		else
+			return gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.geradorRandomico, this.taxa);
+	}
+	
+	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, Random random, double taxa){
+		double poisson  = (-((Math.log(random.nextDouble()))/taxa));
+		return instanteTempoAtual + poisson;
+	}
+	
+	private double gerarInstanteTempoProximoEventoDeterministico(double instanteTempoAtual, double periodo){
+		return instanteTempoAtual + periodo;
+	} 
+	
 	
 	public int getIdTerminal() {
 		return id;
 	}
 
-	public Porta getPorta() {
-		return porta;
-	}
-
-	public void setPorta(Porta porta) {
-		this.porta = porta;
-	}
-
 	public void setIdTerminal(int id) {
 		this.id = id;
 	}
+
+	public void setDistanciaHub(double distanciaHub) {
+		this.distanciaHub = distanciaHub;
+	}
+
+	public double getDistanciaHub() {
+		return distanciaHub;
+	}
+
+	public void setpMensagens(double pMensagens) {
+		this.pMensagens = pMensagens;
+	}
+
+	public double getpMensagens() {
+		return pMensagens;
+	}
+	
 }
+
+

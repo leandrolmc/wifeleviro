@@ -21,6 +21,8 @@ public class Terminal{
 	
 	private double instanteTempoInicial;
 	private double instanteTempoAtual;
+
+	private boolean isMeioOcupado;
 	
 	public Terminal(int id, double distanciaHub, int tipo, double taxa, double pMensagens) {
 		this.id = id;
@@ -32,6 +34,7 @@ public class Terminal{
 			this.instanteTempoAtual = this.gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.geradorRandomico, this.taxa);
 		this.instanteTempoInicial = this.instanteTempoAtual;
 		this.setpMensagens(pMensagens);
+		this.setMeioOcupado(false);
 	}
 	
 	public double getInstanteTempoInicial(){
@@ -78,7 +81,15 @@ public class Terminal{
 	public double getpMensagens() {
 		return pMensagens;
 	}
-	
+
+	public void setMeioOcupado(boolean isMeioOcupado) {
+		this.isMeioOcupado = isMeioOcupado;
+	}
+
+	public boolean isMeioOcupado() {
+		return isMeioOcupado;
+	}
+
 }
 
 

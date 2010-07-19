@@ -11,6 +11,7 @@ public class Evento {
 	
 	private int tipoEvento;
 	private int idTerminalOrigemDaMensagem;
+	private Mensagem mensagem;
 	
 	private Integer idTerminalDestino;
 	
@@ -18,12 +19,21 @@ public class Evento {
 		this.idTerminalOrigemDaMensagem = idTerminalOrigemDaMensagem;
 		this.tipoEvento = tipoEvento;
 		this.idTerminalDestino = null;
+		this.mensagem = null;
 	}
 
+	public Evento(int idTerminalOrigemDaMensagem, Mensagem mensagem, int tipoEvento){
+		this.idTerminalOrigemDaMensagem = idTerminalOrigemDaMensagem;
+		this.tipoEvento = tipoEvento;
+		this.idTerminalDestino = null;
+		this.mensagem = mensagem;
+	}
+	
 	public Evento(int idTerminalOrigemDaMensagem, int idTerminalDestino, int tipoEvento){
 		this.idTerminalOrigemDaMensagem = idTerminalOrigemDaMensagem;
 		this.tipoEvento = tipoEvento;
 		this.idTerminalDestino = idTerminalDestino;
+		this.mensagem = null;
 	}
 	
 	public int getIdTerminalOrigemDaMensagem() {
@@ -36,6 +46,14 @@ public class Evento {
 
 	public Integer getIdTerminalDestino() {
 		return idTerminalDestino;
+	}
+
+	public void setMensagem(Mensagem mensagem) {
+		this.mensagem = mensagem;
+	}
+
+	public Mensagem getMensagem() {
+		return mensagem;
 	}
 
 }

@@ -1,5 +1,13 @@
 = Diário de Bordo =
 
+== 18 de julho de 2010 ==
+
+Os problemas constantes no dia 17 de julho continuam.
+
+Finalizados todos os fluxos, com exceção de tratamento de colisão durante tx.
+
+Ficou a pendência de ativar as coletas de estatísticas, fazer a coleta dos parâmetros de entrada para o programa e fazer os relatórios finais a partir das estatísticas coletadas.
+
 == 17 de julho de 2010 ==
 
 O código não está devidamente documentado, mas já estão implementados a lista de eventos e a geração de mensagens.

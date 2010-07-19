@@ -8,6 +8,8 @@ _Dicas para programarmos adequadamente este maldito sistema!_
 
   * Toda mensagem transmitida deverá ter um identificador único do tipo *long* de modo a auxiliar na coleta de estatística de tempo e do número de colisões.
 
+  * Finalmente consegui bolar uma solução para o problema da colisão durante transmissão onde é necessário recalcular início de tx e fim de tx. Deverá ser implementada uma memória em cada pc de "mensagem pendente"! Esta memória irá armazenar a mensagem (contendo o número de quadros restantes) que foi suspensa pela colisão e deverá voltar a ser transmitida segundo o algoritmo de Binary Backoff.
+
 ==Coletor de estatísticas==
 
 O *ColetorEstatisticasSingleton*, como o próprio nome já diz, é um singleton. Ou seja, ele não é instanciável, portanto sempre deverá ser acessado via seu próprio método *getInstance()*. Este método é capaz de instanciá-lo, caso seja necessário, ou simplesmente recuperar a instância única do mesmo no programa.

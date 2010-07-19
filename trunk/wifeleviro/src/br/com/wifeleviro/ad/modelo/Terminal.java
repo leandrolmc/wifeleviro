@@ -16,6 +16,8 @@ public class Terminal{
 	
 	private double pMensagens;
 	
+	private Mensagem transmissaoPendente;
+	
 	private int id;
 	private double distanciaHub;
 	
@@ -23,6 +25,9 @@ public class Terminal{
 	private double instanteTempoAtual;
 
 	private boolean isMeioOcupado;
+	private double instanteTempoInicioUltimaTx;
+	private double instanteTempoFimUltimaTx;
+	private double instanteTempoFimUltimoRx;
 	
 	public Terminal(int id, double distanciaHub, int tipo, double taxa, double pMensagens) {
 		this.id = id;
@@ -35,6 +40,9 @@ public class Terminal{
 		this.instanteTempoInicial = this.instanteTempoAtual;
 		this.setpMensagens(pMensagens);
 		this.setMeioOcupado(false);
+		this.instanteTempoInicioUltimaTx = -1;
+		this.instanteTempoFimUltimaTx = -1;
+		this.instanteTempoFimUltimoRx = -1;
 	}
 	
 	public double getInstanteTempoInicial(){
@@ -90,6 +98,41 @@ public class Terminal{
 		return isMeioOcupado;
 	}
 
+	public void setInstanteTempoFimUltimaTx(double instanteTempoFimUltimaTx) {
+		this.instanteTempoFimUltimaTx = instanteTempoFimUltimaTx;
+	}
+
+	public double getInstanteTempoFimUltimaTx() {
+		return instanteTempoFimUltimaTx;
+	}
+
+	public void setInstanteTempoInicioUltimaTx(double instanteTempoInicioUltimaTx) {
+		this.instanteTempoInicioUltimaTx = instanteTempoInicioUltimaTx;
+	}
+
+	public double getInstanteTempoInicioUltimaTx() {
+		return instanteTempoInicioUltimaTx;
+	}
+
+	public void setInstanteTempoFimUltimoRx(double instanteTempoFimUltimoRx) {
+		this.instanteTempoFimUltimoRx = instanteTempoFimUltimoRx;
+	}
+
+	public double getInstanteTempoFimUltimoRx() {
+		return instanteTempoFimUltimoRx;
+	}
+
+	public void setTransmissaoPendente(Mensagem transmissaoPendente) {
+		this.transmissaoPendente = transmissaoPendente;
+	}
+
+	public Mensagem atenderTransmissaoPendente() {
+		Mensagem pendente = this.transmissaoPendente;
+		this.transmissaoPendente = null;
+		return pendente;
+	}
+
 }
+
 
 

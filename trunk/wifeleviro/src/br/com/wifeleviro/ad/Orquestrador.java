@@ -60,16 +60,12 @@ public class Orquestrador {
 		//Crio a mensagem a ser transmitida.
 		Mensagem mensagem = new Mensagem(pc[terminal].getpMensagens());
 
-		//Crio uma chegada no HUB com o acréscimo de tempo necessário para o atraso do meio físico e de transmissão do quadro.
-		Evento inicioTxPc = new Evento(terminal, Evento.INICIO_TX_PC);
-		double instanteDeTempoInicioTxPc = instanteDeTempoDaMensagem + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO; 
-		//Atualizo o contador de tempo local para o instante em que terminei de transmitir no RX do PC.
-		instanteDeTempoDaMensagem = instanteDeTempoFimTransmissaoNoTxDoPc;
-		//O tempo que chegará no HUB será o tempo final no RX + o tempo de propagação no meio.
-		double instanteDeChegadaNoHub = Quadro.TEMPO_MINIMO_ENTRE_QUADROS+instanteDeTempoFimTransmissaoNoTxDoPc + MeioFisico.calculaTempoPropagacao(pc[terminal].getDistanciaHub());
-		lista.put(instanteDeChegadaNoHub, chegadaQuadroNoHub);
+		//Crio o primeiro quadro da mensagem para ser transmitido no tx.
+		Evento inicioTxPrimeiroQuadroMensagem = new Evento(terminal, mensagem, Evento.INICIO_TX_PC);
+		double instanteDeTempoInicioTxPrimeiroQuadroMensagem = instanteDeTempoDaMensagem;
+		lista.put(instanteDeTempoInicioTxPrimeiroQuadroMensagem, inicioTxPrimeiroQuadroMensagem);
 				
-		//Crio mais uma mensagem.
+		//Crio a próxima mensagem.
 		Evento proximaMensagem = new Evento(terminal, Evento.GERAR_MENSAGEM);
 		double instanteDeTempoDaProximaMensagem = instanteDeTempo + pc[terminal].gerarProximoInstanteDeTempoDeMensagem();
 		lista.put(instanteDeTempoDaProximaMensagem, proximaMensagem);
@@ -78,8 +74,63 @@ public class Orquestrador {
 	
 	private static void tratarEventoInicioTxPc(Terminal[] pc, ListaDeEventos lista, Evento e){
 		
+		int terminal = e.getIdTerminalOrigemDaMensagem();
 		
+		if(pc[terminal].isMeioOcupado()){
+
+			double instanteTempoFimRx = pc[terminal].getInstanteTempoFimUltimoRx();
+			
+			double instanteTempoInicioTx = instanteTempoFimRx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
+			double instanteTempoFimTx = instanteTempoInicioTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
+			pc[terminal].setInstanteTempoInicioUltimaTx(instanteTempoInicioTx);
+			pc[terminal].setInstanteTempoFimUltimaTx(instanteTempoFimTx);
+			
+			double instanteTempoFimChegadaRxHub = instanteTempoFimTx + MeioFisico.calculaTempoPropagacao(pc[terminal].getDistanciaHub()); 
+			Evento chegadaRxHub = new Evento(terminal, Evento.CHEGADA_QUADRO_NO_RX_HUB);
+			lista.put(instanteTempoFimChegadaRxHub, chegadaRxHub);
 		
+			e.getMensagem().decrementaNumeroQuadroRestantesParaTransmissao();
+			if(e.getMensagem().getNumeroQuadroRestantesParaTransmissao() > 0){
+				double instanteDeTempoDoProximoQuadro = instanteTempoFimTx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
+				lista.put(instanteDeTempoDoProximoQuadro, e);
+			}
+			
+		}else{
+		
+			if((lista.getInstanteDeTempoAtual() - pc[terminal].getInstanteTempoFimUltimaTx()) > Quadro.TEMPO_MINIMO_ENTRE_QUADROS){
+				double instanteTempoInicioDeTx = lista.getInstanteDeTempoAtual();
+				double instanteTempoFimDeTx = instanteTempoInicioDeTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO; 
+				
+				pc[terminal].setInstanteTempoInicioUltimaTx(instanteTempoInicioDeTx);
+				pc[terminal].setInstanteTempoFimUltimaTx(instanteTempoFimDeTx);
+				
+				Mensagem mensagem = e.getMensagem();
+				mensagem.decrementaNumeroQuadroRestantesParaTransmissao();
+				
+				if(mensagem.getNumeroQuadroRestantesParaTransmissao() > 0){
+					double instanteDeTempoDoProximoQuadro = instanteTempoFimDeTx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
+					lista.put(instanteDeTempoDoProximoQuadro, e);
+				}else{
+					// Fim da mensagem.
+				}
+			}else{
+				double acrescimoInstanteTempoTx = Quadro.TEMPO_MINIMO_ENTRE_QUADROS - (lista.getInstanteDeTempoAtual() - pc[terminal].getInstanteTempoFimUltimaTx());
+				double instanteTempoInicioTx = lista.getInstanteDeTempoAtual() + acrescimoInstanteTempoTx;
+				double instanteTempoFimTx = instanteTempoInicioTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
+				pc[terminal].setInstanteTempoInicioUltimaTx(instanteTempoInicioTx);
+				pc[terminal].setInstanteTempoFimUltimaTx(instanteTempoFimTx);
+				
+				double instanteTempoFimChegadaRxHub = instanteTempoFimTx + MeioFisico.calculaTempoPropagacao(pc[terminal].getDistanciaHub()); 
+				Evento chegadaRxHub = new Evento(terminal, Evento.CHEGADA_QUADRO_NO_RX_HUB);
+				lista.put(instanteTempoFimChegadaRxHub, chegadaRxHub);
+			
+				e.getMensagem().decrementaNumeroQuadroRestantesParaTransmissao();
+				if(e.getMensagem().getNumeroQuadroRestantesParaTransmissao() > 0){
+					double instanteDeTempoDoProximoQuadro = instanteTempoFimTx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
+					lista.put(instanteDeTempoDoProximoQuadro, e);
+				}
+			}
+		}
 	}
 	
 	private static void tratarEventoChegadaDeQuadroNoRxDoHub(Terminal[] pc, ListaDeEventos lista, Evento e){
@@ -102,7 +153,14 @@ public class Orquestrador {
 	}
 	
 	private static void tratarEventoInicioChegadaDeQuadroNoRxDoTerminal(Terminal[] pc, ListaDeEventos lista, Evento e){
-		pc[e.getIdTerminalDestino()].setMeioOcupado(true);
+		if(e.getIdTerminalOrigemDaMensagem() != e.getIdTerminalDestino()){
+			pc[e.getIdTerminalDestino()].setMeioOcupado(true);
+			pc[e.getIdTerminalDestino()].setInstanteTempoFimUltimoRx(lista.getInstanteDeTempoAtual() + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO);
+		
+			// TODO Implementar colisão durante transmissão.
+			
+		}else
+			pc[e.getIdTerminalDestino()].setMeioOcupado(false);
 	}
 
 	private static void tratarEventoFimChegadaDeQuadroNoRxDoTerminal(Terminal[] pc, ListaDeEventos lista, Evento e){

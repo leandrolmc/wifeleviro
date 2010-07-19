@@ -18,7 +18,7 @@ public class Tst {
 		while(l.size() > 0){
 			
 			Evento e = l.proximoEvento();
-			System.out.println(e.getIdTerminal());
+			System.out.println("");
 			
 		}
 		

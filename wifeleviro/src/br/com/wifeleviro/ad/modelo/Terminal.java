@@ -1,15 +1,11 @@
 package br.com.wifeleviro.ad.modelo;
 
-import java.util.GregorianCalendar;
-import java.util.Random;
+import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
 public class Terminal{
 
 	public static final int TIPO_DETERMINISTICO = 0;
 	public static final int TIPO_EXPONENCIAL = 1;
-	
-	private long semente;
-	private Random geradorRandomico;
 	
 	private int tipo;
 	private double taxa;
@@ -31,11 +27,9 @@ public class Terminal{
 	public Terminal(int id, double distanciaHub, int tipo, double taxa, double pMensagens) {
 		this.id = id;
 		this.distanciaHub = distanciaHub;
-		this.semente = new GregorianCalendar().getTimeInMillis();
-		this.geradorRandomico = new Random(this.semente);
 		this.instanteTempoAtual = 0;
 		if(this.tipo == TIPO_EXPONENCIAL)
-			this.instanteTempoAtual = this.gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.geradorRandomico, this.taxa);
+			this.instanteTempoAtual = this.gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.taxa);
 		this.instanteTempoInicial = this.instanteTempoAtual;
 		this.setpMensagens(pMensagens);
 		this.setMeioOcupado(false);
@@ -53,11 +47,11 @@ public class Terminal{
 		if(this.tipo == Terminal.TIPO_DETERMINISTICO)
 			return gerarInstanteTempoProximoEventoDeterministico(this.instanteTempoAtual, this.taxa);
 		else
-			return gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.geradorRandomico, this.taxa);
+			return gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.taxa);
 	}
 	
-	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, Random random, double taxa){
-		double poisson  = (-((Math.log(random.nextDouble()))/taxa));
+	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, double taxa){
+		double poisson  = (-((Math.log(GeradorRandomicoSingleton.getInstance().gerarProximoRandomico()))/taxa));
 		return instanteTempoAtual + poisson;
 	}
 	

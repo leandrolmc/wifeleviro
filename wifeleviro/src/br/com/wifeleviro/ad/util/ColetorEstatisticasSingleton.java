@@ -1,6 +1,7 @@
 package br.com.wifeleviro.ad.util;
 
 import java.util.Hashtable;
+import java.util.TreeMap;
 import java.util.Vector;
 
 // Classe única de coleta dos dados estatísticos para avaliação do programa.
@@ -8,11 +9,18 @@ import java.util.Vector;
 //  desta classe dentro do programa em execução. 
 public class ColetorEstatisticasSingleton {
 
+	private double instanteInicioSimulacao;
+	private double instanteFimSimulacao;
+	
 	// Variável que armazenará as estatísticas de cada estação.
 	private Estatisticas[] estatisticas;
 	
 	// Construtor padrão da classe.
 	private ColetorEstatisticasSingleton() {
+		
+		instanteInicioSimulacao = -1;
+		instanteFimSimulacao = -1;
+		
 		// Inicia uma instância de Estatisticas para cada estação.
 		estatisticas = new Estatisticas[4];
 		
@@ -40,6 +48,9 @@ public class ColetorEstatisticasSingleton {
 	// para armazenamento dos dados coletados.
 	private class Estatisticas {
 
+		protected static final int INICIO_PERIODO_OCUPADO = 0;
+		protected static final int FIM_PERIODO_OCUPADO = 1;
+		
 		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
 		// quadro para medição dos tap´s.
 		protected Hashtable<Long, Double> tapMedicaoInicio;
@@ -59,6 +70,10 @@ public class ColetorEstatisticasSingleton {
 		// o número de quadros que foram necessários para transmitir a mensagem.
 		protected Hashtable<Long, Long> quadrosPorMensagem;
 		
+		protected TreeMap<Double, Integer> periodosOcupados;
+		
+		protected Long numeroQuadrosTransmitidosComSucesso;
+		
 		protected Estatisticas(){
 			tapMedicaoInicio = new Hashtable<Long, Double>();
 			tap = new Vector<Double>();
@@ -66,6 +81,8 @@ public class ColetorEstatisticasSingleton {
 			tam = new Vector<Double>();
 			colisoesPorMensagem = new Hashtable<Long, Long>();
 			quadrosPorMensagem = new Hashtable<Long, Long>();
+			periodosOcupados = new TreeMap<Double, Integer>();
+			numeroQuadrosTransmitidosComSucesso = (long)0;
 		}
 	}
 
@@ -167,10 +184,26 @@ public class ColetorEstatisticasSingleton {
 	}
 
 	// Coleta de utilização do Ethernet
-	//TODO Ainda não sei como irei implementar a coleta de utilização.
+	public void coletaInicioSimulacao(double instanteDeTempo){
+		this.instanteInicioSimulacao = instanteDeTempo;
+	}
+	
+	public void coletaFimSimulacao(double instanteDeTempo){
+		this.instanteFimSimulacao = instanteDeTempo;
+	}
+	
+	public void coletaInicioPeriodoOcupado(double instanteDeTempo){
+		this.estatisticas[0].periodosOcupados.put(instanteDeTempo, Estatisticas.INICIO_PERIODO_OCUPADO);
+	}
+	
+	public void coletaFimPeriodoOcupado(double instanteDeTempo){
+		this.estatisticas[0].periodosOcupados.put(instanteDeTempo, Estatisticas.FIM_PERIODO_OCUPADO);
+	}
 	
 	// Coleta de vazão(i)
-	//TODO Ainda não sei como irei implementar a vazão.
+	public void coletaTransmissaoDeQuadroComSucessoNaEstacao(int estacao){
+		this.estatisticas[estacao].numeroQuadrosTransmitidosComSucesso++;
+	}
 
 
 

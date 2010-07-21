@@ -1,10 +1,14 @@
 package br.com.wifeleviro.ad.modelo;
 
+import java.util.GregorianCalendar;
+
 
 public class Quadro {
 	
 	public static final double TEMPO_MINIMO_ENTRE_QUADROS = 0.0000096;
 	public static final double SLOT_RETRANSMISSAO = 0.0000512;
+	
+	private long id;
 	
 	private Integer idRemetente;
 	private Integer idDestinatario;
@@ -18,6 +22,7 @@ public class Quadro {
 		this.idDestinatario = idDestinatario;
 		this.mensagem = mensagem;
 		this.colisoes = 0;
+		this.id = new GregorianCalendar().getTimeInMillis();
 	}
 
 	public Integer getIdRemetente() {
@@ -53,5 +58,9 @@ public class Quadro {
 	
 	public void incColisoes(){
 		++this.colisoes;
+	}
+	
+	public long getId(){
+		return this.id;
 	}
 }

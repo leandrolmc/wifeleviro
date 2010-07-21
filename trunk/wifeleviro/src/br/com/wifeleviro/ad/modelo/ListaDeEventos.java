@@ -9,6 +9,25 @@ public class ListaDeEventos {
 	
 	private double instanteDeTempo;
 	
+	public class ProximoEvento{
+		
+		private double tempo;
+		private Evento proximo;
+		
+		public ProximoEvento(double tempo, Evento proximo){
+			this.tempo = tempo;
+			this.proximo = proximo;
+		}
+		
+		public double getTempo(){
+			return this.tempo;
+		}
+		
+		public Evento getEvento(){
+			return this.proximo;
+		}
+	}
+	
 	public ListaDeEventos(){
 		tree = new TreeMap<Double, ArrayList<Evento>>();
 		this.instanteDeTempo = 0;
@@ -23,14 +42,14 @@ public class ListaDeEventos {
 		tree.put(instanteDeTempo, col);
 	}
 	
-	public Evento proximoEvento(){
+	public ProximoEvento proximoEvento(){
 		this.instanteDeTempo = (Double)tree.firstKey();
 		ArrayList<Evento> eventos = (ArrayList<Evento>)tree.get(this.instanteDeTempo);
 		tree.remove(this.instanteDeTempo);
 		Evento proximoEvento = eventos.remove(0);
 		if(eventos.size()>0)
 			tree.put(this.instanteDeTempo, eventos);
-		return proximoEvento;
+		return new ProximoEvento(this.instanteDeTempo, proximoEvento);
 	}
 	
 	public int size(){

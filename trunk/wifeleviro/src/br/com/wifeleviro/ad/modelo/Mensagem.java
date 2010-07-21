@@ -12,6 +12,7 @@ public class Mensagem {
 	public static final int REFORCO_COLISAO = 1;
 	
 	private long id;
+	
 	private double numeroQuadros;
 	private int numeroQuadroRestantesParaTransmissao;
 	private int tipoMensagem;

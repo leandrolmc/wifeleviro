@@ -1,5 +1,9 @@
 = Diário de Bordo =
 
+== 21 de julho de 2010 (manhã) ==
+
+Finalizei a coleta de estatísticas. Agora falta imprimir as estatísticas em arquivo ou algum tipo de saída padrão e realizar testes.
+
 == 20 de julho de 2010 ==
 
 Finalizada a implementação dos fluxos e da colisão. Agora só falta terminar as coletas para imprimir no relatório.

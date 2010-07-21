@@ -31,3 +31,7 @@ Agora existe um executável na pasta *release* com o nome do projeto que pode se
 Gerei um guia do programador que está disponível no wiki.
 
 Também gerei a parte inicial do coletor de estatísticas e mostrei como utilizá-lo no guia do programador.
+
+== < 11 de julho de 2010 ==
+
+Caos e destruição...

@@ -10,51 +10,25 @@ public class Evento {
 	public static final int GERAR_REFORCO_COLISAO = 5;
 	
 	private int tipoEvento;
-	private int idTerminalOrigemDaMensagem;
-	private Mensagem mensagem;
+	private int terminalOrigem;
+	private Quadro quadro;
 	
-	private Integer idTerminalDestino;
-	
-	public Evento(int idTerminalOrigemDaMensagem, int tipoEvento){
-		this.idTerminalOrigemDaMensagem = idTerminalOrigemDaMensagem;
+	public Evento(int tipoEvento, int terminalOrigem, Quadro quadro){
 		this.tipoEvento = tipoEvento;
-		this.idTerminalDestino = null;
-		this.mensagem = null;
-	}
-
-	public Evento(int idTerminalOrigemDaMensagem, Mensagem mensagem, int tipoEvento){
-		this.idTerminalOrigemDaMensagem = idTerminalOrigemDaMensagem;
-		this.tipoEvento = tipoEvento;
-		this.idTerminalDestino = null;
-		this.mensagem = mensagem;
-	}
-	
-	public Evento(int idTerminalOrigemDaMensagem, int idTerminalDestino, int tipoEvento){
-		this.idTerminalOrigemDaMensagem = idTerminalOrigemDaMensagem;
-		this.tipoEvento = tipoEvento;
-		this.idTerminalDestino = idTerminalDestino;
-		this.mensagem = null;
-	}
-	
-	public int getIdTerminalOrigemDaMensagem() {
-		return idTerminalOrigemDaMensagem;
+		this.terminalOrigem = terminalOrigem;
+		this.quadro = quadro;
 	}
 	
 	public int getTipoEvento() {
 		return tipoEvento;
 	}
 
-	public Integer getIdTerminalDestino() {
-		return idTerminalDestino;
+	public int getTerminalOrigem() {
+		return terminalOrigem;
 	}
-
-	public void setMensagem(Mensagem mensagem) {
-		this.mensagem = mensagem;
-	}
-
-	public Mensagem getMensagem() {
-		return mensagem;
+	
+	public Quadro getQuadro() {
+		return quadro;
 	}
 
 }
-

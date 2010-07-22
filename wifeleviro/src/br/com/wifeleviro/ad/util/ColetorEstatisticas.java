@@ -1,7 +1,6 @@
 package br.com.wifeleviro.ad.util;
 
 import java.util.Hashtable;
-import java.util.TreeMap;
 import java.util.Vector;
 
 // Classe única de coleta dos dados estatísticos para avaliação do programa.
@@ -18,10 +17,10 @@ public class ColetorEstatisticas {
 	private Estatisticas[] estatisticas;
 	
 	// Construtor padrão da classe.
-	private ColetorEstatisticas(int numTerminais) {
+	public ColetorEstatisticas(int numTerminais) {
 		
-		instanteInicioRodada = -1;
-		instanteFimRodada = -1;
+		setInstanteInicioRodada(-1);
+		setInstanteFimRodada(-1);
 		
 		this.numTerminais = numTerminais;
 		
@@ -35,7 +34,31 @@ public class ColetorEstatisticas {
 
 	// Sub-classe que será utilizada unicamente pelo coletor de estatísticas
 	// para armazenamento dos dados coletados.
-	protected class Estatisticas {
+	public class Estatisticas {
+
+		public Vector<Double> getTap() {
+			return tap;
+		}
+
+		public Vector<Double> getTam() {
+			return tam;
+		}
+
+		public Hashtable<Long, Long> getColisoesPorMensagem() {
+			return colisoesPorMensagem;
+		}
+
+		public Hashtable<Long, Long> getQuadrosPorMensagem() {
+			return quadrosPorMensagem;
+		}
+
+		public Vector<Double> getPeriodosOcupados() {
+			return periodosOcupados;
+		}
+
+		public Long getNumeroQuadrosTransmitidosComSucesso() {
+			return numeroQuadrosTransmitidosComSucesso;
+		}
 
 		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
 		// quadro para medição dos tap´s.
@@ -171,11 +194,11 @@ public class ColetorEstatisticas {
 
 	// Coleta de utilização do Ethernet
 	public void coletaInicioRodada(double instanteDeTempo){
-		this.instanteInicioRodada = instanteDeTempo;
+		this.setInstanteInicioRodada(instanteDeTempo);
 	}
 	
 	public void coletaFimRodada(double instanteDeTempo){
-		this.instanteFimRodada = instanteDeTempo;
+		this.setInstanteFimRodada(instanteDeTempo);
 	}
 	
 	public void coletaInicioPeriodoOcupado(double instanteDeTempo){
@@ -190,11 +213,24 @@ public class ColetorEstatisticas {
 	public void coletaTransmissaoDeQuadroComSucessoNaEstacao(int estacao){
 		this.estatisticas[estacao].numeroQuadrosTransmitidosComSucesso++;
 	}
-	
-	public boolean intervalosDeConfiancaDentroDoLimiteAceitavel(){
-		return false;
+
+	private void setInstanteInicioRodada(double instanteInicioRodada) {
+		this.instanteInicioRodada = instanteInicioRodada;
 	}
 
+	public double getInstanteInicioRodada() {
+		return instanteInicioRodada;
+	}
 
+	private void setInstanteFimRodada(double instanteFimRodada) {
+		this.instanteFimRodada = instanteFimRodada;
+	}
 
+	public double getInstanteFimRodada() {
+		return instanteFimRodada;
+	}
+	
+	public Estatisticas[] getEstatisticas() {
+		return this.estatisticas;
+	}
 }

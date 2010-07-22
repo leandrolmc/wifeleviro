@@ -10,6 +10,7 @@ import br.com.wifeleviro.ad.modelo.Quadro;
 import br.com.wifeleviro.ad.modelo.Terminal;
 import br.com.wifeleviro.ad.modelo.ListaDeEventos.ProximoEvento;
 import br.com.wifeleviro.ad.util.ColetorEstatisticas;
+import br.com.wifeleviro.ad.util.DadosFinaisDaRodada;
 import br.com.wifeleviro.ad.util.EstatisticasColetadas;
 import br.com.wifeleviro.ad.util.EstatisticasColisaoRodada;
 import br.com.wifeleviro.ad.util.EstatisticasUtilizacaoRodada;
@@ -94,14 +95,33 @@ public class Orquestrador {
 				EstatisticasVazaoRodada vazao = new EstatisticasVazaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getNumeroQuadrosTransmitidosComSucesso());
 				statsColetadas[i].armazenar(tap, tam, colisao, utilizacao, vazao);
 				
-				intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  
-					IntervaloDeConfianca.intervalosDeConfiancaDentroDoLimiteAceitavel(
-							statsColetadas[i].getColTap(), 
-							statsColetadas[i].getColTap(), 
-							statsColetadas[i].getColEstatisticaColisaoRodada(), 
-							statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
-							statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
-							rodadaAtual);
+				DadosFinaisDaRodada dados = IntervaloDeConfianca.intervalosDeConfiancaDentroDoLimiteAceitavel(
+						statsColetadas[i].getColTap(), 
+						statsColetadas[i].getColTap(), 
+						statsColetadas[i].getColEstatisticaColisaoRodada(), 
+						statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
+						statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
+						rodadaAtual);
+				
+				intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
+				
+				System.out.println("== RODADA "+rodadaAtual+" ==");
+				System.out.println("--[TAp("+i+")]--");
+				System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
+				System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
+				System.out.println("--[TAm("+i+")]--");
+				System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
+				System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
+				System.out.println("--[NCm("+i+")]--");
+				System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
+				System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
+				System.out.println("--[Utilizacao("+i+")]--");
+				System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
+				System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
+				System.out.println("--[Vazao("+i+")]--");
+				System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
+				System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
+				System.out.println("== FIM RODADA "+rodadaAtual+" ==");	
 			}
 
 			++rodadaAtual;
@@ -159,7 +179,7 @@ public class Orquestrador {
 
 			if (quadro.getMensagem().getTipoMensagem() == Mensagem.MENSAGEM_PADRAO) {
 				coletor.iniciaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimRx);
-				coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoInicioTx);
+				coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimChegadaRxHub);
 
 				quadro.getMensagem().decrementaNumeroQuadroRestantesParaTransmissao();
 				if (quadro.getMensagem().getNumeroQuadroRestantesParaTransmissao() > 0) {
@@ -194,7 +214,7 @@ public class Orquestrador {
 
 				if (quadro.getMensagem().getTipoMensagem() == Mensagem.MENSAGEM_PADRAO) {
 					coletor.iniciaColetaTap(terminalAtual, quadro.getId(), instanteTempoInicioDeTx);
-					coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoInicioDeTx);
+					coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimChegadaRxHub);
 
 					Mensagem mensagem = quadro.getMensagem();
 					mensagem.decrementaNumeroQuadroRestantesParaTransmissao();
@@ -206,7 +226,7 @@ public class Orquestrador {
 						Evento proximoEvento = new Evento(Evento.INICIO_TX_PC, terminalAtual, proximoQuadro);
 						lista.put(instanteDeTempoDoProximoQuadro, proximoEvento);
 					} else {
-						coletor.finalizaColetaTam(terminalAtual, mensagem.getId(), instanteTempoInicioDeTx);
+						coletor.finalizaColetaTam(terminalAtual, mensagem.getId(), instanteTempoFimChegadaRxHub);
 					}
 				}
 
@@ -230,7 +250,7 @@ public class Orquestrador {
 
 				if (quadro.getMensagem().getTipoMensagem() == Mensagem.MENSAGEM_PADRAO) {
 					coletor.iniciaColetaTap(terminalAtual, quadro.getId(),lista.getInstanteDeTempoAtual());
-					coletor.finalizaColetaTap(terminalAtual, quadro.getId(),instanteTempoInicioDeTx);
+					coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimChegadaRxHub);
 
 					Mensagem mensagem = quadro.getMensagem();
 					mensagem.decrementaNumeroQuadroRestantesParaTransmissao();
@@ -242,7 +262,7 @@ public class Orquestrador {
 						Evento proximoEvento = new Evento(Evento.INICIO_TX_PC, terminalAtual, proximoQuadro);
 						lista.put(instanteDeTempoDoProximoQuadro, proximoEvento);
 					} else {
-						coletor.finalizaColetaTam(terminalAtual, mensagem.getId(), instanteTempoInicioDeTx);
+						coletor.finalizaColetaTam(terminalAtual, mensagem.getId(), instanteTempoFimChegadaRxHub);
 					}
 				}
 

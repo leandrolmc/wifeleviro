@@ -10,11 +10,11 @@ public class ResultadoIntervaloDeConfianca {
 		this.tamanhoDoIntervaloDeConfianca = tamanhoDoIntervaloDeConfianca;
 	}
 
-	protected double getMediaDasAmostras() {
+	public double getMediaDasAmostras() {
 		return mediaDasAmostras;
 	}
 
-	protected double getTamanhoDoIntervaloDeConfianca() {
+	public double getTamanhoDoIntervaloDeConfianca() {
 		return tamanhoDoIntervaloDeConfianca;
 	}
 	

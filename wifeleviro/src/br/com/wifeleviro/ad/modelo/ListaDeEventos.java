@@ -9,6 +9,8 @@ public class ListaDeEventos {
 	
 	private double instanteDeTempo;
 	
+	private long numEventosNaRodada;
+	
 	public class ProximoEvento{
 		
 		private double tempo;
@@ -31,15 +33,25 @@ public class ListaDeEventos {
 	public ListaDeEventos(){
 		tree = new TreeMap<Double, ArrayList<Evento>>();
 		this.instanteDeTempo = 0;
+		this.numEventosNaRodada = 0;
 	}
 	
 	public void put(double instanteDeTempo, Evento e){
+		this.numEventosNaRodada++;
 		ArrayList<Evento> col = tree.get(instanteDeTempo);
 		if(col == null){
 			col = new ArrayList<Evento>();
 		}
 		col.add(e);
 		tree.put(instanteDeTempo, col);
+	}
+	
+	public void resetContadorEventosPorRodada(){
+		this.numEventosNaRodada = 0;
+	}
+	
+	public long getNumeroDeEventosNaRodada(){
+		return this.numEventosNaRodada;
 	}
 	
 	public ProximoEvento proximoEvento(){

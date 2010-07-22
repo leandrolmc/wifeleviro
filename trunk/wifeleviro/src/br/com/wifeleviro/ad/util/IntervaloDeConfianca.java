@@ -77,8 +77,7 @@ public class IntervaloDeConfianca {
 	}
 
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaNcm(
-			Hashtable<Long, Long>[] colisoesPorMensagemDasRodadas,
-			Hashtable<Long, Long>[] quadrosPorMensagemDasRodadas, int numRodadas) {
+			Collection<EstatisticasColisaoRodada> estatisticas, int numRodadas) {
 
 		double somaAmostras = 0;
 		double mediaAmostras = 0;
@@ -86,9 +85,9 @@ public class IntervaloDeConfianca {
 		double varianciaAmostras = 0;
 		double mediasNcmsDasRodadas[] = new double[numRodadas];
 
-		for (int i = 0; i < quadrosPorMensagemDasRodadas.length; i++) {
-			Hashtable<Long, Long> quadrosPorMensagem = quadrosPorMensagemDasRodadas[i];
-			Hashtable<Long, Long> colisoesPorMensagem = colisoesPorMensagemDasRodadas[i];
+		for (EstatisticasColisaoRodada estatistica : estatisticas) {
+			Hashtable<Long, Long> quadrosPorMensagem = estatistica.getQuadros();
+			Hashtable<Long, Long> colisoesPorMensagem = estatistica.getColisoes();
 
 			double somatorioNcmPorMensagem = 0;
 
@@ -202,6 +201,44 @@ public class IntervaloDeConfianca {
 		
 		ResultadoIntervaloDeConfianca result = new ResultadoIntervaloDeConfianca(mediaAmostras, tamanhoIntervaloDeConfianca);
 		return result;
+	}
+	
+	public static boolean intervalosDeConfiancaDentroDoLimiteAceitavel(
+			Collection<Vector<Double>> tapsRodadas,
+			Collection<Vector<Double>> tamsRodadas,
+			Collection<EstatisticasColisaoRodada> estatisticasColisaoDasRodadas,
+			Collection<EstatisticasUtilizacaoRodada> estatisticasUtilizacaoDasRodadas,
+			Collection<EstatisticasVazaoRodada> estatisticasVazaoDasRodadas,
+			int numRodadas){
+		
+		ResultadoIntervaloDeConfianca tap = calculaTamanhoIntervaloConfiancaTap(tapsRodadas, numRodadas);
+		ResultadoIntervaloDeConfianca tam = calculaTamanhoIntervaloConfiancaTam(tamsRodadas, numRodadas);
+		ResultadoIntervaloDeConfianca ncm = calculaTamanhoIntervaloConfiancaNcm(estatisticasColisaoDasRodadas, numRodadas);
+		ResultadoIntervaloDeConfianca utilizacao = calculaTamanhoIntervaloConfiancaUtilizacaoDoEthernet(estatisticasUtilizacaoDasRodadas, numRodadas);
+		ResultadoIntervaloDeConfianca vazao = calculaTamanhoIntervaloConfiancaVazao(estatisticasVazaoDasRodadas, numRodadas);
+		
+		double mediaTap = tap.getMediaDasAmostras();
+		double tamanhoICTap = tap.getTamanhoDoIntervaloDeConfianca();
+		
+		double mediaTam = tam.getMediaDasAmostras();
+		double tamanhoICTam = tam.getTamanhoDoIntervaloDeConfianca();
+		
+		double mediaNcm = ncm.getMediaDasAmostras();
+		double tamanhoICNcm = ncm.getTamanhoDoIntervaloDeConfianca();
+
+		double mediaUtilizacao = utilizacao.getMediaDasAmostras();
+		double tamanhoICUtilizacao = utilizacao.getTamanhoDoIntervaloDeConfianca();
+		
+		double mediaVazao = vazao.getMediaDasAmostras();
+		double tamanhoICVazao = vazao.getTamanhoDoIntervaloDeConfianca();
+		
+		return (
+			(tamanhoICTap < (0.1*mediaTap)) &&
+			(tamanhoICTam < (0.1*mediaTam)) &&
+			(tamanhoICNcm < (0.1*mediaNcm)) &&
+			(tamanhoICUtilizacao < (0.1*mediaUtilizacao)) &&
+			(tamanhoICVazao < (0.1*mediaVazao))
+		);
 	}
 	
 }

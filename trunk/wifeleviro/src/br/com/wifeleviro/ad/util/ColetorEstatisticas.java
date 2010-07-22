@@ -7,50 +7,36 @@ import java.util.Vector;
 // Classe única de coleta dos dados estatísticos para avaliação do programa.
 // O padrão singleton utilizado garante que não exista mais que uma intância 
 //  desta classe dentro do programa em execução. 
-public class ColetorEstatisticasSingleton {
+public class ColetorEstatisticas {
 
-	private double instanteInicioSimulacao;
-	private double instanteFimSimulacao;
+	private double instanteInicioRodada;
+	private double instanteFimRodada;
+	
+	private int numTerminais;
 	
 	// Variável que armazenará as estatísticas de cada estação.
 	private Estatisticas[] estatisticas;
 	
 	// Construtor padrão da classe.
-	private ColetorEstatisticasSingleton() {
+	private ColetorEstatisticas(int numTerminais) {
 		
-		instanteInicioSimulacao = -1;
-		instanteFimSimulacao = -1;
+		instanteInicioRodada = -1;
+		instanteFimRodada = -1;
+		
+		this.numTerminais = numTerminais;
 		
 		// Inicia uma instância de Estatisticas para cada estação.
-		estatisticas = new Estatisticas[4];
+		estatisticas = new Estatisticas[this.numTerminais];
 		
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < this.numTerminais; i++){
 			estatisticas[i] = new Estatisticas();
 		}
 	}
 
-	// Variável privada que contém a única referência para o coletor de
-	// estatísticas.
-	private static ColetorEstatisticasSingleton _instance;
-
-	// Metódo capaz de gerar a instância única do coletor de estatísticas, caso
-	// esta ainda não exista. Caso exista, simplesmente retorna uma referência
-	// para a mesma.
-	public static synchronized ColetorEstatisticasSingleton getInstance() {
-		if (_instance == null) {
-			_instance = new ColetorEstatisticasSingleton();
-		}
-
-		return _instance;
-	}
-
 	// Sub-classe que será utilizada unicamente pelo coletor de estatísticas
 	// para armazenamento dos dados coletados.
-	private class Estatisticas {
+	protected class Estatisticas {
 
-		protected static final int INICIO_PERIODO_OCUPADO = 0;
-		protected static final int FIM_PERIODO_OCUPADO = 1;
-		
 		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
 		// quadro para medição dos tap´s.
 		protected Hashtable<Long, Double> tapMedicaoInicio;
@@ -70,7 +56,7 @@ public class ColetorEstatisticasSingleton {
 		// o número de quadros que foram necessários para transmitir a mensagem.
 		protected Hashtable<Long, Long> quadrosPorMensagem;
 		
-		protected TreeMap<Double, Integer> periodosOcupados;
+		protected Vector<Double> periodosOcupados;
 		
 		protected Long numeroQuadrosTransmitidosComSucesso;
 		
@@ -81,7 +67,7 @@ public class ColetorEstatisticasSingleton {
 			tam = new Vector<Double>();
 			colisoesPorMensagem = new Hashtable<Long, Long>();
 			quadrosPorMensagem = new Hashtable<Long, Long>();
-			periodosOcupados = new TreeMap<Double, Integer>();
+			periodosOcupados = new Vector<Double>();
 			numeroQuadrosTransmitidosComSucesso = (long)0;
 		}
 	}
@@ -184,25 +170,29 @@ public class ColetorEstatisticasSingleton {
 	}
 
 	// Coleta de utilização do Ethernet
-	public void coletaInicioSimulacao(double instanteDeTempo){
-		this.instanteInicioSimulacao = instanteDeTempo;
+	public void coletaInicioRodada(double instanteDeTempo){
+		this.instanteInicioRodada = instanteDeTempo;
 	}
 	
-	public void coletaFimSimulacao(double instanteDeTempo){
-		this.instanteFimSimulacao = instanteDeTempo;
+	public void coletaFimRodada(double instanteDeTempo){
+		this.instanteFimRodada = instanteDeTempo;
 	}
 	
 	public void coletaInicioPeriodoOcupado(double instanteDeTempo){
-		this.estatisticas[0].periodosOcupados.put(instanteDeTempo, Estatisticas.INICIO_PERIODO_OCUPADO);
+		this.estatisticas[0].periodosOcupados.add(-instanteDeTempo);
 	}
 	
 	public void coletaFimPeriodoOcupado(double instanteDeTempo){
-		this.estatisticas[0].periodosOcupados.put(instanteDeTempo, Estatisticas.FIM_PERIODO_OCUPADO);
+		this.estatisticas[0].periodosOcupados.add(instanteDeTempo);
 	}
 	
 	// Coleta de vazão(i)
 	public void coletaTransmissaoDeQuadroComSucessoNaEstacao(int estacao){
 		this.estatisticas[estacao].numeroQuadrosTransmitidosComSucesso++;
+	}
+	
+	public boolean intervalosDeConfiancaDentroDoLimiteAceitavel(){
+		return false;
 	}
 
 

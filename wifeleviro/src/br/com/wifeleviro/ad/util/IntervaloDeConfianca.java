@@ -203,7 +203,7 @@ public class IntervaloDeConfianca {
 		return result;
 	}
 	
-	public static boolean intervalosDeConfiancaDentroDoLimiteAceitavel(
+	public static DadosFinaisDaRodada intervalosDeConfiancaDentroDoLimiteAceitavel(
 			Collection<Vector<Double>> tapsRodadas,
 			Collection<Vector<Double>> tamsRodadas,
 			Collection<EstatisticasColisaoRodada> estatisticasColisaoDasRodadas,
@@ -232,13 +232,16 @@ public class IntervaloDeConfianca {
 		double mediaVazao = vazao.getMediaDasAmostras();
 		double tamanhoICVazao = vazao.getTamanhoDoIntervaloDeConfianca();
 		
-		return (
+		boolean dentroDoLimite = (
 			(tamanhoICTap < (0.1*mediaTap)) &&
 			(tamanhoICTam < (0.1*mediaTam)) &&
 			(tamanhoICNcm < (0.1*mediaNcm)) &&
 			(tamanhoICUtilizacao < (0.1*mediaUtilizacao)) &&
 			(tamanhoICVazao < (0.1*mediaVazao))
 		);
+		
+		DadosFinaisDaRodada dadosRodada = new DadosFinaisDaRodada(tap, tam, ncm, utilizacao, vazao, dentroDoLimite);
+		return dadosRodada;
 	}
 	
 }

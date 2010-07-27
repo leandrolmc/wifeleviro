@@ -8,9 +8,11 @@ import java.util.Vector;
 //  desta classe dentro do programa em execução. 
 public class ColetorEstatisticas {
 
+	// Variáveis que armazenarão início e fim de rodada.
 	private double instanteInicioRodada;
 	private double instanteFimRodada;
 	
+	// Variável que mantém dado da quantidade de terminais ativos no sistema.
 	private int numTerminais;
 	
 	// Variável que armazenará as estatísticas de cada estação.
@@ -19,9 +21,11 @@ public class ColetorEstatisticas {
 	// Construtor padrão da classe.
 	public ColetorEstatisticas(int numTerminais) {
 		
+		// Setando valores iniciais para -1 de modo a serem substituídos pelas primeiras medições corretas.
 		setInstanteInicioRodada(-1);
 		setInstanteFimRodada(-1);
 		
+		// Parâmetro de inicialização do coletor.
 		this.numTerminais = numTerminais;
 		
 		// Inicia uma instância de Estatisticas para cada estação.
@@ -35,30 +39,6 @@ public class ColetorEstatisticas {
 	// Sub-classe que será utilizada unicamente pelo coletor de estatísticas
 	// para armazenamento dos dados coletados.
 	public class Estatisticas {
-
-		public Vector<Double> getTap() {
-			return tap;
-		}
-
-		public Vector<Double> getTam() {
-			return tam;
-		}
-
-		public Hashtable<Long, Long> getColisoesPorMensagem() {
-			return colisoesPorMensagem;
-		}
-
-		public Hashtable<Long, Long> getQuadrosPorMensagem() {
-			return quadrosPorMensagem;
-		}
-
-		public Vector<Double> getPeriodosOcupados() {
-			return periodosOcupados;
-		}
-
-		public Long getNumeroQuadrosTransmitidosComSucesso() {
-			return numeroQuadrosTransmitidosComSucesso;
-		}
 
 		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
 		// quadro para medição dos tap´s.
@@ -79,10 +59,15 @@ public class ColetorEstatisticas {
 		// o número de quadros que foram necessários para transmitir a mensagem.
 		protected Hashtable<Long, Long> quadrosPorMensagem;
 		
+		// Armazena os instantes de tempo de início de período ocupado e de
+		// fim de período ocupado, com valores negativo e positivo, respectivamente.
 		protected Vector<Double> periodosOcupados;
 		
+		// Contador inicializado em zero do número de quadros que
+		// atingiram RX do HUB com sucesso durante a rodada.
 		protected Long numeroQuadrosTransmitidosComSucesso;
 		
+		// Inicialização com valores padrão ou instanciação de classe.
 		protected Estatisticas(){
 			tapMedicaoInicio = new Hashtable<Long, Double>();
 			tap = new Vector<Double>();
@@ -92,6 +77,42 @@ public class ColetorEstatisticas {
 			quadrosPorMensagem = new Hashtable<Long, Long>();
 			periodosOcupados = new Vector<Double>();
 			numeroQuadrosTransmitidosComSucesso = (long)0;
+		}
+		
+		// Método de simples recuperação da coleção de TAp's.
+		public Vector<Double> getTap() {
+			return tap;
+		}
+
+		// Método de simples recuperação da coleção de TAm's.
+		public Vector<Double> getTam() {
+			return tam;
+		}
+
+		// Método simples para recuperação do
+		// Hashtable indexada pelo id da mensagem contendo o
+		// número de colisões sofridas em cada mensagem.
+		public Hashtable<Long, Long> getColisoesPorMensagem() {
+			return colisoesPorMensagem;
+		}
+
+		// Método simples para recuperação do
+		// Hashtable indexada pelo id da mensagem contendo o
+		// número de quadros gerados por mensagem.
+		public Hashtable<Long, Long> getQuadrosPorMensagem() {
+			return quadrosPorMensagem;
+		}
+
+		// Método simples para recuperação da coleção
+		// de instantes iniciais e finais de períodos ocupados.
+		public Vector<Double> getPeriodosOcupados() {
+			return periodosOcupados;
+		}
+
+		// Método simples para recuperação do número
+		// de quadros transmitidos com sucesso durante a rodada.
+		public Long getNumeroQuadrosTransmitidosComSucesso() {
+			return numeroQuadrosTransmitidosComSucesso;
 		}
 	}
 
@@ -192,44 +213,56 @@ public class ColetorEstatisticas {
 		this.estatisticas[idEstacao].colisoesPorMensagem.put(idMensagem, numeroDeQuadros);
 	}
 
-	// Coleta de utilização do Ethernet
+	// Coleta intante de tempo inicial da rodada.
 	public void coletaInicioRodada(double instanteDeTempo){
 		this.setInstanteInicioRodada(instanteDeTempo);
 	}
 	
+	// Coleta intante de tempo final da rodada.
 	public void coletaFimRodada(double instanteDeTempo){
 		this.setInstanteFimRodada(instanteDeTempo);
 	}
 	
+	// Coleta valor de início de período ocupado, o converte para
+	// negativo e armazena na coleção de períodos ocupados.
 	public void coletaInicioPeriodoOcupado(double instanteDeTempo){
 		this.estatisticas[0].periodosOcupados.add(-instanteDeTempo);
 	}
-	
+
+	// Coleta valor de início de período ocupado e armazena 
+	// na coleção de períodos ocupados.
 	public void coletaFimPeriodoOcupado(double instanteDeTempo){
 		this.estatisticas[0].periodosOcupados.add(instanteDeTempo);
 	}
 	
-	// Coleta de vazão(i)
+	// Incrementa o número de quadros transmitidos com sucesso
+	// na estação i.
 	public void coletaTransmissaoDeQuadroComSucessoNaEstacao(int estacao){
 		this.estatisticas[estacao].numeroQuadrosTransmitidosComSucesso++;
 	}
 
+	// Método privado para simples manipulação do valor de início da rodada.
 	private void setInstanteInicioRodada(double instanteInicioRodada) {
 		this.instanteInicioRodada = instanteInicioRodada;
 	}
 
+	// Método para simples recuperação do valor de início de rodada.
 	public double getInstanteInicioRodada() {
 		return instanteInicioRodada;
 	}
 
+	// Método privado para simples manipulação do valor de final da rodada.
 	private void setInstanteFimRodada(double instanteFimRodada) {
 		this.instanteFimRodada = instanteFimRodada;
 	}
 
+	// Método para simples recuperação do valor de final de rodada.
 	public double getInstanteFimRodada() {
 		return instanteFimRodada;
 	}
 	
+	// Recupera array de estatísticas indexado pelo id do terminal
+	// para cálculo de intervalo de confiança.
 	public Estatisticas[] getEstatisticas() {
 		return this.estatisticas;
 	}

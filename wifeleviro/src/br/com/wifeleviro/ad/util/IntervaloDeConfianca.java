@@ -141,8 +141,7 @@ public class IntervaloDeConfianca {
 			EstatisticasUtilizacaoRodada estatisticaUtilizacaoDaRodada = (EstatisticasUtilizacaoRodada) it.next();
 
 			double periodoOcupado = 0;
-			Collection<Double> medicoes = estatisticaUtilizacaoDaRodada
-					.getMedicaoInstanteUtilizacao();
+			Collection<Double> medicoes = estatisticaUtilizacaoDaRodada.getMedicaoInstanteUtilizacao();
 			for (Double medicao : medicoes) {
 				periodoOcupado += medicao;
 			}

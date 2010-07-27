@@ -1,6 +1,8 @@
 package br.com.wifeleviro.ad.modelo;
 
-import java.util.GregorianCalendar;
+import java.util.Random;
+
+import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
 
 public class Quadro {
@@ -22,7 +24,7 @@ public class Quadro {
 		this.idDestinatario = idDestinatario;
 		this.mensagem = mensagem;
 		this.colisoes = 0;
-		this.id = new GregorianCalendar().getTimeInMillis();
+		this.id = GeradorRandomicoSingleton.getInstance().gerarProximoRandomicoAuxiliar();
 	}
 
 	public Integer getIdRemetente() {

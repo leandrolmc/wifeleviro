@@ -21,43 +21,71 @@ import br.com.wifeleviro.ad.util.ColetorEstatisticas.Estatisticas;
 
 public class Orquestrador {
 
-	public static void main(String[] args) {
+	private int qtdTerminais;
+	private Terminal[] terminais;
+	private long qtdMensagensNaRodada;
 
-		int numTerminais = 4;
+	public Orquestrador(int qtdTerminais, Terminal[] terminais){
+		this.qtdTerminais = qtdTerminais;
+		this.terminais = terminais;
+	}
+	
+	public void executarSimulacao() {
+
+		int numTerminais = this.qtdTerminais;
 		
-		Terminal[] pc = new Terminal[numTerminais];
-		pc[0] = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, 5, 0.1);
-		pc[1] = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, 4, 10);
-		pc[2] = new Terminal(2, 60, Terminal.TIPO_DETERMINISTICO, 3, 20);
-		pc[3] = new Terminal(3, 40, Terminal.TIPO_DETERMINISTICO, 2, 0.7);
+		Terminal[] pc = this.terminais;
 
 		ListaDeEventos listaEventos = new ListaDeEventos();
-		
 		EstatisticasColetadas[] statsColetadas = new EstatisticasColetadas[numTerminais]; 
 
 		double inicioRodada = (2 ^ 31) - 1;
 
-		int rodadaAtual = 0; // Rodada 0 -> fase transiente
+		int rodadaAtual = -1; // Inicia em -1 para incrementar no início do programa: Rodada 0 -> fase transiente
 
 		for (int i = 0; i < numTerminais; i++) {
 			listaEventos.put(pc[i].getInstanteTempoInicial(), new Evento(Evento.GERAR_MENSAGEM, i, null));
 			inicioRodada = Math.min(inicioRodada, pc[i].getInstanteTempoInicial());
+			statsColetadas[i] = new EstatisticasColetadas();
 		}
 
 		ColetorEstatisticas coletor = null;
 		boolean intervaloDeConfiancaOK = true; // Inicializo com true para compor corretamente o and final.
 		do {
+			++rodadaAtual;
+			this.qtdMensagensNaRodada = 0;
+			
+			intervaloDeConfiancaOK = true;
+			
+//			listaEventos.resetContadorEventosPorRodada();
+			long numEventosDaRodada = 0;
+			
 			if(rodadaAtual > 0)
 				inicioRodada = listaEventos.getInstanteDeTempoAtual();
 
+			if(rodadaAtual == 0)
+				System.out.println("== FASE TRANSIENTE ==");
+			else
+				System.out.println("== RODADA "+rodadaAtual+" ==");
+			
 			coletor = new ColetorEstatisticas(numTerminais);
 			
 			coletor.coletaInicioRodada(inicioRodada);
 
 			double fimDaRodada = 0;
 
-			while ((rodadaAtual == 0 && listaEventos.getNumeroDeEventosNaRodada() < 1000000) || (rodadaAtual > 0 && listaEventos.getNumeroDeEventosNaRodada() < 100000)) {
-
+			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 100000)) {
+				
+				if(numEventosDaRodada == 100000){
+					int a = 1;
+					System.out.println(a);
+				}
+				
+				if(rodadaAtual != 0){
+					int a = 1;
+					System.out.println(a);
+				}
+				
 				ProximoEvento proximo = listaEventos.proximoEvento();
 				fimDaRodada = proximo.getTempo();
 				Evento e = proximo.getEvento();
@@ -65,67 +93,83 @@ public class Orquestrador {
 				switch (e.getTipoEvento()) {
 					case Evento.GERAR_MENSAGEM:
 						tratarEventoGerarMensagem(coletor, pc, listaEventos, e);
+						++this.qtdMensagensNaRodada;
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Gerar Mensagem");
+						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_TX_PC:
 						tratarEventoInicioTxPc(coletor, pc, listaEventos, e);
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Inicio TX do PC");
+						++numEventosDaRodada;
 						break;
 					case Evento.CHEGADA_QUADRO_NO_RX_HUB:
 						tratarEventoChegadaDeQuadroNoRxDoHub(numTerminais, pc, listaEventos, e);
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Chegada Quadro no RX do HUB");
+						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL:
 						tratarEventoInicioChegadaDeQuadroNoRxDoTerminal(coletor, pc, listaEventos, e);
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Inicio Chegada Quadro no RX do terminal");
+						++numEventosDaRodada;
 						break;
 					case Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL:
 						tratarEventoFimChegadaDeQuadroNoRxDoTerminal(coletor, pc, listaEventos, e);
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Fim Chegada Quadro no RX do terminal");
+						++numEventosDaRodada;
 						break;
 					case Evento.GERAR_REFORCO_COLISAO:
 						tratarEventoGerarReforcoColisao(pc, listaEventos, e);
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Gerar Reforco Colisao");
+						++numEventosDaRodada;
 						break;
 				}
 			}
 
 			coletor.coletaFimRodada(fimDaRodada);
 			
-			Estatisticas[] estatisticas = coletor.getEstatisticas();
-			for(int i = 0; i < numTerminais; i++){
-				Vector<Double> tap = estatisticas[i].getTap();
-				Vector<Double> tam = estatisticas[i].getTam();
-				EstatisticasColisaoRodada colisao = new EstatisticasColisaoRodada(estatisticas[i].getColisoesPorMensagem(), estatisticas[i].getQuadrosPorMensagem());
-				EstatisticasUtilizacaoRodada utilizacao = new EstatisticasUtilizacaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getPeriodosOcupados()); 
-				EstatisticasVazaoRodada vazao = new EstatisticasVazaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getNumeroQuadrosTransmitidosComSucesso());
-				statsColetadas[i].armazenar(tap, tam, colisao, utilizacao, vazao);
+			if(rodadaAtual == 0){
+				System.out.println("== FIM DA FASE TRANSIENTE ==");
+				}else{
+					Estatisticas[] estatisticas = coletor.getEstatisticas();
+					for(int i = 0; i < numTerminais; i++){
+						Vector<Double> tap = estatisticas[i].getTap();
+						Vector<Double> tam = estatisticas[i].getTam();
+						EstatisticasColisaoRodada colisao = new EstatisticasColisaoRodada(estatisticas[i].getColisoesPorMensagem(), estatisticas[i].getQuadrosPorMensagem());
+						EstatisticasUtilizacaoRodada utilizacao = new EstatisticasUtilizacaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getPeriodosOcupados()); 
+						EstatisticasVazaoRodada vazao = new EstatisticasVazaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getNumeroQuadrosTransmitidosComSucesso());
+						statsColetadas[i].armazenar(tap, tam, colisao, utilizacao, vazao);
+						
+						DadosFinaisDaRodada dados = IntervaloDeConfianca.intervalosDeConfiancaDentroDoLimiteAceitavel(
+								statsColetadas[i].getColTap(), 
+								statsColetadas[i].getColTam(), 
+								statsColetadas[i].getColEstatisticaColisaoRodada(), 
+								statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
+								statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
+								1+rodadaAtual);
+						
+						intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
+						
+						System.out.println("--[TAp("+i+")]--");
+						System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
+						System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
+						System.out.println("--[TAm("+i+")]--");
+						System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
+						System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
+						System.out.println("--[NCm("+i+")]--");
+						System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
+						System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
+						System.out.println("--[Utilizacao("+i+")]--");
+						System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
+						System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
+						System.out.println("--[Vazao("+i+")]--");
+						System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
+						System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
+						
+					}
+	
+					System.out.println("== FIM RODADA "+rodadaAtual+" ==");
+				}
 				
-				DadosFinaisDaRodada dados = IntervaloDeConfianca.intervalosDeConfiancaDentroDoLimiteAceitavel(
-						statsColetadas[i].getColTap(), 
-						statsColetadas[i].getColTap(), 
-						statsColetadas[i].getColEstatisticaColisaoRodada(), 
-						statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
-						statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
-						rodadaAtual);
-				
-				intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
-				
-				System.out.println("== RODADA "+rodadaAtual+" ==");
-				System.out.println("--[TAp("+i+")]--");
-				System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
-				System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
-				System.out.println("--[TAm("+i+")]--");
-				System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
-				System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
-				System.out.println("--[NCm("+i+")]--");
-				System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
-				System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
-				System.out.println("--[Utilizacao("+i+")]--");
-				System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
-				System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
-				System.out.println("--[Vazao("+i+")]--");
-				System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
-				System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
-				System.out.println("== FIM RODADA "+rodadaAtual+" ==");	
-			}
-
-			++rodadaAtual;
-			intervaloDeConfiancaOK = true;
 		} while ((rodadaAtual <= 30) || (rodadaAtual > 30 && !intervaloDeConfiancaOK));
 	}
 
@@ -142,17 +186,13 @@ public class Orquestrador {
 		coletor.coletaQuadroPorMensagem(terminalOrigem, mensagem.getId());
 
 		// Crio o primeiro quadro da mensagem para ser transmitido no tx.
-		Evento inicioTxPrimeiroQuadroMensagem = new Evento(Evento.INICIO_TX_PC,
-				terminalOrigem, quadro);
+		Evento inicioTxPrimeiroQuadroMensagem = new Evento(Evento.INICIO_TX_PC, terminalOrigem, quadro);
 		lista.put(instanteDeTempo, inicioTxPrimeiroQuadroMensagem);
-		coletor.iniciaColetaTam(terminalOrigem, mensagem.getId(),
-				instanteDeTempo);
+		coletor.iniciaColetaTam(terminalOrigem, mensagem.getId(),instanteDeTempo);
 
 		// Crio a próxima mensagem.
-		Evento proximaMensagem = new Evento(Evento.GERAR_MENSAGEM,
-				terminalOrigem, null);
-		double instanteDeTempoDaProximaMensagem = instanteDeTempo
-				+ pc[terminalOrigem].gerarProximoInstanteDeTempoDeMensagem();
+		Evento proximaMensagem = new Evento(Evento.GERAR_MENSAGEM, terminalOrigem, null);
+		double instanteDeTempoDaProximaMensagem = instanteDeTempo + pc[terminalOrigem].gerarProximoInstanteDeTempoDeMensagem();
 		lista.put(instanteDeTempoDaProximaMensagem, proximaMensagem);
 
 	}
@@ -322,12 +362,10 @@ public class Orquestrador {
 								.getInstanteDeTempoAtual());
 		}
 
-		Evento fimChegadaQuadroRxTerminal = new Evento(
-				Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL, quadro
-						.getIdRemetente(), quadro);
-		double instanteTempoFimTx = lista.getInstanteDeTempoAtual()
-				+ Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
-		lista.put(instanteTempoFimTx, fimChegadaQuadroRxTerminal);
+		Evento fimChegadaQuadroRxTerminal = new Evento(Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL, quadro.getIdRemetente(), quadro);
+		double instanteTempoFimRx = lista.getInstanteDeTempoAtual() + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
+		pc[terminalAtual].setInstanteTempoFimUltimoRx(instanteTempoFimRx);
+		lista.put(instanteTempoFimRx, fimChegadaQuadroRxTerminal);
 	}
 
 	private static void tratarEventoFimChegadaDeQuadroNoRxDoTerminal(ColetorEstatisticas coletor,
@@ -344,23 +382,15 @@ public class Orquestrador {
 		int terminalAtual = e.getTerminalOrigem();
 		Quadro quadroPendente = pc[terminalAtual].getQuadroPendente();
 
-		Evento chegadaReforcoColisaoRxHub = new Evento(
-				Evento.CHEGADA_QUADRO_NO_RX_HUB, terminalAtual, e.getQuadro());
-		double instanteTempoSaidaTxPc = lista.getInstanteDeTempoAtual()
-				+ Mensagem.TEMPO_TRANSMISSAO_REFORCO_COLISAO;
-		double instanteTempoChegadaReforcoRxHub = instanteTempoSaidaTxPc
-				+ MeioFisico.calculaTempoPropagacao(pc[terminalAtual]
-						.getDistanciaHub());
+		Evento chegadaReforcoColisaoRxHub = new Evento(Evento.CHEGADA_QUADRO_NO_RX_HUB, terminalAtual, e.getQuadro());
+		double instanteTempoSaidaTxPc = lista.getInstanteDeTempoAtual() + Mensagem.TEMPO_TRANSMISSAO_REFORCO_COLISAO;
+		double instanteTempoChegadaReforcoRxHub = instanteTempoSaidaTxPc + MeioFisico.calculaTempoPropagacao(pc[terminalAtual].getDistanciaHub());
 		lista.put(instanteTempoChegadaReforcoRxHub, chegadaReforcoColisaoRxHub);
 
 		if (quadroPendente.getColisoes() < 16) {
-			Evento retransmissaoMensagemPendente = new Evento(
-					Evento.INICIO_TX_PC, terminalAtual, quadroPendente);
-			double instanteTempoAleatorioEscolhido = instanteTempoSaidaTxPc
-					+ Orquestrador
-							.gerarAtrasoAleatorioBinaryBackoff(quadroPendente);
-			lista.put(instanteTempoAleatorioEscolhido,
-					retransmissaoMensagemPendente);
+			Evento retransmissaoMensagemPendente = new Evento(Evento.INICIO_TX_PC, terminalAtual, quadroPendente);
+			double instanteTempoAleatorioEscolhido = instanteTempoSaidaTxPc + Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadroPendente);
+			lista.put(instanteTempoAleatorioEscolhido, retransmissaoMensagemPendente);
 		}
 	}
 
@@ -376,4 +406,9 @@ public class Orquestrador {
 
 		return intervalos * Quadro.SLOT_RETRANSMISSAO;
 	}
+	
+	private static void verbosePorEvento(String tempo, String numEventoAtual, String terminal, String rodada, String mensagem, String tipoEvento){
+		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
+	}
 }
+

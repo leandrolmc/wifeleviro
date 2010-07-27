@@ -8,7 +8,7 @@ public class Terminal{
 	public static final int TIPO_EXPONENCIAL = 1;
 	
 	private int tipo;
-	private double taxa;
+	private double periodo;
 	
 	private double pMensagens;
 	
@@ -24,13 +24,14 @@ public class Terminal{
 	private double instanteTempoFimUltimoRx;
 	private Quadro quadroPendente;
 	
-	public Terminal(int id, double distanciaHub, int tipo, double taxa, double pMensagens) {
+	public Terminal(int id, double distanciaHub, int tipo, double periodo, double pMensagens) {
 		this.id = id;
 		this.distanciaHub = distanciaHub;
 		this.instanteTempoAtual = 0;
 		if(this.tipo == TIPO_EXPONENCIAL)
-			this.instanteTempoAtual = this.gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.taxa);
+			this.instanteTempoAtual = this.gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.periodo);
 		this.instanteTempoInicial = this.instanteTempoAtual;
+		this.periodo = periodo;
 		this.setpMensagens(pMensagens);
 		this.setMeioOcupado(false);
 		this.instanteTempoInicioUltimaTx = -1;
@@ -45,13 +46,13 @@ public class Terminal{
 	
 	public double gerarProximoInstanteDeTempoDeMensagem(){
 		if(this.tipo == Terminal.TIPO_DETERMINISTICO)
-			return gerarInstanteTempoProximoEventoDeterministico(this.instanteTempoAtual, this.taxa);
+			return gerarInstanteTempoProximoEventoDeterministico(this.instanteTempoAtual, this.periodo);
 		else
-			return gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.taxa);
+			return gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.periodo);
 	}
 	
-	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, double taxa){
-		double poisson  = (-((Math.log(GeradorRandomicoSingleton.getInstance().gerarProximoRandomico()))/taxa));
+	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, double periodo){
+		double poisson  = (-((Math.log(1-(GeradorRandomicoSingleton.getInstance().gerarProximoRandomico()%1)))/(1/periodo)));
 		return instanteTempoAtual + poisson;
 	}
 	

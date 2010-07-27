@@ -3,6 +3,8 @@ package br.com.wifeleviro.ad.modelo;
 import java.util.GregorianCalendar;
 import java.util.Random;
 
+import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
+
 public class Mensagem {
 
 	public static final double TEMPO_TRANSMISAO_POR_QUADRO = 0.001; //segundos por quadro 
@@ -26,7 +28,7 @@ public class Mensagem {
 	
 	public Mensagem(double p){
 		
-		setId(new GregorianCalendar().getTimeInMillis());
+		setId(GeradorRandomicoSingleton.getInstance().gerarProximoRandomicoAuxiliar());
 		this.setTipoMensagem(MENSAGEM_PADRAO);
 		
 		if(p > 0 && p < 1){

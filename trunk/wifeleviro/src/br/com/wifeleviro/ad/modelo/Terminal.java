@@ -22,6 +22,7 @@ public class Terminal{
 	private double instanteTempoInicioUltimaTx;
 	private double instanteTempoFimUltimaTx;
 	private double instanteTempoFimUltimoRx;
+	private int idTerminalUltimoRx;
 	private Quadro quadroPendente;
 	
 	public Terminal(int id, double distanciaHub, int tipo, double periodo, double pMensagens) {
@@ -37,6 +38,7 @@ public class Terminal{
 		this.instanteTempoInicioUltimaTx = -1;
 		this.instanteTempoFimUltimaTx = -1;
 		this.instanteTempoFimUltimoRx = -1;
+		this.setIdTerminalUltimoRx(-1);
 		this.quadroPendente = null;
 	}
 	
@@ -123,6 +125,14 @@ public class Terminal{
 
 	public Quadro getQuadroPendente() {
 		return quadroPendente;
+	}
+
+	public void setIdTerminalUltimoRx(int idTerminalUltimoRx) {
+		this.idTerminalUltimoRx = idTerminalUltimoRx;
+	}
+
+	public int getIdTerminalUltimoRx() {
+		return idTerminalUltimoRx;
 	}
 
 }

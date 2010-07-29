@@ -7,7 +7,7 @@ import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
 public class Mensagem {
 
-	public static final double TEMPO_TRANSMISAO_POR_QUADRO = 0.001; //segundos por quadro 
+	public static final double TEMPO_TRANSMISAO_POR_QUADRO = 0.0008; //segundos por quadro 
 	public static final double TEMPO_TRANSMISSAO_REFORCO_COLISAO = 0.0000032; //segundos por reforco
 	
 	public static final int MENSAGEM_PADRAO = 0;

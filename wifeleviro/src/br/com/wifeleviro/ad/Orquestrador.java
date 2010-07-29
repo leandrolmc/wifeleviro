@@ -90,36 +90,50 @@ public class Orquestrador {
 				fimDaRodada = proximo.getTempo();
 				Evento e = proximo.getEvento();
 
+				if(fimDaRodada >= 0.08)
+					System.out.print("");
+				
+				Mensagem msg = null;
+				if(e.getQuadro() != null){
+					msg = e.getQuadro().getMensagem();
+				}
+				
 				switch (e.getTipoEvento()) {
 					case Evento.GERAR_MENSAGEM:
 						tratarEventoGerarMensagem(coletor, pc, listaEventos, e);
 						++this.qtdMensagensNaRodada;
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Gerar Mensagem");
+						//Mensagem msg = e.getQuadro().getMensagem();
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Gerar Mensagem");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_TX_PC:
 						tratarEventoInicioTxPc(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Inicio TX do PC");
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Inicio TX do PC");
+						++numEventosDaRodada;
+						break;
+					case Evento.FIM_TX_PC:
+						tratarEventoFimTxPc(coletor, pc, listaEventos, e);
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Fim TX do PC");
 						++numEventosDaRodada;
 						break;
 					case Evento.CHEGADA_QUADRO_NO_RX_HUB:
 						tratarEventoChegadaDeQuadroNoRxDoHub(numTerminais, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Chegada Quadro no RX do HUB");
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Chegada Quadro no RX do HUB");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL:
 						tratarEventoInicioChegadaDeQuadroNoRxDoTerminal(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Inicio Chegada Quadro no RX do terminal");
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Inicio Chegada Quadro no RX do terminal");
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL:
 						tratarEventoFimChegadaDeQuadroNoRxDoTerminal(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Fim Chegada Quadro no RX do terminal");
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Fim Chegada Quadro no RX do terminal");
 						++numEventosDaRodada;
 						break;
 					case Evento.GERAR_REFORCO_COLISAO:
 						tratarEventoGerarReforcoColisao(pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, ""+this.qtdMensagensNaRodada, "Gerar Reforco Colisao");
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Gerar Reforco Colisao");
 						++numEventosDaRodada;
 						break;
 				}
@@ -204,113 +218,48 @@ public class Orquestrador {
 		Quadro quadro = e.getQuadro();
 
 		if (pc[terminalAtual].isMeioOcupado()) {
-
-			double instanteTempoFimRx = pc[terminalAtual].getInstanteTempoFimUltimoRx();
-			double instanteTempoInicioTx = instanteTempoFimRx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
-
-			pc[terminalAtual].setInstanteTempoInicioUltimaTx(instanteTempoInicioTx);
-			double instanteTempoFimTx = instanteTempoInicioTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
-			pc[terminalAtual].setInstanteTempoFimUltimaTx(instanteTempoFimTx);
-
-			double instanteTempoFimChegadaRxHub = instanteTempoFimTx + MeioFisico.calculaTempoPropagacao(pc[terminalAtual].getDistanciaHub());
-			Evento chegadaRxHub = new Evento(Evento.CHEGADA_QUADRO_NO_RX_HUB, terminalAtual, quadro);
-			lista.put(instanteTempoFimChegadaRxHub, chegadaRxHub);
-			coletor.coletaTransmissaoDeQuadroComSucessoNaEstacao(terminalAtual);
-
-			if (quadro.getMensagem().getTipoMensagem() == Mensagem.MENSAGEM_PADRAO) {
-				coletor.iniciaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimRx);
-				coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimChegadaRxHub);
-
-				quadro.getMensagem().decrementaNumeroQuadroRestantesParaTransmissao();
-				if (quadro.getMensagem().getNumeroQuadroRestantesParaTransmissao() > 0) {
-					double instanteDeTempoDoProximoQuadro = instanteTempoFimTx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
-					Quadro novoQuadro = new Quadro(terminalAtual, null, quadro.getMensagem());
-					coletor.coletaQuadroPorMensagem(terminalAtual, quadro.getMensagem().getId());
-					Evento novoEvento = new Evento(Evento.INICIO_TX_PC, terminalAtual, novoQuadro);
-					lista.put(instanteDeTempoDoProximoQuadro, novoEvento);
-				}
+			if(pc[terminalAtual].getIdTerminalUltimoRx() == terminalAtual){
+				double instanteTempoInicioTx = lista.getInstanteDeTempoAtual();
+				double instanteTempoPrevisaoFimTx = instanteTempoInicioTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
+				Evento fimTx = new Evento(Evento.FIM_TX_PC, terminalAtual, quadro);
+				lista.put(instanteTempoPrevisaoFimTx, fimTx);
+			}else{
+				double tempoMeioLivre = pc[terminalAtual].getInstanteTempoFimUltimoRx();
+				double instanteTempoInicioTransmissaoForcada = tempoMeioLivre + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
+				double instanteTempoPrevisaoFimTx = instanteTempoInicioTransmissaoForcada + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
+				Evento fimTx = new Evento(Evento.FIM_TX_PC, terminalAtual, quadro);
+				lista.put(instanteTempoPrevisaoFimTx, fimTx);
 			}
-
-			if (terminalAtual == 0)
-				coletor.coletaInicioPeriodoOcupado(instanteTempoInicioTx);
-			if (terminalAtual == 0)
-				coletor.coletaFimPeriodoOcupado(instanteTempoFimTx);
-		} else {
-
-			double ultimaTransmissaoTx = lista.getInstanteDeTempoAtual() - pc[terminalAtual].getInstanteTempoFimUltimaTx();
-			double ultimaTransmissaoRx = lista.getInstanteDeTempoAtual() - pc[terminalAtual].getInstanteTempoFimUltimoRx();
-
-			if (ultimaTransmissaoTx > Quadro.TEMPO_MINIMO_ENTRE_QUADROS && ultimaTransmissaoRx > Quadro.TEMPO_MINIMO_ENTRE_QUADROS) {
-				double instanteTempoInicioDeTx = lista.getInstanteDeTempoAtual();
-				double instanteTempoFimDeTx = instanteTempoInicioDeTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
-
-				pc[terminalAtual].setInstanteTempoInicioUltimaTx(instanteTempoInicioDeTx);
-				pc[terminalAtual].setInstanteTempoFimUltimaTx(instanteTempoFimDeTx);
-
-				double instanteTempoFimChegadaRxHub = instanteTempoFimDeTx + MeioFisico.calculaTempoPropagacao(pc[terminalAtual].getDistanciaHub());
-				Evento chegadaRxHub = new Evento(Evento.CHEGADA_QUADRO_NO_RX_HUB, terminalAtual, quadro);
-				lista.put(instanteTempoFimChegadaRxHub, chegadaRxHub);
-				coletor.coletaTransmissaoDeQuadroComSucessoNaEstacao(terminalAtual);
-
-				if (quadro.getMensagem().getTipoMensagem() == Mensagem.MENSAGEM_PADRAO) {
-					coletor.iniciaColetaTap(terminalAtual, quadro.getId(), instanteTempoInicioDeTx);
-					coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimChegadaRxHub);
-
-					Mensagem mensagem = quadro.getMensagem();
-					mensagem.decrementaNumeroQuadroRestantesParaTransmissao();
-
-					if (mensagem.getNumeroQuadroRestantesParaTransmissao() > 0) {
-						double instanteDeTempoDoProximoQuadro = instanteTempoFimDeTx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
-						Quadro proximoQuadro = new Quadro(terminalAtual, null, mensagem);
-						coletor.coletaQuadroPorMensagem(terminalAtual, mensagem.getId());
-						Evento proximoEvento = new Evento(Evento.INICIO_TX_PC, terminalAtual, proximoQuadro);
-						lista.put(instanteDeTempoDoProximoQuadro, proximoEvento);
-					} else {
-						coletor.finalizaColetaTam(terminalAtual, mensagem.getId(), instanteTempoFimChegadaRxHub);
-					}
-				}
-
-				if (terminalAtual == 0)
-					coletor.coletaInicioPeriodoOcupado(instanteTempoInicioDeTx);
-				if (terminalAtual == 0)
-					coletor.coletaFimPeriodoOcupado(instanteTempoFimDeTx);
-			} else {
-				double instanteTempoMeioVazio = lista.getInstanteDeTempoAtual() + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
-
-				double instanteTempoInicioDeTx = instanteTempoMeioVazio;
-				double instanteTempoFimDeTx = instanteTempoInicioDeTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
-
-				pc[terminalAtual].setInstanteTempoInicioUltimaTx(instanteTempoInicioDeTx);
-				pc[terminalAtual].setInstanteTempoFimUltimaTx(instanteTempoFimDeTx);
-
-				double instanteTempoFimChegadaRxHub = instanteTempoFimDeTx + MeioFisico.calculaTempoPropagacao(pc[terminalAtual].getDistanciaHub());
-				Evento chegadaRxHub = new Evento(Evento.CHEGADA_QUADRO_NO_RX_HUB, terminalAtual, quadro);
-				lista.put(instanteTempoFimChegadaRxHub, chegadaRxHub);
-				coletor.coletaTransmissaoDeQuadroComSucessoNaEstacao(terminalAtual);
-
-				if (quadro.getMensagem().getTipoMensagem() == Mensagem.MENSAGEM_PADRAO) {
-					coletor.iniciaColetaTap(terminalAtual, quadro.getId(),lista.getInstanteDeTempoAtual());
-					coletor.finalizaColetaTap(terminalAtual, quadro.getId(), instanteTempoFimChegadaRxHub);
-
-					Mensagem mensagem = quadro.getMensagem();
-					mensagem.decrementaNumeroQuadroRestantesParaTransmissao();
-
-					if (mensagem.getNumeroQuadroRestantesParaTransmissao() > 0) {
-						double instanteDeTempoDoProximoQuadro = instanteTempoFimDeTx + Quadro.TEMPO_MINIMO_ENTRE_QUADROS;
-						Quadro proximoQuadro = new Quadro(terminalAtual, null, mensagem);
-						coletor.coletaQuadroPorMensagem(terminalAtual, mensagem.getId());
-						Evento proximoEvento = new Evento(Evento.INICIO_TX_PC, terminalAtual, proximoQuadro);
-						lista.put(instanteDeTempoDoProximoQuadro, proximoEvento);
-					} else {
-						coletor.finalizaColetaTam(terminalAtual, mensagem.getId(), instanteTempoFimChegadaRxHub);
-					}
-				}
-
-				if (terminalAtual == 0)
-					coletor.coletaInicioPeriodoOcupado(instanteTempoInicioDeTx);
-				if (terminalAtual == 0)
-					coletor.coletaFimPeriodoOcupado(instanteTempoFimDeTx);
-			}
+		}else{
+			double instanteTempoInicioTx = lista.getInstanteDeTempoAtual();
+			double instanteTempoPrevisaoFimTx = instanteTempoInicioTx + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO;
+			Evento fimTx = new Evento(Evento.FIM_TX_PC, terminalAtual, quadro);
+			lista.put(instanteTempoPrevisaoFimTx, fimTx);
+		}
+	}
+	
+	private static void tratarEventoFimTxPc(ColetorEstatisticas coletor, Terminal[] pc,
+			ListaDeEventos lista, Evento e) {
+		
+		int terminalAtual = e.getTerminalOrigem();
+		Quadro quadro = e.getQuadro();
+		
+		double instanteTempoFimTx = lista.getInstanteDeTempoAtual();
+		double instanteTempoChegadaNoRxHub = instanteTempoFimTx + MeioFisico.calculaTempoPropagacao(pc[terminalAtual].getDistanciaHub());
+		Evento chegadaRxHub = new Evento(Evento.CHEGADA_QUADRO_NO_RX_HUB, terminalAtual, quadro);
+		lista.put(instanteTempoChegadaNoRxHub, chegadaRxHub);
+		
+		Mensagem m = quadro.getMensagem();
+		m.decrementaNumeroQuadroRestantesParaTransmissao();
+		
+		if(m.getNumeroQuadroRestantesParaTransmissao() > 0){
+			Quadro novoQuadro = new Quadro(terminalAtual, null, m);	
+			
+			double instanteTempoProximoQuadro = instanteTempoFimTx + quadro.TEMPO_MINIMO_ENTRE_QUADROS;
+			Evento proximoQuadro = new Evento(Evento.INICIO_TX_PC, terminalAtual, novoQuadro);
+			lista.put(instanteTempoProximoQuadro, proximoQuadro);
+		}else{
+			//FIM MENSAGEM
 		}
 	}
 
@@ -335,31 +284,28 @@ public class Orquestrador {
 		Quadro quadro = e.getQuadro();
 		int terminalAtual = quadro.getIdDestinatario();
 
+		pc[terminalAtual].setMeioOcupado(true);		
+		pc[terminalAtual].setIdTerminalUltimoRx(quadro.getIdRemetente());
+		
 		if (terminalAtual == 0)
 			coletor.coletaInicioPeriodoOcupado(lista.getInstanteDeTempoAtual());
 
-		if (quadro.getIdRemetente() != quadro.getIdDestinatario()) {
-			pc[terminalAtual].setMeioOcupado(true);
+		if (quadro.getIdRemetente() != terminalAtual) {
 			if (terminalAtual == 0)
 				coletor.coletaInicioPeriodoOcupado(lista
 						.getInstanteDeTempoAtual());
 			quadro.incColisoes();
 			pc[terminalAtual].setQuadroPendente(quadro);
-			coletor.coletaColisaoPorMensagem(terminalAtual, quadro
-					.getMensagem().getId());
+			coletor.coletaColisaoPorMensagem(terminalAtual, quadro.getMensagem().getId());
 
 			Mensagem mColisao = new Mensagem();
 			Quadro qColisao = new Quadro(terminalAtual, null, mColisao);
-			Evento colisao = new Evento(Evento.GERAR_REFORCO_COLISAO,
-					terminalAtual, qColisao);
+			Evento colisao = new Evento(Evento.GERAR_REFORCO_COLISAO, terminalAtual, qColisao);
 			lista.put(lista.getInstanteDeTempoAtual(), colisao);
 
 		} else {
-			pc[terminalAtual].setMeioOcupado(false);
 			if (terminalAtual == 0)
-				coletor
-						.coletaFimPeriodoOcupado(lista
-								.getInstanteDeTempoAtual());
+				coletor.coletaFimPeriodoOcupado(lista.getInstanteDeTempoAtual());
 		}
 
 		Evento fimChegadaQuadroRxTerminal = new Evento(Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL, quadro.getIdRemetente(), quadro);
@@ -407,8 +353,8 @@ public class Orquestrador {
 		return intervalos * Quadro.SLOT_RETRANSMISSAO;
 	}
 	
-	private static void verbosePorEvento(String tempo, String numEventoAtual, String terminal, String rodada, String mensagem, String tipoEvento){
-		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
+	private static void verbosePorEvento(String tempo, String numEventoAtual, String terminal, String rodada, String mensagem, String quadrosRestantes, String tipoEvento){
+		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Quadros restantes: "+quadrosRestantes+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
 	}
 }
 

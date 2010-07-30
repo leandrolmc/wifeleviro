@@ -165,14 +165,20 @@ public class ColetorEstatisticas {
 	// perdendo a identificação única da mensagem e tornando esta medição
 	// em um "freguês típico" do sistema.
 	public void finalizaColetaTam(int idEstacao, long idMensagem, double tempoFim) {
-		// Recupero da hashtable o tempo do início do acesso da mensagem
-		// identificada por idMensagem.
-		double tempoInicio = (Double)this.estatisticas[idEstacao].tamMedicaoInicio.get(idMensagem);
-		// O cálculo do tempo de acesso é dado simplesmente pela subtração
-		// do instante de tempo inicial do instante de tempo final.
-		double tempoAcesso = tempoFim - tempoInicio;
-		// Armazena na lista encadeada o tempo de acesso da mensagem.
-		this.estatisticas[idEstacao].tam.add(tempoAcesso);
+		// Verifico se eu tenho o dado de inicio de coleta de TAm armazenado.
+		Object o = this.estatisticas[idEstacao].tamMedicaoInicio.get(idMensagem);
+		// Caso exista, continuo. Do contrário, significa que a mensagem não pertence
+		// a esta rodada e sim a rodada anterior.
+		if(o != null){
+			// Recupero da hashtable o tempo do início do acesso da mensagem
+			// identificada por idMensagem.
+			double tempoInicio = (Double)o;
+			// O cálculo do tempo de acesso é dado simplesmente pela subtração
+			// do instante de tempo inicial do instante de tempo final.
+			double tempoAcesso = tempoFim - tempoInicio;
+			// Armazena na lista encadeada o tempo de acesso da mensagem.
+			this.estatisticas[idEstacao].tam.add(tempoAcesso);
+		}
 	}
 	
 	// Coleta de E[NCm(i)]

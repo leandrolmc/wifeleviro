@@ -144,7 +144,7 @@ public class ColetorEstatisticas {
 		// Armazena na lista encadeada o tempo de acesso do quadro.
 		this.estatisticas[idEstacao].tap.add(tempoAcesso);
 	}
-
+	
 	// Coleta de E[Tam(i)]
 
 	// Coleta o valor do tempo quando do início do acesso do primeiro quadro 

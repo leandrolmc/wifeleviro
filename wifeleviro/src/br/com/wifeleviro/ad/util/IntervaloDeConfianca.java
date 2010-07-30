@@ -76,8 +76,7 @@ public class IntervaloDeConfianca {
 		return result;
 	}
 
-	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaNcm(
-			Collection<EstatisticasColisaoRodada> estatisticas, int numRodadas) {
+	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaNcm(Collection<EstatisticasColisaoRodada> estatisticas, int numRodadas) {
 
 		double somaAmostras = 0;
 		double mediaAmostras = 0;
@@ -98,14 +97,12 @@ public class IntervaloDeConfianca {
 				Long numColisoesPorMensagem = colisoesPorMensagem
 						.get(idMensagem);
 
-				double razaoPorMensagem = numColisoesPorMensagem
-						/ numQuadrosPorMensagem;
+				double razaoPorMensagem = numColisoesPorMensagem / numQuadrosPorMensagem;
 
 				somatorioNcmPorMensagem += razaoPorMensagem;
 			}
 
-			double ncmRodada = somatorioNcmPorMensagem
-					/ quadrosPorMensagem.size();
+			double ncmRodada = somatorioNcmPorMensagem / quadrosPorMensagem.size();
 
 			somaAmostras += ncmRodada;
 		}

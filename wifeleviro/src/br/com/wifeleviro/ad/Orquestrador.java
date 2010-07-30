@@ -74,11 +74,8 @@ public class Orquestrador {
 
 			double fimDaRodada = 0;
 
-			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 100000)) {
-				
-				if(numEventosDaRodada == 100000){
-					System.out.print("");
-				}
+//			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 100000)) {
+			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 20)) {
 				
 				if(rodadaAtual != 0){
 					System.out.print("");
@@ -88,9 +85,6 @@ public class Orquestrador {
 				fimDaRodada = proximo.getTempo();
 				Evento e = proximo.getEvento();
 
-				if(fimDaRodada >= 0.08)
-					System.out.print("");
-				
 				Mensagem msg = null;
 				if(e.getQuadro() != null){
 					msg = e.getQuadro().getMensagem();
@@ -136,46 +130,46 @@ public class Orquestrador {
 			
 			if(rodadaAtual == 0){
 				System.out.println("== FIM DA FASE TRANSIENTE ==");
-				}else{
-					Estatisticas[] estatisticas = coletor.getEstatisticas();
-					for(int i = 0; i < numTerminais; i++){
-						Vector<Double> tap = estatisticas[i].getTap();
-						Vector<Double> tam = estatisticas[i].getTam();
-						EstatisticasColisaoRodada colisao = new EstatisticasColisaoRodada(estatisticas[i].getColisoesPorMensagem(), estatisticas[i].getQuadrosPorMensagem());
-						EstatisticasUtilizacaoRodada utilizacao = new EstatisticasUtilizacaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getPeriodosOcupados()); 
-						EstatisticasVazaoRodada vazao = new EstatisticasVazaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getNumeroQuadrosTransmitidosComSucesso());
-						statsColetadas[i].armazenar(tap, tam, colisao, utilizacao, vazao);
-						
-						DadosFinaisDaRodada dados = IntervaloDeConfianca.intervalosDeConfiancaDentroDoLimiteAceitavel(
-								statsColetadas[i].getColTap(), 
-								statsColetadas[i].getColTam(), 
-								statsColetadas[i].getColEstatisticaColisaoRodada(), 
-								statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
-								statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
-								1+rodadaAtual);
-						
-						intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
-						
-						System.out.println("--[TAp("+i+")]--");
-						System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
-						System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
-						System.out.println("--[TAm("+i+")]--");
-						System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
-						System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
-						System.out.println("--[NCm("+i+")]--");
-						System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
-						System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
-						System.out.println("--[Utilizacao("+i+")]--");
-						System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
-						System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
-						System.out.println("--[Vazao("+i+")]--");
-						System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
-						System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
-						
-					}
-	
-					System.out.println("== FIM RODADA "+rodadaAtual+" ==");
+			}else{
+				Estatisticas[] estatisticas = coletor.getEstatisticas();
+				for(int i = 0; i < numTerminais; i++){
+					Vector<Double> tap = estatisticas[i].getTap();
+					Vector<Double> tam = estatisticas[i].getTam();
+					EstatisticasColisaoRodada colisao = new EstatisticasColisaoRodada(estatisticas[i].getColisoesPorMensagem(), estatisticas[i].getQuadrosPorMensagem());
+					EstatisticasUtilizacaoRodada utilizacao = new EstatisticasUtilizacaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getPeriodosOcupados()); 
+					EstatisticasVazaoRodada vazao = new EstatisticasVazaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getNumeroQuadrosTransmitidosComSucesso());
+					statsColetadas[i].armazenar(tap, tam, colisao, utilizacao, vazao);
+					
+					DadosFinaisDaRodada dados = IntervaloDeConfianca.intervalosDeConfiancaDentroDoLimiteAceitavel(
+							statsColetadas[i].getColTap(), 
+							statsColetadas[i].getColTam(), 
+							statsColetadas[i].getColEstatisticaColisaoRodada(), 
+							statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
+							statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
+							1+rodadaAtual);
+					
+					intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
+					
+					System.out.println("--[TAp("+i+")]--");
+					System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("--[TAm("+i+")]--");
+					System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("--[NCm("+i+")]--");
+					System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("--[Utilizacao("+i+")]--");
+					System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("--[Vazao("+i+")]--");
+					System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
+					
 				}
+
+				System.out.println("== FIM RODADA "+rodadaAtual+" ==");
+			}
 				
 		} while ((rodadaAtual <= 30) || (rodadaAtual > 30 && !intervaloDeConfiancaOK));
 	}
@@ -359,7 +353,7 @@ public class Orquestrador {
 	}
 	
 	private static void verbosePorEvento(String tempo, String numEventoAtual, String terminal, String rodada, String mensagem, String quadrosRestantes, String tipoEvento){
-		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Quadros restantes: "+quadrosRestantes+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
+//		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Quadros restantes: "+quadrosRestantes+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
 	}
 }
 

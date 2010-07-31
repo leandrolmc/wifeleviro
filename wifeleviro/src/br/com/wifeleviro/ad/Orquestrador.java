@@ -74,8 +74,7 @@ public class Orquestrador {
 
 			double fimDaRodada = 0;
 
-//			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 100000)) {
-			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 20)) {
+			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 100000)) {
 				
 				if(rodadaAtual != 0){
 					System.out.print("");
@@ -88,13 +87,14 @@ public class Orquestrador {
 				Mensagem msg = null;
 				if(e.getQuadro() != null){
 					msg = e.getQuadro().getMensagem();
+					if(msg.getNumeroQuadroRestantesParaTransmissao() == 0)
+						System.out.print("");
 				}
 				
 				switch (e.getTipoEvento()) {
 					case Evento.GERAR_MENSAGEM:
 						tratarEventoGerarMensagem(coletor, pc, listaEventos, e);
 						++this.qtdMensagensNaRodada;
-						//Mensagem msg = e.getQuadro().getMensagem();
 						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Gerar Mensagem");
 						++numEventosDaRodada;
 						break;
@@ -150,21 +150,27 @@ public class Orquestrador {
 					
 					intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
 					
+					System.out.println("*************************************");
 					System.out.println("--[TAp("+i+")]--");
 					System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
 					System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
 					System.out.println("--[TAm("+i+")]--");
 					System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
 					System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
 					System.out.println("--[NCm("+i+")]--");
 					System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
 					System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
 					System.out.println("--[Utilizacao("+i+")]--");
 					System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
 					System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
 					System.out.println("--[Vazao("+i+")]--");
 					System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
 					System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
 					
 				}
 
@@ -296,7 +302,7 @@ public class Orquestrador {
 		for (int i = 0; i < numTerminais; i++) {
 			Quadro quadroi = new Quadro(e.getQuadro().getIdRemetente(), i, e.getQuadro().getMensagem());
 			Evento inicioChegadaQuadroNoPc = new Evento(Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL, terminalDeOrigem, quadroi);
-			double instanteDeTempoDeInicioChegadaDoQuadroNoRxTerminal = instanteDeTempoDoBroadcast + MeioFisico.calculaTempoPropagacao(pc[i].getDistanciaHub());
+			double instanteDeTempoDeInicioChegadaDoQuadroNoRxTerminal = instanteDeTempoDoBroadcast + Mensagem.TEMPO_TRANSMISAO_POR_QUADRO + MeioFisico.calculaTempoPropagacao(pc[i].getDistanciaHub());
 			lista.put(instanteDeTempoDeInicioChegadaDoQuadroNoRxTerminal, inicioChegadaQuadroNoPc);
 		}
 	}
@@ -353,7 +359,7 @@ public class Orquestrador {
 	}
 	
 	private static void verbosePorEvento(String tempo, String numEventoAtual, String terminal, String rodada, String mensagem, String quadrosRestantes, String tipoEvento){
-//		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Quadros restantes: "+quadrosRestantes+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
+		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Quadros restantes: "+quadrosRestantes+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
 	}
 }
 

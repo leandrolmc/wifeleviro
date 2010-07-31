@@ -1,7 +1,5 @@
 package br.com.wifeleviro.ad.modelo;
 
-import java.util.Random;
-
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
 

@@ -1,5 +1,7 @@
 package br.com.wifeleviro.ad.modelo;
 
+import java.util.ArrayList;
+
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
 public class Terminal{
@@ -12,18 +14,20 @@ public class Terminal{
 	
 	private double pMensagens;
 	
+	private ArrayList<Evento> quadrosPendentes; 
+	
 	private int id;
 	private double distanciaHub;
 	
 	private double instanteTempoInicial;
 	private double instanteTempoAtual;
 
+	private boolean txOcupado;
 	private boolean isMeioOcupado;
 	private double instanteTempoInicioUltimaTx;
 	private double instanteTempoFimUltimaTx;
 	private double instanteTempoFimUltimoRx;
 	private int idTerminalUltimoRx;
-	private Quadro quadroPendente;
 	
 	private boolean emColisao;
 	private double instanteTempoColisao;
@@ -42,9 +46,10 @@ public class Terminal{
 		this.instanteTempoFimUltimaTx = -1;
 		this.instanteTempoFimUltimoRx = -1;
 		this.setIdTerminalUltimoRx(-1);
-		this.quadroPendente = null;
 		this.setEmColisao(false);
 		this.instanteTempoColisao = -1;
+		this.quadrosPendentes = new ArrayList<Evento>();
+		this.txOcupado = false;
 	}
 	
 	public double getInstanteTempoInicial(){
@@ -124,14 +129,6 @@ public class Terminal{
 		return instanteTempoFimUltimoRx;
 	}
 
-	public void setQuadroPendente(Quadro quadroPendente) {
-		this.quadroPendente = quadroPendente;
-	}
-
-	public Quadro getQuadroPendente() {
-		return quadroPendente;
-	}
-
 	public void setIdTerminalUltimoRx(int idTerminalUltimoRx) {
 		this.idTerminalUltimoRx = idTerminalUltimoRx;
 	}
@@ -154,6 +151,29 @@ public class Terminal{
 
 	public double getInstanteTempoColisao() {
 		return instanteTempoColisao;
+	}
+	
+	public void enfileirarQuadroPendente(Evento eventoInicioTx) throws Exception{
+		if(eventoInicioTx.getTipoEvento() != Evento.INICIO_TX_PC)
+			throw new Exception("Impossível armazenar este evento na fila de mensagens pendentes.");
+		this.quadrosPendentes.add(eventoInicioTx);
+	}
+	
+	public Evento proximoEventoQuadroPendente(){
+		Evento proximoEvento = this.quadrosPendentes.remove(0);
+		return proximoEvento;
+	}
+	
+	public boolean temQuadrosPendentes(){
+		return (this.quadrosPendentes.size()>0);
+	}
+
+	public void setTxOcupado(boolean txOcupado) {
+		this.txOcupado = txOcupado;
+	}
+
+	public boolean isTxOcupado() {
+		return txOcupado;
 	}
 
 }

@@ -8,7 +8,8 @@ public class Evento {
 	public static final int CHEGADA_QUADRO_NO_RX_HUB = 2;
 	public static final int INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL = 3;
 	public static final int FIM_CHEGADA_QUADRO_NO_RX_TERMINAL = 4;
-	public static final int GERAR_REFORCO_COLISAO = 5;
+	public static final int INICIO_REFORCO_COLISAO = 5;
+	public static final int FIM_REFORCO_COLISAO = 7;
 	
 	private int tipoEvento;
 	private int terminalOrigem;

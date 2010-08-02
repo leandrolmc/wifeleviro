@@ -74,7 +74,7 @@ public class Orquestrador {
 
 			double fimDaRodada = 0;
 
-			while ((rodadaAtual == 0 && numEventosDaRodada <= 100000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 100000)) {
+			while ((rodadaAtual == 0 && numEventosDaRodada <= 1000000) || (rodadaAtual > 0 && rodadaAtual < 100 && numEventosDaRodada < 100000)) {
 				
 				if(rodadaAtual != 0){
 					System.out.print("");
@@ -84,6 +84,9 @@ public class Orquestrador {
 				fimDaRodada = proximo.getTempo();
 				Evento e = proximo.getEvento();
 
+				if(fimDaRodada == Double.parseDouble("008832100000000002"))
+					System.out.print("");
+				
 				Mensagem msg = null;
 				if(e.getQuadro() != null){
 					msg = e.getQuadro().getMensagem();
@@ -98,9 +101,7 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Gerar Mensagem");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+null, 
-								"VAZIO", "VAZIO", "VAZIO", 
-								"GERAR MENSAGEM");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+null, "VAZIO", "VAZIO", "VAZIO","GERAR MENSAGEM");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_TX_PC:
@@ -108,9 +109,7 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Inicio TX do PC");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
-								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
-								"INICIO TX PC");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(),""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"INICIO TX PC");
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_TX_PC:
@@ -118,9 +117,7 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Fim TX do PC");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
-								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
-								"FIM TX PC");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"FIM TX PC");
 						++numEventosDaRodada;
 						break;
 					case Evento.CHEGADA_QUADRO_NO_RX_HUB:
@@ -128,9 +125,7 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Chegada Quadro no RX do HUB");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
-								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
-								"CHEGADA QUADRO NO RX HUB");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), "CHEGADA QUADRO NO RX HUB");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL:
@@ -138,9 +133,7 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Inicio Chegada Quadro no RX do terminal");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
-								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
-								"INICIO CHEGADA QUADRO NO RX TERMINAL");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"INICIO CHEGADA QUADRO NO RX TERMINAL");
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL:
@@ -148,9 +141,7 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Fim Chegada Quadro no RX do terminal");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
-								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
-								"FIM CHEGADA QUADRO NO RX TERMINAL");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(),""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"FIM CHEGADA QUADRO NO RX TERMINAL");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_REFORCO_COLISAO:
@@ -158,9 +149,7 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Inicio TX Reforco de Colisao");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
-								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
-								"INICIO REFORCO COLISAO");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"INICIO REFORCO COLISAO");
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_REFORCO_COLISAO:
@@ -168,13 +157,13 @@ public class Orquestrador {
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Fim TX Reforco de Colisao");
-						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
-								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
-								"FIM REFORCO COLISAO");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"FIM REFORCO COLISAO");
 						++numEventosDaRodada;
 						break;
 				}
 			}
+			
+			System.out.println("MSG NA RODADA: "+this.qtdMensagensNaRodada);
 
 			coletor.coletaFimRodada(fimDaRodada);
 			
@@ -319,21 +308,21 @@ public class Orquestrador {
 		int terminalAtual = e.getTerminalOrigem();
 		Quadro quadro = e.getQuadro();
 		
-		if(pc[terminalAtual].isEmColisao()){
-			coletor.coletaColisaoPorMensagem(terminalAtual, quadro.getMensagem().getId());
-			quadro.incColisoes();
-			if (quadro.getColisoes() < 16) {
-				Evento retransmissaoMensagemPendente = new Evento(Evento.INICIO_TX_PC, terminalAtual, quadro);
-				double instanteTempoAleatorioEscolhido = 
-					pc[terminalAtual].getInstanteTempoColisao() + 
-					Mensagem.TEMPO_TRANSMISSAO_REFORCO_COLISAO + 
-					Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadro);
-				lista.put(instanteTempoAleatorioEscolhido, retransmissaoMensagemPendente);
-			} else {
-				coletor.coletaQuadroPorMensagem(terminalAtual, quadro.getMensagem().getId());
-			}
+//		if(!pc[terminalAtual].isEmColisao()){
+//			coletor.coletaColisaoPorMensagem(terminalAtual, quadro.getMensagem().getId());
+//			quadro.incColisoes();
+//			if (quadro.getColisoes() < 16) {
+//				Evento retransmissaoMensagemPendente = new Evento(Evento.INICIO_TX_PC, terminalAtual, quadro);
+//				double instanteTempoAleatorioEscolhido = 
+//					pc[terminalAtual].getInstanteTempoColisao() + 
+//					Mensagem.TEMPO_TRANSMISSAO_REFORCO_COLISAO + 
+//					Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadro);
+//				lista.put(instanteTempoAleatorioEscolhido, retransmissaoMensagemPendente);
+//			} else {
+//				coletor.coletaQuadroPorMensagem(terminalAtual, quadro.getMensagem().getId());
+//			}
 			
-		}else{
+//		}else{
 			double instanteTempoFimTx = lista.getInstanteDeTempoAtual();
 			pc[terminalAtual].setTxOcupado(false);
 			
@@ -357,7 +346,7 @@ public class Orquestrador {
 			}else{
 				coletor.finalizaColetaTam(terminalAtual, m.getId(), pc[terminalAtual].getInstanteTempoInicioUltimaTx());
 			}
-		}
+//		}
 	}
 
 	private static void tratarEventoChegadaDeQuadroNoRxDoHub(int numTerminais, Terminal[] pc, ListaDeEventos lista, Evento e) {
@@ -387,6 +376,7 @@ public class Orquestrador {
 
 		double instanteAtual = lista.getInstanteDeTempoAtual();
 		if((terminalAtual != quadro.getIdRemetente()) && (pc[terminalAtual].getInstanteTempoInicioUltimaTx() < instanteAtual) && (instanteAtual < pc[terminalAtual].getInstanteTempoFimUltimaTx())){
+			// C O L I D I U //
 			pc[terminalAtual].setEmColisao(true);
 			pc[terminalAtual].setInstanteTempoColisao(instanteAtual);
 			
@@ -395,6 +385,21 @@ public class Orquestrador {
 			
 			Evento chegadaReforcoColisaoRxHub = new Evento(Evento.INICIO_REFORCO_COLISAO, terminalAtual, qColisao);
 			lista.put(lista.getInstanteDeTempoAtual(), chegadaReforcoColisaoRxHub);
+			
+			quadro.incColisoes();
+			if (quadro.getColisoes() < 16) {
+				
+				// Cancelo o próximo FIM TX do terminal atual.
+				Evento fimTxCancelado = lista.removeEvento(terminalAtual, Evento.FIM_TX_PC);
+				// Crio um novo evento de INICIO TX para o terminal atual com o quadro retirado de FIM TX.
+				Evento retransmissaoMensagemPendente = new Evento(Evento.INICIO_TX_PC, terminalAtual, fimTxCancelado.getQuadro());
+				double instanteTempoAleatorioEscolhido = 
+					instanteAtual + 
+					Mensagem.TEMPO_TRANSMISSAO_REFORCO_COLISAO + 
+					Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadro);
+				pc[terminalAtual].setInstanteTempoInicioUltimaTx(instanteTempoAleatorioEscolhido);
+				lista.put(instanteTempoAleatorioEscolhido, retransmissaoMensagemPendente);
+			}			
 		}
 		
 		Evento fimChegadaQuadroRxTerminal = new Evento(Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL, quadro.getIdRemetente(), quadro);
@@ -455,7 +460,7 @@ public class Orquestrador {
 //	}
 	
 	private static void verbosePorQuadro(String tempo, String trmOrg, String trmDst, String mensagem, String quadro, String quadrosRestantes, String tipoEvento){
-		System.out.println("Tempo: "+tempo+" | Tipo Evento: "+tipoEvento+" | PC org: "+trmOrg+" | PC dst: "+trmDst+" | Msg: "+mensagem+" | Qdro: "+quadro+" | Quadros restantes: "+quadrosRestantes+" ");
+		System.out.println("PC org: "+trmOrg+" | PC dst: "+((trmDst==null||trmDst.equalsIgnoreCase("null"))?"?":trmDst)+" | Tempo: "+tempo+" | Tipo Evento: "+tipoEvento+" | Msg: "+mensagem+" | Qdro: "+quadro+" | Quadros restantes: "+quadrosRestantes+" ");
 	}
 
 }

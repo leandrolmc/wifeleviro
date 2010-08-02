@@ -95,42 +95,82 @@ public class Orquestrador {
 					case Evento.GERAR_MENSAGEM:
 						tratarEventoGerarMensagem(coletor, pc, listaEventos, e);
 						++this.qtdMensagensNaRodada;
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Gerar Mensagem");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Gerar Mensagem");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+null, 
+								"VAZIO", "VAZIO", "VAZIO", 
+								"GERAR MENSAGEM");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_TX_PC:
 						tratarEventoInicioTxPc(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Inicio TX do PC");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Inicio TX do PC");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
+								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
+								"INICIO TX PC");
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_TX_PC:
 						tratarEventoFimTxPc(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Fim TX do PC");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Fim TX do PC");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
+								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
+								"FIM TX PC");
 						++numEventosDaRodada;
 						break;
 					case Evento.CHEGADA_QUADRO_NO_RX_HUB:
 						tratarEventoChegadaDeQuadroNoRxDoHub(numTerminais, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Chegada Quadro no RX do HUB");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Chegada Quadro no RX do HUB");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
+								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
+								"CHEGADA QUADRO NO RX HUB");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL:
 						tratarEventoInicioChegadaDeQuadroNoRxDoTerminal(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Inicio Chegada Quadro no RX do terminal");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Inicio Chegada Quadro no RX do terminal");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
+								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
+								"INICIO CHEGADA QUADRO NO RX TERMINAL");
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL:
 						tratarEventoFimChegadaDeQuadroNoRxDoTerminal(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Fim Chegada Quadro no RX do terminal");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Fim Chegada Quadro no RX do terminal");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
+								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
+								"FIM CHEGADA QUADRO NO RX TERMINAL");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_REFORCO_COLISAO:
 						tratarEventoInicioReforcoColisao(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Fim Chegada Quadro no RX do terminal");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Inicio TX Reforco de Colisao");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
+								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
+								"INICIO REFORCO COLISAO");
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_REFORCO_COLISAO:
 						tratarEventoFimReforcoColisao(coletor, pc, listaEventos, e);
-						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():"SEM QUADROS", "Fim Chegada Quadro no RX do terminal");
+//						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+//								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+//									"SEM QUADROS", "Fim TX Reforco de Colisao");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getQuadro().getIdDestinatario(), 
+								""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), 
+								"FIM REFORCO COLISAO");
 						++numEventosDaRodada;
 						break;
 				}
@@ -410,8 +450,13 @@ public class Orquestrador {
 		return intervalos * Quadro.SLOT_RETRANSMISSAO;
 	}
 	
-	private static void verbosePorEvento(String tempo, String numEventoAtual, String terminal, String rodada, String mensagem, String quadrosRestantes, String tipoEvento){
-		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | Terminal: "+terminal+" | Rodada: "+rodada+" | Quadros restantes: "+quadrosRestantes+" | Mensagem no.: "+mensagem+" Tipo Evento: "+tipoEvento);
+//	private static void verbosePorEvento(String tempo, String numEventoAtual, String terminal, String rodada, String mensagem, String quadrosRestantes, String tipoEvento){
+//		System.out.println("Tempo: "+tempo+" | #Evento: "+numEventoAtual+" | PC org: "+terminal+" | Rodada: "+rodada+" | Quadros restantes: "+quadrosRestantes+" | Mensagem no.: "+mensagem+" | Tipo Evento: "+tipoEvento);
+//	}
+	
+	private static void verbosePorQuadro(String tempo, String trmOrg, String trmDst, String mensagem, String quadro, String quadrosRestantes, String tipoEvento){
+		System.out.println("Tempo: "+tempo+" | Tipo Evento: "+tipoEvento+" | PC org: "+trmOrg+" | PC dst: "+trmDst+" | Msg: "+mensagem+" | Qdro: "+quadro+" | Quadros restantes: "+quadrosRestantes+" ");
 	}
+
 }
 

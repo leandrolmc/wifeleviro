@@ -1,6 +1,7 @@
 package br.com.wifeleviro.ad.modelo;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class ListaDeEventos {
@@ -52,6 +53,30 @@ public class ListaDeEventos {
 		if(eventos.size()>0)
 			tree.put(this.instanteDeTempo, eventos);
 		return new ProximoEvento(this.instanteDeTempo, proximoEvento);
+	}
+	
+	public Evento removeEvento(int terminal, int tipoEvento){
+		
+		Evento saida = null;
+		Map<Double, ArrayList<Evento>> treeTmp = new TreeMap<Double, ArrayList<Evento>>();
+			
+		while(saida == null && !tree.isEmpty()){
+			double instanteTmp = (Double)tree.firstKey();
+			ArrayList<Evento> eventos = (ArrayList<Evento>)tree.get(instanteTmp);
+			tree.remove(instanteTmp);
+			for(Evento evento : eventos){
+				if(evento.getTerminalOrigem() == terminal && evento.getTipoEvento() == tipoEvento){
+					saida = evento;
+					eventos.remove(evento);
+					break;
+				}
+			}
+			if(eventos.size()>0) treeTmp.put(instanteTmp, eventos);
+		}
+			
+		tree.putAll(treeTmp);
+		
+		return saida;
 	}
 	
 	public int size(){

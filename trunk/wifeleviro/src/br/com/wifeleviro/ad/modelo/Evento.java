@@ -33,4 +33,35 @@ public class Evento {
 		return quadro;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((quadro == null) ? 0 : quadro.hashCode());
+		result = prime * result + terminalOrigem;
+		result = prime * result + tipoEvento;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Evento other = (Evento) obj;
+		if (quadro == null) {
+			if (other.quadro != null)
+				return false;
+		} else if (!quadro.equals(other.quadro))
+			return false;
+		if (terminalOrigem != other.terminalOrigem)
+			return false;
+		if (tipoEvento != other.tipoEvento)
+			return false;
+		return true;
+	}
+
 }

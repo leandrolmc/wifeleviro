@@ -122,8 +122,8 @@ public class IntervaloDeConfianca {
 				Long idMensagem = idMensagens.nextElement();
 				Long numQuadrosPorMensagem = quadrosPorMensagem.get(idMensagem);
 				Long numColisoesPorMensagem = colisoesPorMensagem.get(idMensagem);
-
-				double ncm = numColisoesPorMensagem / numQuadrosPorMensagem;
+				
+				double ncm = numColisoesPorMensagem==null?0:numColisoesPorMensagem / numQuadrosPorMensagem;
 
 				++numeroDeMensagens;
 				somatorioNcm += ncm;

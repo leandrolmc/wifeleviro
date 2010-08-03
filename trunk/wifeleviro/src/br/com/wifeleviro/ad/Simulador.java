@@ -9,8 +9,8 @@ public class Simulador {
 //		int qtdTerminais = 1;
 		int qtdTerminais = 2;
 		
-		Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 5);
-		Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, 0.08, 5);
+		Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40);
+		Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, 0.08, 40);
 //		Terminal[] terminais = {pc1};
 		Terminal[] terminais = {pc1, pc2};
 		

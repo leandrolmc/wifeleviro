@@ -3,6 +3,7 @@ package br.com.wifeleviro.ad.util.estatisticas;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 
 // Classe única de coleta dos dados estatísticos para avaliação do programa.
@@ -48,15 +49,13 @@ public class ColetorEstatisticas {
 	// para armazenamento dos dados coletados.
 	public class Estatisticas {
 
-		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
-		// quadro para medição dos tap´s.
+		// Hashtable que irá armazenar as coletas dos tempos de acesso de cada
+		// quadro para medição dos TAp´s.
 		protected Hashtable<Long, TAp> tap;
 		
-		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
-		// quadro para medição dos tam´s.
-		protected Hashtable<Long, Double> tamMedicaoInicio;
-		// Lista encadeada não-ordenada que irá armazenar os tam´s medidos.
-		protected Vector<Double> tam;
+		// Hashtable que irá armazenar as coletas dos tempos de acesso de cada
+		// mensagem para medição dos TAm´s.
+		protected Hashtable<Long, TAm> tam;;
 		
 		// Hashtable indexada pelo identificador da mensagem que armazena
 		// o número de colisões ocorridas na mensagem.
@@ -76,8 +75,7 @@ public class ColetorEstatisticas {
 		// Inicialização com valores padrão ou instanciação de classe.
 		protected Estatisticas(){
 			tap = new Hashtable<Long, TAp>();
-			tamMedicaoInicio = new Hashtable<Long, Double>();
-			tam = new Vector<Double>();
+			tam = new Hashtable<Long, TAm>();
 			colisoesPorMensagem = new Hashtable<Long, Long>();
 			quadrosPorMensagem = new Hashtable<Long, Long>();
 			periodosOcupados = new Vector<Double>();
@@ -90,7 +88,7 @@ public class ColetorEstatisticas {
 		}
 
 		// Método de simples recuperação da coleção de TAm's.
-		public Vector<Double> getTam() {
+		public Hashtable<Long, TAm> getTam() {
 			return tam;
 		}
 
@@ -158,37 +156,36 @@ public class ColetorEstatisticas {
 	
 	// Coleta de E[Tam(i)]
 
-	// Coleta o valor do tempo quando do início do acesso do primeiro quadro 
-	// da mensagem a ser transmitida na estação i. Toda mensagem tem um 
-	// identificador único que irá indexá-la na hash de armazenamento 
-	// do tempo inicial.
-	public void iniciaColetaTam(int idEstacao, long idMensagem, double tempoInicio) {
-		// Armazena na hashtable tamMedicaoInicio referente a estação
-		// identificada por idEstacao o tempo de início de acesso do 
-		// primeiro quadro da mensagem identificada por idMensagem.
-		this.estatisticas[idEstacao].tamMedicaoInicio.put(idMensagem, tempoInicio);
+	// Coleta o valor do tempo quando do início do acesso de uma mensagem na
+	// estação i. Toda mensagem tem um identificador único que irá indexá-la
+	// na hash de armazenamento do tempo.
+	public void iniciaColetaTam(int rodada, int idEstacao, long idMensagem, double tempoInicio) {
+		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
+		if(rodada==this.rodadaAtual){
+			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
+			TAm tam = this.estatisticas[idEstacao].tam.get(idMensagem);
+			// Caso não exista medições ainda para o quadro idQuadro, cria-se
+			// um novo par de medições.
+			if(tam == null)
+				tam = new TAm();
+			// Seta o instante inicial de tap para o tempo indicado.
+			tam.setInstanteTempoInicial(tempoInicio);
+			// Sobrescreve na Hashtable o par de medições para o quadro idQuado.
+			this.estatisticas[idEstacao].tam.put(idMensagem, tam);
+		}
 	}
 
-	// Coleta o valor do tempo quando do fim do acesso do último quadro 
-	// de uma mensagem na estação i. Busca no hash de armazenamento do tempo
-	// inicial o valor referente ao identificador da mensagem informado de
-	// modo a armazenar este em um agregador de "tam´s" da estação i,
-	// perdendo a identificação única da mensagem e tornando esta medição
-	// em um "freguês típico" do sistema.
-	public void finalizaColetaTam(int idEstacao, long idMensagem, double tempoFim) {
-		// Verifico se eu tenho o dado de inicio de coleta de TAm armazenado.
-		Object o = this.estatisticas[idEstacao].tamMedicaoInicio.get(idMensagem);
-		// Caso exista, continuo. Do contrário, significa que a mensagem não pertence
-		// a esta rodada e sim a rodada anterior.
-		if(o != null){
-			// Recupero da hashtable o tempo do início do acesso da mensagem
-			// identificada por idMensagem.
-			double tempoInicio = (Double)o;
-			// O cálculo do tempo de acesso é dado simplesmente pela subtração
-			// do instante de tempo inicial do instante de tempo final.
-			double tempoAcesso = tempoFim - tempoInicio;
-			// Armazena na lista encadeada o tempo de acesso da mensagem.
-			this.estatisticas[idEstacao].tam.add(tempoAcesso);
+	// Coleta o valor do tempo quando do fim do acesso 
+	// de uma mensagem na estação i. Lógica similar a iniciaColetaTam.
+	public void finalizaColetaTam(int rodada, int idEstacao, long idMensagem, double tempoFim) {
+		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
+		if(rodada==this.rodadaAtual){
+			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
+			TAm tam = this.estatisticas[idEstacao].tam.get(idMensagem);
+			// Seta o instante final de tap para o tempo indicado.
+			tam.setInstanteTempoFinal(tempoFim);
+			// Sobrescreve na Hashtable o par de medições para o quadro idQuado.
+			this.estatisticas[idEstacao].tam.put(idMensagem, tam);
 		}
 	}
 	

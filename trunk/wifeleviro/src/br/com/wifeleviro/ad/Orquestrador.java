@@ -221,7 +221,7 @@ public class Orquestrador {
 				System.out.println("== FIM RODADA "+this.rodadaAtual+" ==");
 			}
 				
-		} while ((this.rodadaAtual <= 30) || (this.rodadaAtual > 30 && !intervaloDeConfiancaOK) || (rodadaAtual == 300));
+		} while ((this.rodadaAtual <= 30) || (this.rodadaAtual > 30 && rodadaAtual <= 300 && !intervaloDeConfiancaOK));
 	}
 
 	private static void tratarEventoGerarMensagem(int rodadaAtual, ColetorEstatisticas coletor, Terminal[] pc,

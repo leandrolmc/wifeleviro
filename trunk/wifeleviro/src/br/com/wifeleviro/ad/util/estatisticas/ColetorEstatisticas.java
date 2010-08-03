@@ -126,7 +126,7 @@ public class ColetorEstatisticas {
 	// na hash de armazenamento do tempo.
 	public void iniciaColetaTap(int rodada, int idEstacao, long idQuadro, double tempoInicio) {
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual){
+		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
 			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
 			TAp tap = this.estatisticas[idEstacao].tap.get(idQuadro);
 			// Caso não exista medições ainda para o quadro idQuadro, cria-se
@@ -144,7 +144,7 @@ public class ColetorEstatisticas {
 	// de um quadro na estação i. Lógica similar a iniciaColetaTap.
 	public void finalizaColetaTap(int rodada, int idEstacao, long idQuadro, double tempoFim) {
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual){
+		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
 			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
 			TAp tap = this.estatisticas[idEstacao].tap.get(idQuadro);
 			// Seta o instante final de tap para o tempo indicado.
@@ -161,7 +161,7 @@ public class ColetorEstatisticas {
 	// na hash de armazenamento do tempo.
 	public void iniciaColetaTam(int rodada, int idEstacao, long idMensagem, double tempoInicio) {
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual){
+		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
 			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
 			TAm tam = this.estatisticas[idEstacao].tam.get(idMensagem);
 			// Caso não exista medições ainda para o quadro idQuadro, cria-se
@@ -179,7 +179,7 @@ public class ColetorEstatisticas {
 	// de uma mensagem na estação i. Lógica similar a iniciaColetaTam.
 	public void finalizaColetaTam(int rodada, int idEstacao, long idMensagem, double tempoFim) {
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual){
+		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
 			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
 			TAm tam = this.estatisticas[idEstacao].tam.get(idMensagem);
 			// Seta o instante final de tap para o tempo indicado.

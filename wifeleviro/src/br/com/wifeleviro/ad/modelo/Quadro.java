@@ -9,6 +9,7 @@ public class Quadro {
 	public static final double SLOT_RETRANSMISSAO = 0.0000512;
 	
 	private long id;
+	private int rodada;
 	
 	private Integer idRemetente;
 	private Integer idDestinatario;
@@ -17,7 +18,8 @@ public class Quadro {
 	
 	private int colisoes;
 	
-	public Quadro(Integer idRemetente, Integer idDestinatario, Mensagem mensagem) {
+	public Quadro(int rodada, Integer idRemetente, Integer idDestinatario, Mensagem mensagem) {
+		this.rodada = rodada;
 		this.idRemetente = idRemetente;
 		this.idDestinatario = idDestinatario;
 		this.mensagem = mensagem;
@@ -62,5 +64,9 @@ public class Quadro {
 	
 	public long getId(){
 		return this.id;
+	}
+	
+	public int getRodada(){
+		return this.rodada;
 	}
 }

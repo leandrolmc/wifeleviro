@@ -1,7 +1,9 @@
-package br.com.wifeleviro.ad.util;
+package br.com.wifeleviro.ad.util.estatisticas;
 
 import java.util.Hashtable;
 import java.util.Vector;
+
+import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 
 // Classe única de coleta dos dados estatísticos para avaliação do programa.
 // O padrão singleton utilizado garante que não exista mais que uma intância 
@@ -15,11 +17,17 @@ public class ColetorEstatisticas {
 	// Variável que mantém dado da quantidade de terminais ativos no sistema.
 	private int numTerminais;
 	
+	// Variável para informar a "cor" da rodada atual.
+	private int rodadaAtual;
+	
 	// Variável que armazenará as estatísticas de cada estação.
 	private Estatisticas[] estatisticas;
 	
 	// Construtor padrão da classe.
-	public ColetorEstatisticas(int numTerminais) {
+	public ColetorEstatisticas(int rodadaAtual, int numTerminais) {
+
+		// A "cor" da rodada atual é informada no momento de criação do novo coletor.
+		this.rodadaAtual = rodadaAtual;
 		
 		// Setando valores iniciais para -1 de modo a serem substituídos pelas primeiras medições corretas.
 		setInstanteInicioRodada(-1);
@@ -42,9 +50,7 @@ public class ColetorEstatisticas {
 
 		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
 		// quadro para medição dos tap´s.
-		protected Hashtable<Long, Double> tapMedicaoInicio;
-		// Lista encadeada não-ordenada que irá armazenar os tap´s medidos.
-		protected Vector<Double> tap;
+		protected Hashtable<Long, TAp> tap;
 		
 		// Hashtable que irá armazenar as coletas dos tempos iniciais de cada
 		// quadro para medição dos tam´s.
@@ -69,8 +75,7 @@ public class ColetorEstatisticas {
 		
 		// Inicialização com valores padrão ou instanciação de classe.
 		protected Estatisticas(){
-			tapMedicaoInicio = new Hashtable<Long, Double>();
-			tap = new Vector<Double>();
+			tap = new Hashtable<Long, TAp>();
 			tamMedicaoInicio = new Hashtable<Long, Double>();
 			tam = new Vector<Double>();
 			colisoesPorMensagem = new Hashtable<Long, Long>();
@@ -79,8 +84,8 @@ public class ColetorEstatisticas {
 			numeroQuadrosTransmitidosComSucesso = (long)0;
 		}
 		
-		// Método de simples recuperação da coleção de TAp's.
-		public Vector<Double> getTap() {
+		// Método de simples recuperação da Hashtable de TAp's.
+		public Hashtable<Long, TAp> getTap() {
 			return tap;
 		}
 
@@ -120,29 +125,35 @@ public class ColetorEstatisticas {
 
 	// Coleta o valor do tempo quando do início do acesso de um quadro na
 	// estação i. Todo quadro tem um identificador único que irá indexá-lo
-	// na hash de armazenamento do tempo inicial.
-	public void iniciaColetaTap(int idEstacao, long idQuadro, double tempoInicio) {
-		// Armazena na hashtable tapMedicaoInicio referente a estação
-		// identificada por idEstacao o tempo de início de acesso do 
-		// quadro identificado por idQuadro.
-		this.estatisticas[idEstacao].tapMedicaoInicio.put(idQuadro, tempoInicio);
+	// na hash de armazenamento do tempo.
+	public void iniciaColetaTap(int rodada, int idEstacao, long idQuadro, double tempoInicio) {
+		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
+		if(rodada==this.rodadaAtual){
+			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
+			TAp tap = this.estatisticas[idEstacao].tap.get(idQuadro);
+			// Caso não exista medições ainda para o quadro idQuadro, cria-se
+			// um novo par de medições.
+			if(tap == null)
+				tap = new TAp();
+			// Seta o instante inicial de tap para o tempo indicado.
+			tap.setInstanteTempoInicial(tempoInicio);
+			// Sobrescreve na Hashtable o par de medições para o quadro idQuado.
+			this.estatisticas[idEstacao].tap.put(idQuadro, tap);
+		}
 	}
 
 	// Coleta o valor do tempo quando do fim do acesso 
-	// de um quadro na estação i. Busca no hash de armazenamento do tempo
-	// inicial o valor referente ao identificador do quadro informado de
-	// modo a armazenar este em um agregador de "tap´s" da estação i,
-	// perdendo a identificação única do quadro e tornando esta medição
-	// em um "freguês típico" do sistema.
-	public void finalizaColetaTap(int idEstacao, long idQuadro, double tempoFim) {
-		// Recupero da hashtable o tempo do início do acesso do quadro
-		// identificado por idQuadro.
-		double tempoInicio = (Double)this.estatisticas[idEstacao].tapMedicaoInicio.get(idQuadro);
-		// O cálculo do tempo de acesso é dado simplesmente pela subtração
-		// do instante de tempo inicial do instante de tempo final.
-		double tempoAcesso = tempoFim - tempoInicio;
-		// Armazena na lista encadeada o tempo de acesso do quadro.
-		this.estatisticas[idEstacao].tap.add(tempoAcesso);
+	// de um quadro na estação i. Lógica similar a iniciaColetaTap.
+	public void finalizaColetaTap(int rodada, int idEstacao, long idQuadro, double tempoFim) {
+		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
+		if(rodada==this.rodadaAtual){
+			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
+			TAp tap = this.estatisticas[idEstacao].tap.get(idQuadro);
+			// Seta o instante final de tap para o tempo indicado.
+			tap.setInstanteTempoFinal(tempoFim);
+			// Sobrescreve na Hashtable o par de medições para o quadro idQuado.
+			this.estatisticas[idEstacao].tap.put(idQuadro, tap);
+		}
 	}
 	
 	// Coleta de E[Tam(i)]

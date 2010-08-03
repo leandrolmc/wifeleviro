@@ -1,4 +1,4 @@
-package br.com.wifeleviro.ad.util;
+package br.com.wifeleviro.ad.util.estatisticas;
 
 import java.util.Collection;
 import java.util.Enumeration;
@@ -6,12 +6,14 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
+
 public class IntervaloDeConfianca {
 
 	private static final double ASSINTOTICO_95 = 1.96;
 
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaTap(
-			Collection<Vector<Double>> tapsRodadas, int numRodadas) {
+			Collection<Hashtable<Long, TAp>> tapsRodadas, int numRodadas) {
 
 		double somaAmostras = 0;
 		double mediaAmostras = 0;
@@ -19,10 +21,15 @@ public class IntervaloDeConfianca {
 		double varianciaAmostras = 0;
 		double mediasTapsDasRodadas[] = new double[numRodadas];
 
-		for (Vector<Double> taps : tapsRodadas) {
+		for (Hashtable<Long, TAp> taps : tapsRodadas) {
 			double somatorioTaps = 0;
-			for (Double tap : taps)
-				somatorioTaps += tap;
+			Enumeration<Long> enm = taps.keys();
+			while(enm.hasMoreElements()){
+				TAp tap = taps.get(enm.nextElement());
+				if(tap.getInstanteTempoFinal()==null)
+					continue;
+				somatorioTaps += tap.getInstanteTempoFinal() - tap.getInstanteTempoInicial();
+			}
 			double mediaTapsDaRodada = somatorioTaps / taps.size();
 			somaAmostras += mediaTapsDaRodada;
 		}
@@ -200,7 +207,7 @@ public class IntervaloDeConfianca {
 	}
 	
 	public static DadosFinaisDaRodada intervalosDeConfiancaDentroDoLimiteAceitavel(
-			Collection<Vector<Double>> tapsRodadas,
+			Collection<Hashtable<Long, TAp>> tapsRodadas,
 			Collection<Vector<Double>> tamsRodadas,
 			Collection<EstatisticasColisaoRodada> estatisticasColisaoDasRodadas,
 			Collection<EstatisticasUtilizacaoRodada> estatisticasUtilizacaoDasRodadas,

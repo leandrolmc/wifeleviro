@@ -1,26 +1,29 @@
-package br.com.wifeleviro.ad.util;
+package br.com.wifeleviro.ad.util.estatisticas;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Vector;
+
+import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 
 public class EstatisticasColetadas {
 
-	Collection<Vector<Double>> colTap;
+	Collection<Hashtable<Long, TAp>> colTap;
 	Collection<Vector<Double>> colTam;
 	Collection<EstatisticasColisaoRodada> colEstatisticaColisaoRodada;
 	Collection<EstatisticasUtilizacaoRodada> colEstatisticaUtilizacaoDaRodada; 
 	Collection<EstatisticasVazaoRodada> colEstatisticaVazaoDaRodada;
 	
 	public EstatisticasColetadas(){
-		this.colTap = new ArrayList<Vector<Double>>();
+		this.colTap = new ArrayList<Hashtable<Long, TAp>>();
 		this.colTam = new ArrayList<Vector<Double>>();
 		this.colEstatisticaColisaoRodada = new ArrayList<EstatisticasColisaoRodada>();
 		this.colEstatisticaUtilizacaoDaRodada = new ArrayList<EstatisticasUtilizacaoRodada>();
 		this.colEstatisticaVazaoDaRodada = new ArrayList<EstatisticasVazaoRodada>();
 	}
 	
-	public void armazenar(Vector<Double> tap, Vector<Double> tam, EstatisticasColisaoRodada colisao, EstatisticasUtilizacaoRodada utilizacao, EstatisticasVazaoRodada vazao){
+	public void armazenar(Hashtable<Long, TAp> tap, Vector<Double> tam, EstatisticasColisaoRodada colisao, EstatisticasUtilizacaoRodada utilizacao, EstatisticasVazaoRodada vazao){
 		this.colTap.add(tap);  
 		this.colTam.add(tam);
 		this.colEstatisticaColisaoRodada.add(colisao);
@@ -28,7 +31,7 @@ public class EstatisticasColetadas {
 		this.colEstatisticaVazaoDaRodada.add(vazao);
 	}
 	
-	public Collection<Vector<Double>> getColTap() {
+	public Collection<Hashtable<Long, TAp>> getColTap() {
 		return colTap;
 	}
 	public Collection<Vector<Double>> getColTam() {

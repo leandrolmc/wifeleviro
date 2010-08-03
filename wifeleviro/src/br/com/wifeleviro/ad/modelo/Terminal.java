@@ -32,6 +32,8 @@ public class Terminal{
 	private boolean emColisao;
 	private double instanteTempoColisao;
 	
+	private boolean forcarTransmissao;
+	
 	public Terminal(int id, double distanciaHub, int tipo, double periodo, double pMensagens) {
 		this.id = id;
 		this.distanciaHub = distanciaHub;
@@ -50,6 +52,7 @@ public class Terminal{
 		this.instanteTempoColisao = -1;
 		this.quadrosPendentes = new ArrayList<Evento>();
 		this.txOcupado = false;
+		this.setForcarTransmissao(false);
 	}
 	
 	public double getInstanteTempoInicial(){
@@ -64,7 +67,7 @@ public class Terminal{
 	}
 	
 	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, double periodo){
-		double poisson  = (-((Math.log(1-(GeradorRandomicoSingleton.getInstance().gerarProximoRandomico()%1)))/(1/periodo)));
+		double poisson  = (-((Math.log(1-(GeradorRandomicoSingleton.getInstance().gerarProximoDoubleRandomico()%1)))/(1/periodo)));
 		return instanteTempoAtual + poisson;
 	}
 	
@@ -174,6 +177,14 @@ public class Terminal{
 
 	public boolean isTxOcupado() {
 		return txOcupado;
+	}
+
+	public void setForcarTransmissao(boolean forcarTransmissao) {
+		this.forcarTransmissao = forcarTransmissao;
+	}
+
+	public boolean isForcarTransmissao() {
+		return forcarTransmissao;
 	}
 
 }

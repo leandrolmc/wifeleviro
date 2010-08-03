@@ -1,5 +1,7 @@
 package br.com.wifeleviro.ad;
 
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 
 import br.com.wifeleviro.ad.modelo.Evento;
@@ -66,9 +68,10 @@ public class Orquestrador {
 			if(this.rodadaAtual > 0)
 				inicioRodada = listaEventos.getInstanteDeTempoAtual();
 
-			if(this.rodadaAtual == 0)
+			if(this.rodadaAtual == 0){
 				System.out.println("== FASE TRANSIENTE ==");
-			else
+				System.out.println("== "+(new SimpleDateFormat("HH:mm:ss").format(new GregorianCalendar().getTime()))+" ==");
+			}else
 				System.out.println("== RODADA "+this.rodadaAtual+" ==");
 			
 			coletor = new ColetorEstatisticas(this.rodadaAtual, numTerminais);
@@ -137,7 +140,7 @@ public class Orquestrador {
 						++numEventosDaRodada;
 						break;
 					case Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL:
-						tratarEventoFimChegadaDeQuadroNoRxDoTerminal(coletor, pc, listaEventos, e);
+						tratarEventoFimChegadaDeQuadroNoRxDoTerminal(this.rodadaAtual, coletor, pc, listaEventos, e);
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 //									"SEM QUADROS", "Fim Chegada Quadro no RX do terminal");
@@ -169,15 +172,14 @@ public class Orquestrador {
 			
 			if(this.rodadaAtual == 0){
 				System.out.println("== FIM DA FASE TRANSIENTE ==");
+				System.out.println("== "+(new SimpleDateFormat("HH:mm:ss").format(new GregorianCalendar().getTime()))+" ==");
 			}else{
 				Estatisticas[] estatisticas = coletor.getEstatisticas();
-				boolean criterioParadaAtingido[] = new boolean[numTerminais];
 				for(int i = 0; i < numTerminais; i++){
-					criterioParadaAtingido[i] = false;
 					Hashtable<Long, TAp> tap = estatisticas[i].getTap();
 					Hashtable<Long, TAm> tam = estatisticas[i].getTam();
 					EstatisticasColisaoRodada colisao = new EstatisticasColisaoRodada(estatisticas[i].getColisoesPorMensagem(), estatisticas[i].getQuadrosPorMensagem());
-					EstatisticasUtilizacaoRodada utilizacao = new EstatisticasUtilizacaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getPeriodosOcupados()); 
+					EstatisticasUtilizacaoRodada utilizacao = new EstatisticasUtilizacaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getUtilizacao()); 
 					EstatisticasVazaoRodada vazao = new EstatisticasVazaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getNumeroQuadrosTransmitidosComSucesso());
 					statsColetadas[i].armazenar(tap, tam, colisao, utilizacao, vazao);
 					
@@ -191,50 +193,35 @@ public class Orquestrador {
 					
 					intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
 					
-//					System.out.println("*************************************");
-//					System.out.println("--[TAp("+i+")]--");
-//					System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
-//					System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
-//					System.out.println("*************************************");
-//					System.out.println("--[TAm("+i+")]--");
-//					System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
-//					System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
+					System.out.println("--[TAp("+i+")]--");
+					System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
+					System.out.println("--[TAm("+i+")]--");
+					System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
 					System.out.println("*************************************");
 					System.out.println("--[NCm("+i+")]--");
 					System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
 					System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
 					System.out.println("*************************************");
-					System.out.println("--[Utilizacao("+i+")]--");
-					System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
-					System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
-					System.out.println("*************************************");
+					if(i==0){
+						System.out.println("--[Utilizacao("+i+")]--");
+						System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
+						System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
+						System.out.println("*************************************");
+					}
 					System.out.println("--[Vazao("+i+")]--");
 					System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
 					System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
 					System.out.println("*************************************");
-
-					if(this.rodadaAtual > 30 && dados.getTap().getTamanhoDoIntervaloDeConfianca()<(0.1*dados.getTap().getMediaDasAmostras()))
-						criterioParadaAtingido[i] = true;
-					
 				}
 				
-				boolean para = true;
-				for(boolean criterioParada : criterioParadaAtingido){
-					para = para && criterioParada; 
-				}
-				if(para){
-					System.out.println("CRITERIO DE PARADA DE AMBOS OS TAm´s ATINGIDOS");
-					System.exit(0);
-				}
-				
-
 				System.out.println("== FIM RODADA "+this.rodadaAtual+" ==");
 			}
 				
-			if(rodadaAtual == 500)
-				System.exit(0);
-			
-		} while ((this.rodadaAtual <= 30) || (this.rodadaAtual > 30 && !intervaloDeConfiancaOK));
+		} while ((this.rodadaAtual <= 30) || (this.rodadaAtual > 30 && !intervaloDeConfiancaOK) || (rodadaAtual == 300));
 	}
 
 	private static void tratarEventoGerarMensagem(int rodadaAtual, ColetorEstatisticas coletor, Terminal[] pc,
@@ -247,7 +234,6 @@ public class Orquestrador {
 		// Crio a mensagem a ser transmitida.
 		Mensagem mensagem = new Mensagem(rodadaAtual, pc[terminalOrigem].getpMensagens());
 		Quadro quadro = new Quadro(rodadaAtual, terminalOrigem, null, mensagem);
-		coletor.coletaQuadroPorMensagem(terminalOrigem, mensagem.getId());
 
 		// Crio o primeiro quadro da mensagem para ser transmitido no tx.
 		Evento inicioTxPrimeiroQuadroMensagem = new Evento(Evento.INICIO_TX_PC, terminalOrigem, quadro);
@@ -336,11 +322,14 @@ public class Orquestrador {
 		Evento chegadaRxHub = new Evento(Evento.CHEGADA_QUADRO_NO_RX_HUB, terminalAtual, quadro);
 		lista.put(instanteTempoChegadaNoRxHub, chegadaRxHub);
 		
-		coletor.coletaQuadroPorMensagem(terminalAtual, quadro.getMensagem().getId());
-		coletor.coletaTransmissaoDeQuadroComSucessoNaEstacao(terminalAtual);
+		if(quadro.getRodada() == rodadaAtual && rodadaAtual > 0)
+			coletor.coletaTransmissaoDeQuadroComSucessoNaEstacao(terminalAtual);
 		
 		Mensagem m = quadro.getMensagem();
 		m.decrementaNumeroQuadroRestantesParaTransmissao();
+		
+		if(m.getRodada()==rodadaAtual)
+			coletor.coletaQuadroPorMensagem(rodadaAtual, terminalAtual, m.getId());
 
 		if(m.getNumeroQuadroRestantesParaTransmissao() > 0){
 			Quadro novoQuadro = new Quadro(rodadaAtual, terminalAtual, null, m);	
@@ -377,8 +366,8 @@ public class Orquestrador {
 		pc[terminalAtual].setMeioOcupado(true);		
 		pc[terminalAtual].setIdTerminalUltimoRx(quadro.getIdRemetente());
 		
-		if (terminalAtual == 0)
-			coletor.coletaInicioPeriodoOcupado(lista.getInstanteDeTempoAtual());
+		if (terminalAtual == 0 && rodadaAtual > 0 && quadro.getRodada() == rodadaAtual)
+			coletor.coletaInicioPeriodoUtilizacao(terminalAtual, quadro.getId(), lista.getInstanteDeTempoAtual());
 
 		double instanteAtual = lista.getInstanteDeTempoAtual();
 		if((terminalAtual != quadro.getIdRemetente()) && (pc[terminalAtual].getInstanteTempoInicioUltimaTx() < instanteAtual) && (instanteAtual < pc[terminalAtual].getInstanteTempoFimUltimaTx())){
@@ -397,6 +386,9 @@ public class Orquestrador {
 			// Caso o evento de FIM TX cancelado não exista é porque já foi cancelado antes e entrou outra colisão.
 			if(fimTxCancelado != null){
 				Quadro quadroCancelado = fimTxCancelado.getQuadro();
+				
+				if(quadroCancelado.getRodada() == rodadaAtual)
+					coletor.coletaColisaoPorMensagem(rodadaAtual, terminalAtual, quadroCancelado.getMensagem().getId());
 				
 				quadroCancelado.incColisoes();
 				if (quadroCancelado.getColisoes() < 16) {
@@ -419,13 +411,13 @@ public class Orquestrador {
 		lista.put(instanteTempoFimRx, fimChegadaQuadroRxTerminal);
 	}
 
-	private static void tratarEventoFimChegadaDeQuadroNoRxDoTerminal(ColetorEstatisticas coletor, Terminal[] pc, ListaDeEventos lista, Evento e) {
+	private static void tratarEventoFimChegadaDeQuadroNoRxDoTerminal(int rodadaAtual, ColetorEstatisticas coletor, Terminal[] pc, ListaDeEventos lista, Evento e) {
 		int terminalAtual = e.getQuadro().getIdDestinatario();
 		
 		pc[terminalAtual].setMeioOcupado(false);
 
-		if (terminalAtual == 0)
-			coletor.coletaFimPeriodoOcupado(lista.getInstanteDeTempoAtual());
+		if (terminalAtual == 0 && rodadaAtual > 0 && e.getQuadro().getRodada() == rodadaAtual)
+			coletor.coletaFimPeriodoUtilizacao(terminalAtual, e.getQuadro().getId(), lista.getInstanteDeTempoAtual());
 		
 		double instanteTempoInicioProximoQuadroPendente = lista.getInstanteDeTempoAtual() + Quadro.TEMPO_MINIMO_ENTRE_QUADROS; 
 		while(pc[terminalAtual].temQuadrosPendentes()){

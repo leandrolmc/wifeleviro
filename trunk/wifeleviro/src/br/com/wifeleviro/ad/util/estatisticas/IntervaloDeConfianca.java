@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
+import br.com.wifeleviro.ad.util.estatisticas.metricas.Utilizacao;
 
 public class IntervaloDeConfianca {
 
@@ -108,26 +109,28 @@ public class IntervaloDeConfianca {
 		double varianciaAmostras = 0;
 		double mediasNcmsDasRodadas[] = new double[numRodadas];
 
+		int i = 0;
 		for (EstatisticasColisaoRodada estatistica : estatisticas) {
 			Hashtable<Long, Long> quadrosPorMensagem = estatistica.getQuadros();
 			Hashtable<Long, Long> colisoesPorMensagem = estatistica.getColisoes();
 
-			double somatorioNcmPorMensagem = 0;
-
+			double somatorioNcm = 0;
+			int numeroDeMensagens = 0;
+			
 			Enumeration<Long> idMensagens = quadrosPorMensagem.keys();
 			while (idMensagens.hasMoreElements()) {
 				Long idMensagem = idMensagens.nextElement();
 				Long numQuadrosPorMensagem = quadrosPorMensagem.get(idMensagem);
-				Long numColisoesPorMensagem = colisoesPorMensagem
-						.get(idMensagem);
+				Long numColisoesPorMensagem = colisoesPorMensagem.get(idMensagem);
 
-				double razaoPorMensagem = numColisoesPorMensagem / numQuadrosPorMensagem;
+				double ncm = numColisoesPorMensagem / numQuadrosPorMensagem;
 
-				somatorioNcmPorMensagem += razaoPorMensagem;
+				++numeroDeMensagens;
+				somatorioNcm += ncm;
 			}
-
-			double ncmRodada = somatorioNcmPorMensagem / quadrosPorMensagem.size();
-
+			double ncmRodada = somatorioNcm / numeroDeMensagens;
+			mediasNcmsDasRodadas[i] = ncmRodada;
+			++i;
 			somaAmostras += ncmRodada;
 		}
 
@@ -139,7 +142,7 @@ public class IntervaloDeConfianca {
 			somaVariancias += variancia;
 		}
 
-		varianciaAmostras = somaVariancias / (numRodadas - 1);
+		varianciaAmostras = somaVariancias / numRodadas;
 
 		double tamanhoIntervaloDeConfianca = 2 * Math.sqrt(varianciaAmostras) * ASSINTOTICO_95 / Math.sqrt(numRodadas);
 		
@@ -161,12 +164,14 @@ public class IntervaloDeConfianca {
 		for (int i = 0; it.hasNext(); i++) {
 			EstatisticasUtilizacaoRodada estatisticaUtilizacaoDaRodada = (EstatisticasUtilizacaoRodada) it.next();
 
-			double periodoOcupado = 0;
-			Collection<Double> medicoes = estatisticaUtilizacaoDaRodada.getMedicaoInstanteUtilizacao();
-			for (Double medicao : medicoes) {
-				periodoOcupado += medicao;
+			double periodosUtilizacao = 0;
+			Collection<Utilizacao> medicoes = estatisticaUtilizacaoDaRodada.getUtilizacao();
+			for (Utilizacao medicao : medicoes) {
+				double periodoUtilizacao = medicao.getFim() - medicao.getInicio();
+				periodosUtilizacao += periodoUtilizacao;
 			}
-			utilizacaoDasRodadas[i] = periodoOcupado / estatisticaUtilizacaoDaRodada.getFimDaRodada() - estatisticaUtilizacaoDaRodada.getInicioDaRodada();
+			double tempoTotalRodada = estatisticaUtilizacaoDaRodada.getFimDaRodada() - estatisticaUtilizacaoDaRodada.getInicioDaRodada();
+			utilizacaoDasRodadas[i] = periodosUtilizacao / tempoTotalRodada;
 
 			somaAmostras += utilizacaoDasRodadas[i];
 		}
@@ -179,7 +184,7 @@ public class IntervaloDeConfianca {
 			somaVariancias += variancia;
 		}
 
-		varianciaAmostras = somaVariancias / (numRodadas - 1);
+		varianciaAmostras = somaVariancias / numRodadas;
 
 		double tamanhoIntervaloDeConfianca = 2 * Math.sqrt(varianciaAmostras) * ASSINTOTICO_95 / Math.sqrt(numRodadas);
 		
@@ -202,7 +207,8 @@ public class IntervaloDeConfianca {
 			EstatisticasVazaoRodada estatisticaVazaoDaRodada = (EstatisticasVazaoRodada) it.next();
 
 			double numQuadros = estatisticaVazaoDaRodada.getNumeroQuadrosTransmitidosComSucesso();
-			vazaoDasRodadas[i] = numQuadros / estatisticaVazaoDaRodada.getFimDaRodada() - estatisticaVazaoDaRodada.getInicioDaRodada();
+			double tempoTotalRodada = estatisticaVazaoDaRodada.getFimDaRodada() - estatisticaVazaoDaRodada.getInicioDaRodada();
+			vazaoDasRodadas[i] = numQuadros / tempoTotalRodada;
 
 			somaAmostras += vazaoDasRodadas[i];
 		}
@@ -215,7 +221,7 @@ public class IntervaloDeConfianca {
 			somaVariancias += variancia;
 		}
 
-		varianciaAmostras = somaVariancias / (numRodadas - 1);
+		varianciaAmostras = somaVariancias / numRodadas;
 
 		double tamanhoIntervaloDeConfianca = 2 * Math.sqrt(varianciaAmostras) * ASSINTOTICO_95 / Math.sqrt(numRodadas);
 		

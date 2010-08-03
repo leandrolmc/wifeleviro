@@ -77,7 +77,7 @@ public class Orquestrador {
 
 			double fimDaRodada = 0;
 
-			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 2000000) || (this.rodadaAtual > 0 && this.rodadaAtual < 100 && numEventosDaRodada < 300000)) {
+			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 2000000) || (this.rodadaAtual > 0 /*&& this.rodadaAtual < 100*/ && numEventosDaRodada < 300000)) {
 				
 				if(this.rodadaAtual != 0){
 					System.out.print("");
@@ -212,14 +212,17 @@ public class Orquestrador {
 //					System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
 //					System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
 //					System.out.println("*************************************");
+
+					if(dados.getTam().getTamanhoDoIntervaloDeConfianca()<(0.1*dados.getTam().getMediaDasAmostras()))
+						System.exit(0);
 					
 				}
 
 				System.out.println("== FIM RODADA "+this.rodadaAtual+" ==");
 			}
 				
-			if(rodadaAtual == 200)
-				System.out.print("");
+			if(rodadaAtual == 1000)
+				System.exit(0);
 			
 		} while ((this.rodadaAtual <= 30) || (this.rodadaAtual > 30 && !intervaloDeConfiancaOK));
 	}

@@ -14,19 +14,22 @@ public class Mensagem {
 	public static final int REFORCO_COLISAO = 1;
 	
 	private long id;
+	private int rodada;
 	
 	private double numeroQuadros;
 	private int numeroQuadroRestantesParaTransmissao;
 	private int tipoMensagem;
 	
-	public Mensagem(){
+	public Mensagem(int rodada){
 		setId(new GregorianCalendar().getTimeInMillis());
 		this.setTipoMensagem(REFORCO_COLISAO);
 		this.numeroQuadros = 1;
 		this.numeroQuadroRestantesParaTransmissao = 0;
+		this.rodada = rodada;
 	}
 	
-	public Mensagem(double p){
+	public Mensagem(int rodada, double p){
+		this.rodada = rodada;
 		
 		setId(GeradorRandomicoSingleton.getInstance().gerarProximoRandomicoAuxiliar());
 		this.setTipoMensagem(MENSAGEM_PADRAO);
@@ -69,4 +72,8 @@ public class Mensagem {
 		return tipoMensagem;
 	}
 
+	public int getRodada(){
+		return this.rodada;
+	}
+	
 }

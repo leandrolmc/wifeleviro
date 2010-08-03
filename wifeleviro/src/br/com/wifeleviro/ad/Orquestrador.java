@@ -232,7 +232,7 @@ public class Orquestrador {
 		double instanteDeTempo = lista.getInstanteDeTempoAtual();
 
 		// Crio a mensagem a ser transmitida.
-		Mensagem mensagem = new Mensagem(pc[terminalOrigem].getpMensagens());
+		Mensagem mensagem = new Mensagem(rodadaAtual, pc[terminalOrigem].getpMensagens());
 		Quadro quadro = new Quadro(rodadaAtual, terminalOrigem, null, mensagem);
 		coletor.coletaQuadroPorMensagem(terminalOrigem, mensagem.getId());
 
@@ -336,7 +336,9 @@ public class Orquestrador {
 			Evento proximoQuadro = new Evento(Evento.INICIO_TX_PC, terminalAtual, novoQuadro);
 			lista.put(instanteTempoProximoQuadro, proximoQuadro);
 		}else{
-			coletor.finalizaColetaTam(rodadaAtual, terminalAtual, m.getId(), pc[terminalAtual].getInstanteTempoInicioUltimaTx());
+			if(rodadaAtual > 0)
+				if(m.getTipoMensagem() == Mensagem.MENSAGEM_PADRAO)
+					coletor.finalizaColetaTam(m.getRodada(), terminalAtual, m.getId(), pc[terminalAtual].getInstanteTempoInicioUltimaTx());
 		}
 	}
 
@@ -371,7 +373,7 @@ public class Orquestrador {
 			pc[terminalAtual].setEmColisao(true);
 			pc[terminalAtual].setInstanteTempoColisao(instanteAtual);
 			
-			Mensagem mColisao = new Mensagem();
+			Mensagem mColisao = new Mensagem(rodadaAtual);
 			Quadro qColisao = new Quadro(rodadaAtual, terminalAtual, null, mColisao);
 			
 			Evento chegadaReforcoColisaoRxHub = new Evento(Evento.INICIO_REFORCO_COLISAO, terminalAtual, qColisao);

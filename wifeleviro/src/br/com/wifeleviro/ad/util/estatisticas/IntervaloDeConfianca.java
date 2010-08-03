@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Vector;
 
+import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 
 public class IntervaloDeConfianca {
@@ -20,6 +20,7 @@ public class IntervaloDeConfianca {
 		double somaVariancias = 0;
 		double varianciaAmostras = 0;
 		double mediasTapsDasRodadas[] = new double[numRodadas];
+		long numeroAmostrasValidas = 0;
 
 		for (Hashtable<Long, TAp> taps : tapsRodadas) {
 			double somatorioTaps = 0;
@@ -29,8 +30,9 @@ public class IntervaloDeConfianca {
 				if(tap.getInstanteTempoFinal()==null)
 					continue;
 				somatorioTaps += tap.getInstanteTempoFinal() - tap.getInstanteTempoInicial();
+				++numeroAmostrasValidas;
 			}
-			double mediaTapsDaRodada = somatorioTaps / taps.size();
+			double mediaTapsDaRodada = somatorioTaps / numeroAmostrasValidas;
 			somaAmostras += mediaTapsDaRodada;
 		}
 
@@ -51,22 +53,29 @@ public class IntervaloDeConfianca {
 	}
 
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaTam(
-			Collection<Vector<Double>> tamsRodadas, int numRodadas) {
+			Collection<Hashtable<Long, TAm>> tamsRodadas, int numRodadas) {
 
 		double somaAmostras = 0;
 		double mediaAmostras = 0;
 		double somaVariancias = 0;
 		double varianciaAmostras = 0;
 		double mediasTamsDasRodadas[] = new double[numRodadas];
-
-		for (Vector<Double> tams : tamsRodadas) {
+		long numeroAmostrasValidas = 0;
+		
+		for (Hashtable<Long, TAm> tams : tamsRodadas) {
 			double somatorioTams = 0;
-			for (Double tam : tams)
-				somatorioTams += tam;
-			double mediaTamsDaRodada = somatorioTams / tams.size();
-			somaAmostras += mediaTamsDaRodada;
+			Enumeration<Long> enm = tams.keys();
+			while(enm.hasMoreElements()){
+				TAm tam = tams.get(enm.nextElement());
+				if(tam.getInstanteTempoFinal()==null)
+					continue;
+				somatorioTams += tam.getInstanteTempoFinal() - tam.getInstanteTempoInicial();
+				++numeroAmostrasValidas;
+			}
+			double mediaTapsDaRodada = somatorioTams / numeroAmostrasValidas;
+			somaAmostras += mediaTapsDaRodada;
 		}
-
+		
 		mediaAmostras = somaAmostras / numRodadas;
 
 		for (double mediaTamsDaRodada : mediasTamsDasRodadas) {
@@ -208,7 +217,7 @@ public class IntervaloDeConfianca {
 	
 	public static DadosFinaisDaRodada intervalosDeConfiancaDentroDoLimiteAceitavel(
 			Collection<Hashtable<Long, TAp>> tapsRodadas,
-			Collection<Vector<Double>> tamsRodadas,
+			Collection<Hashtable<Long, TAm>> tamsRodadas,
 			Collection<EstatisticasColisaoRodada> estatisticasColisaoDasRodadas,
 			Collection<EstatisticasUtilizacaoRodada> estatisticasUtilizacaoDasRodadas,
 			Collection<EstatisticasVazaoRodada> estatisticasVazaoDasRodadas,

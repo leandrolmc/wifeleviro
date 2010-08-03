@@ -22,9 +22,11 @@ public class IntervaloDeConfianca {
 		double mediasTapsDasRodadas[] = new double[numRodadas];
 		long numeroAmostrasValidas = 0;
 
+		int i = 0;
 		for (Hashtable<Long, TAp> taps : tapsRodadas) {
 			double somatorioTaps = 0;
 			Enumeration<Long> enm = taps.keys();
+			numeroAmostrasValidas = 0;
 			while(enm.hasMoreElements()){
 				TAp tap = taps.get(enm.nextElement());
 				if(tap.getInstanteTempoFinal()==null)
@@ -33,6 +35,8 @@ public class IntervaloDeConfianca {
 				++numeroAmostrasValidas;
 			}
 			double mediaTapsDaRodada = somatorioTaps / numeroAmostrasValidas;
+//			System.out.println("Rodada i: "+(i+1)+" | Media TAps: "+mediaTapsDaRodada+" = ("+somatorioTaps+"/"+numeroAmostrasValidas+")");
+			mediasTapsDasRodadas[i] = mediaTapsDaRodada;
 			somaAmostras += mediaTapsDaRodada;
 		}
 
@@ -44,9 +48,9 @@ public class IntervaloDeConfianca {
 			somaVariancias += variancia;
 		}
 
-		varianciaAmostras = somaVariancias / (numRodadas - 1);
+		varianciaAmostras = somaVariancias / numRodadas;
 
-		double tamanhoIntervaloDeConfianca = 2 * Math.sqrt(varianciaAmostras) * ASSINTOTICO_95 / Math.sqrt(numRodadas);
+		double tamanhoIntervaloDeConfianca = (2 * Math.sqrt(varianciaAmostras) * ASSINTOTICO_95) / Math.sqrt(numRodadas);
 		
 		ResultadoIntervaloDeConfianca result = new ResultadoIntervaloDeConfianca(mediaAmostras, tamanhoIntervaloDeConfianca);
 		return result;
@@ -62,8 +66,10 @@ public class IntervaloDeConfianca {
 		double mediasTamsDasRodadas[] = new double[numRodadas];
 		long numeroAmostrasValidas = 0;
 		
+		int i = 0;
 		for (Hashtable<Long, TAm> tams : tamsRodadas) {
 			double somatorioTams = 0;
+			numeroAmostrasValidas = 0;
 			Enumeration<Long> enm = tams.keys();
 			while(enm.hasMoreElements()){
 				TAm tam = tams.get(enm.nextElement());
@@ -72,8 +78,10 @@ public class IntervaloDeConfianca {
 				somatorioTams += tam.getInstanteTempoFinal() - tam.getInstanteTempoInicial();
 				++numeroAmostrasValidas;
 			}
-			double mediaTapsDaRodada = somatorioTams / numeroAmostrasValidas;
-			somaAmostras += mediaTapsDaRodada;
+			double mediaTamsDaRodada = somatorioTams / numeroAmostrasValidas;
+			mediasTamsDasRodadas[i] = mediaTamsDaRodada;
+			i++;
+			somaAmostras += mediaTamsDaRodada;
 		}
 		
 		mediaAmostras = somaAmostras / numRodadas;
@@ -84,7 +92,7 @@ public class IntervaloDeConfianca {
 			somaVariancias += variancia;
 		}
 
-		varianciaAmostras = somaVariancias / (numRodadas - 1);
+		varianciaAmostras = somaVariancias / numRodadas;
 
 		double tamanhoIntervaloDeConfianca = 2 * Math.sqrt(varianciaAmostras) * ASSINTOTICO_95 / Math.sqrt(numRodadas);
 		

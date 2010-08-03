@@ -77,7 +77,7 @@ public class Orquestrador {
 
 			double fimDaRodada = 0;
 
-			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 2000000) || (this.rodadaAtual > 0 /*&& this.rodadaAtual < 100*/ && numEventosDaRodada < 300000)) {
+			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 10000000) || (this.rodadaAtual > 0 /*&& this.rodadaAtual < 100*/ && numEventosDaRodada < 500000)) {
 				
 				if(this.rodadaAtual != 0){
 					System.out.print("");
@@ -105,8 +105,6 @@ public class Orquestrador {
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_TX_PC:
-						if(e.getQuadro().getId() == Long.parseLong("8253771087634509487"))
-							System.out.print("");
 						tratarEventoInicioTxPc(coletor, pc, listaEventos, e);
 //						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 //								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
@@ -173,7 +171,9 @@ public class Orquestrador {
 				System.out.println("== FIM DA FASE TRANSIENTE ==");
 			}else{
 				Estatisticas[] estatisticas = coletor.getEstatisticas();
+				boolean criterioParadaAtingido[] = new boolean[numTerminais];
 				for(int i = 0; i < numTerminais; i++){
+					criterioParadaAtingido[i] = false;
 					Hashtable<Long, TAp> tap = estatisticas[i].getTap();
 					Hashtable<Long, TAm> tam = estatisticas[i].getTam();
 					EstatisticasColisaoRodada colisao = new EstatisticasColisaoRodada(estatisticas[i].getColisoesPorMensagem(), estatisticas[i].getQuadrosPorMensagem());
@@ -187,41 +187,51 @@ public class Orquestrador {
 							statsColetadas[i].getColEstatisticaColisaoRodada(), 
 							statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
 							statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
-							1+this.rodadaAtual);
+							this.rodadaAtual);
 					
 					intervaloDeConfiancaOK = intervaloDeConfiancaOK &&  dados.getDentroDoLimite();
 					
-					System.out.println("*************************************");
-					System.out.println("--[TAp("+i+")]--");
-					System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
-					System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
-					System.out.println("*************************************");
-					System.out.println("--[TAm("+i+")]--");
-					System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
-					System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
-					System.out.println("*************************************");
-//					System.out.println("--[NCm("+i+")]--");
-//					System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
-//					System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
 //					System.out.println("*************************************");
-//					System.out.println("--[Utilizacao("+i+")]--");
-//					System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
-//					System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
+//					System.out.println("--[TAp("+i+")]--");
+//					System.out.println("E[TAp("+i+")]: "+dados.getTap().getMediaDasAmostras());
+//					System.out.println("U(alpha)-L(alpha): "+dados.getTap().getTamanhoDoIntervaloDeConfianca());
 //					System.out.println("*************************************");
-//					System.out.println("--[Vazao("+i+")]--");
-//					System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
-//					System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
-//					System.out.println("*************************************");
+//					System.out.println("--[TAm("+i+")]--");
+//					System.out.println("E[TAm("+i+")]: "+dados.getTam().getMediaDasAmostras());
+//					System.out.println("U(alpha)-L(alpha): "+dados.getTam().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
+					System.out.println("--[NCm("+i+")]--");
+					System.out.println("E[NCm("+i+")]: "+dados.getNcm().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getNcm().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
+					System.out.println("--[Utilizacao("+i+")]--");
+					System.out.println("E[Utilizacao("+i+")]: "+dados.getUtilizacao().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getUtilizacao().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
+					System.out.println("--[Vazao("+i+")]--");
+					System.out.println("E[Vazao("+i+")]: "+dados.getVazao().getMediaDasAmostras());
+					System.out.println("U(alpha)-L(alpha): "+dados.getVazao().getTamanhoDoIntervaloDeConfianca());
+					System.out.println("*************************************");
 
-					if(dados.getTam().getTamanhoDoIntervaloDeConfianca()<(0.1*dados.getTam().getMediaDasAmostras()))
-						System.exit(0);
+					if(this.rodadaAtual > 30 && dados.getTap().getTamanhoDoIntervaloDeConfianca()<(0.1*dados.getTap().getMediaDasAmostras()))
+						criterioParadaAtingido[i] = true;
 					
 				}
+				
+				boolean para = true;
+				for(boolean criterioParada : criterioParadaAtingido){
+					para = para && criterioParada; 
+				}
+				if(para){
+					System.out.println("CRITERIO DE PARADA DE AMBOS OS TAm´s ATINGIDOS");
+					System.exit(0);
+				}
+				
 
 				System.out.println("== FIM RODADA "+this.rodadaAtual+" ==");
 			}
 				
-			if(rodadaAtual == 1000)
+			if(rodadaAtual == 500)
 				System.exit(0);
 			
 		} while ((this.rodadaAtual <= 30) || (this.rodadaAtual > 30 && !intervaloDeConfiancaOK));

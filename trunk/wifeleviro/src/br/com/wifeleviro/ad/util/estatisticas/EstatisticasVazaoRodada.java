@@ -1,4 +1,4 @@
-package br.com.wifeleviro.ad.util;
+package br.com.wifeleviro.ad.util.estatisticas;
 
 
 public class EstatisticasVazaoRodada {

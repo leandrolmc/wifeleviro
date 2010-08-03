@@ -24,8 +24,12 @@ public class GeradorRandomicoSingleton {
 		return _instance;
 	}
 	
-	public double gerarProximoRandomico(){
+	public double gerarProximoDoubleRandomico(){
 		return random.nextDouble();
+	}
+	
+	public int gerarProximoIntRandomico(){
+		return random.nextInt();
 	}
 	
 	public long gerarProximoRandomicoAuxiliar(){

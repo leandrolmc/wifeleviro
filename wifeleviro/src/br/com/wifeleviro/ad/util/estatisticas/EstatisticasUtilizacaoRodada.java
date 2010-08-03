@@ -2,18 +2,20 @@ package br.com.wifeleviro.ad.util.estatisticas;
 
 import java.util.Collection;
 
+import br.com.wifeleviro.ad.util.estatisticas.metricas.Utilizacao;
+
 public class EstatisticasUtilizacaoRodada {
 
 	private double inicioDaRodada;
 	private double fimDaRodada;
-	private Collection<Double> medicaoInstanteUtilizacao;
+	private Collection<Utilizacao> utilizacao;
 	
 	public EstatisticasUtilizacaoRodada(double inicioDaRodada, double fimDaRodada,
-			Collection<Double> medicaoInstanteUtilizacao) {
+			Collection<Utilizacao> utilizacao) {
 		super();
 		this.inicioDaRodada = inicioDaRodada;
 		this.fimDaRodada = fimDaRodada;
-		this.medicaoInstanteUtilizacao = medicaoInstanteUtilizacao;
+		this.utilizacao = utilizacao;
 	}
 
 	public double getInicioDaRodada() {
@@ -24,8 +26,8 @@ public class EstatisticasUtilizacaoRodada {
 		return fimDaRodada;
 	}
 
-	public Collection<Double> getMedicaoInstanteUtilizacao() {
-		return medicaoInstanteUtilizacao;
+	public Collection<Utilizacao> getUtilizacao() {
+		return utilizacao;
 	}
 	
 }

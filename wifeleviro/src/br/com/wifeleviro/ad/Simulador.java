@@ -16,6 +16,8 @@ public class Simulador {
 		
 		Orquestrador orch = new Orquestrador(qtdTerminais, terminais);
 		
+		System.out.println("INICIO DA SIMULACAO");
+		
 		orch.executarSimulacao();
 		
 		System.out.println("FIM DA SIMULACAO");

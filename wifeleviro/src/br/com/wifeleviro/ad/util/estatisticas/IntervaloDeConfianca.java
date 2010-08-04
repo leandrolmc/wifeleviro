@@ -9,10 +9,16 @@ import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.Utilizacao;
 
+/*
+ * Classe responsável por calcular os intervalos de confiança a partir
+ * das métricas coletas durante a simulação. 
+ */
 public class IntervaloDeConfianca {
 
+	// Valor assintótico do t-student a 95%.
 	private static final double ASSINTOTICO_95 = 1.96;
 
+	// Calcula a média da rodada e o tamanho do intervalo de confiança da TAp.
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaTap(
 			Collection<Hashtable<Long, TAp>> tapsRodadas, int numRodadas) {
 
@@ -36,7 +42,6 @@ public class IntervaloDeConfianca {
 				++numeroAmostrasValidas;
 			}
 			double mediaTapsDaRodada = somatorioTaps / numeroAmostrasValidas;
-//			System.out.println("Rodada i: "+(i+1)+" | Media TAps: "+mediaTapsDaRodada+" = ("+somatorioTaps+"/"+numeroAmostrasValidas+")");
 			mediasTapsDasRodadas[i] = mediaTapsDaRodada;
 			somaAmostras += mediaTapsDaRodada;
 		}
@@ -57,6 +62,7 @@ public class IntervaloDeConfianca {
 		return result;
 	}
 
+	// Calcula a média da rodada e o tamanho do intervalo de confiança da TAm.
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaTam(
 			Collection<Hashtable<Long, TAm>> tamsRodadas, int numRodadas) {
 
@@ -100,7 +106,8 @@ public class IntervaloDeConfianca {
 		ResultadoIntervaloDeConfianca result = new ResultadoIntervaloDeConfianca(mediaAmostras, tamanhoIntervaloDeConfianca);
 		return result;
 	}
-
+	
+	// Calcula a média da rodada e o tamanho do intervalo de confiança da NCm.
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaNcm(Collection<EstatisticasColisaoRodada> estatisticas, int numRodadas) {
 
 		double somaAmostras = 0;
@@ -150,6 +157,7 @@ public class IntervaloDeConfianca {
 		return result;
 	}
 
+	// Calcula a média da rodada e o tamanho do intervalo de confiança da utilização.
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaUtilizacaoDoEthernet(
 			Collection<EstatisticasUtilizacaoRodada> estatisticasUtilizacaoDasRodadas,
 			int numRodadas) {
@@ -192,6 +200,7 @@ public class IntervaloDeConfianca {
 		return result;
 	}
 
+	// Calcula a média da rodada e o tamanho do intervalo de confiança da vazão.
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaVazao(
 			Collection<EstatisticasVazaoRodada> estatisticasVazaoDasRodadas,
 			int numRodadas) {
@@ -229,6 +238,8 @@ public class IntervaloDeConfianca {
 		return result;
 	}
 	
+	// Recupera o resultado de todos os cálculos realizados e
+	// avalia se todos convergiram para dentro do limite.
 	public static DadosFinaisDaRodada intervalosDeConfiancaDentroDoLimiteAceitavel(
 			Collection<Hashtable<Long, TAp>> tapsRodadas,
 			Collection<Hashtable<Long, TAm>> tamsRodadas,
@@ -262,7 +273,7 @@ public class IntervaloDeConfianca {
 			System.out.print("");
 		
 		boolean dentroDoLimite = (
-//			(tamanhoICTap < (0.1*mediaTap)) &&
+			(tamanhoICTap < (0.1*mediaTap)) &&
 			(tamanhoICTam <= (0.1*mediaTam)) &&
 			(tamanhoICNcm <= (0.1*mediaNcm)) &&
 			(tamanhoICUtilizacao <= (0.1*mediaUtilizacao)) &&

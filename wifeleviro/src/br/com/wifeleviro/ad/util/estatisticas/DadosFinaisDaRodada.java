@@ -1,5 +1,9 @@
 package br.com.wifeleviro.ad.util.estatisticas;
 
+/*
+ * Classe que armazena os resultados dos cálculos de intervalo de confiança
+ * de todas as métricas da rodada.
+ */
 public class DadosFinaisDaRodada {
 
 	ResultadoIntervaloDeConfianca tap;

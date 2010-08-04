@@ -5,6 +5,9 @@ import java.util.Random;
 
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
+/*
+ * Classe que representa uma mensagem.
+ */
 public class Mensagem {
 
 	public static final double TEMPO_TRANSMISAO_POR_QUADRO = 0.0008; //segundos por quadro 

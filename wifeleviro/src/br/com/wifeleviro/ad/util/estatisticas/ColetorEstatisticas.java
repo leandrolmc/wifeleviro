@@ -239,12 +239,12 @@ public class ColetorEstatisticas {
 		}
 	}
 
-	// Coleta intante de tempo inicial da rodada.
+	// Coleta instante de tempo inicial da rodada.
 	public void coletaInicioRodada(double instanteDeTempo){
 		this.setInstanteInicioRodada(instanteDeTempo);
 	}
 	
-	// Coleta intante de tempo final da rodada.
+	// Coleta instante de tempo final da rodada.
 	public void coletaFimRodada(double instanteDeTempo){
 		this.setInstanteFimRodada(instanteDeTempo);
 	}

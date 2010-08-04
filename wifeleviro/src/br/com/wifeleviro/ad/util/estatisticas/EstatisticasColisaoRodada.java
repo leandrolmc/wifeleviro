@@ -1,7 +1,9 @@
 package br.com.wifeleviro.ad.util.estatisticas;
 
 import java.util.Hashtable;
-
+/*
+ *	Armazena as estatísticas de colisão por rodada. 
+ */
 public class EstatisticasColisaoRodada {
 
 	private Hashtable<Long,Long> colisoes;

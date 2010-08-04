@@ -4,6 +4,9 @@ import java.util.Collection;
 
 import br.com.wifeleviro.ad.util.estatisticas.metricas.Utilizacao;
 
+/*
+ * Classe de transporte das coletas de utilização durante a rodada.
+ */
 public class EstatisticasUtilizacaoRodada {
 
 	private double inicioDaRodada;

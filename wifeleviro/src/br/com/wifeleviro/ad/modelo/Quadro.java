@@ -2,7 +2,10 @@ package br.com.wifeleviro.ad.modelo;
 
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
-
+/*
+ * Classe que representa um Quadro que é transmitido
+ * no fluxo do simulador.
+ */
 public class Quadro {
 	
 	public static final double TEMPO_MINIMO_ENTRE_QUADROS = 0.0000096;

@@ -1,5 +1,8 @@
 package br.com.wifeleviro.ad.util.estatisticas.metricas;
 
+/*
+ * Amostra de TAm.
+ */
 public class TAm {
 
 	private Double instanteTempoInicial;

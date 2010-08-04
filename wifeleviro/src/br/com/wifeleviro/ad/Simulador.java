@@ -5,6 +5,10 @@ import java.util.GregorianCalendar;
 
 import br.com.wifeleviro.ad.modelo.Terminal;
 
+/*
+ * Classe responsável por receber os parâmetros iniciais e
+ * iniciar a simulação após configurá-la com estes parâmetros.
+ */
 public class Simulador {
 
 	public static void main(String[] args) {

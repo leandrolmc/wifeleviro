@@ -4,8 +4,13 @@ import java.util.ArrayList;
 
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
+/*
+ * Classe que representa um Terminal e todas os dados
+ * necessários de serem armazenados para cada terminal.
+ */
 public class Terminal{
 
+	// Tipos possíveis de fluxo no terminal.
 	public static final int TIPO_DETERMINISTICO = 0;
 	public static final int TIPO_EXPONENCIAL = 1;
 	

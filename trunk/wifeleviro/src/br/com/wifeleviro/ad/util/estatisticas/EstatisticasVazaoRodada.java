@@ -1,6 +1,8 @@
 package br.com.wifeleviro.ad.util.estatisticas;
 
-
+/*
+ * Armazena as estatísticas de vazão por rodada.
+ */
 public class EstatisticasVazaoRodada {
 
 	private double inicioDaRodada;

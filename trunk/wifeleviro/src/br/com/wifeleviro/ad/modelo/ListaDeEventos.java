@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+/*
+ * Classe que representa a lista de eventos única do programa.
+ */
 public class ListaDeEventos {
 
+	// Árvore rubro-negra indexada pelo instante de tempo (Double) de simulação
+	// e armazena em cada instante de tempo um vetor de Evento´s a serem
+	// tratados no mesmo.
 	private TreeMap<Double, ArrayList<Evento>> tree;
 	
+	// Instante de tempo atual de simulação.
 	private double instanteDeTempo;
 	
+	// Subclasse para transporte dos dados do próximo evento.
 	public class ProximoEvento{
 		
 		private double tempo;
@@ -29,11 +37,15 @@ public class ListaDeEventos {
 		}
 	}
 	
+	// Construtor inicial padrão.
 	public ListaDeEventos(){
 		tree = new TreeMap<Double, ArrayList<Evento>>();
 		this.instanteDeTempo = 0;
 	}
 	
+	// Armazena na árvore rubro-negra, 
+	// no instante de tempo informado,
+	// o evento dado como parâmetro.
 	public void put(double instanteDeTempo, Evento e){
 		if (instanteDeTempo < 0)
 			System.out.println("INSTANTE DE TEMPO: "+instanteDeTempo+" | EVENTO: "+e.getTipoEvento());
@@ -45,6 +57,7 @@ public class ListaDeEventos {
 		tree.put(instanteDeTempo, col);
 	}
 	
+	// Recupera o próximo evento a ser tratado no simulador.
 	public ProximoEvento proximoEvento(){
 		this.instanteDeTempo = (Double)tree.firstKey();
 		ArrayList<Evento> eventos = (ArrayList<Evento>)tree.get(this.instanteDeTempo);
@@ -55,6 +68,8 @@ public class ListaDeEventos {
 		return new ProximoEvento(this.instanteDeTempo, proximoEvento);
 	}
 	
+	// Remove o primeiro evento da árvore que corresponda ao
+	// terminal e tipo de evento solicitados.
 	public Evento removeEvento(int terminal, int tipoEvento){
 		
 		Evento saida = null;
@@ -79,14 +94,17 @@ public class ListaDeEventos {
 		return saida;
 	}
 	
+	// Apresenta o tamanho atual da árvore.
 	public int size(){
 		return this.tree.size();
 	}
 	
+	// Informa se a árvore está vazia.
 	public boolean isEmpty(){
 		return this.tree.isEmpty();
 	}
 	
+	// Informa o instante de tempo atual da árvore.
 	public double getInstanteDeTempoAtual(){
 		return this.instanteDeTempo;
 	}

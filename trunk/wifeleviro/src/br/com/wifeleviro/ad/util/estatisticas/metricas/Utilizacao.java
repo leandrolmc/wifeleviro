@@ -1,5 +1,8 @@
 package br.com.wifeleviro.ad.util.estatisticas.metricas;
 
+/*
+ * Amostra de Utilização.
+ */
 public class Utilizacao {
 
 	private Double inicio;

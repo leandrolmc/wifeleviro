@@ -7,6 +7,9 @@ import java.util.Hashtable;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 
+/*
+ * Classe de transporte de todas as estatísticas coletas.
+ */
 public class EstatisticasColetadas {
 
 	Collection<Hashtable<Long, TAp>> colTap;

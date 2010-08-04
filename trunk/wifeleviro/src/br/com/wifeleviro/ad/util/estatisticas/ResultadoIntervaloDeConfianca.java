@@ -1,5 +1,10 @@
 package br.com.wifeleviro.ad.util.estatisticas;
 
+/*
+ * Classe genérica para armazenar um resultado de 
+ * cálculo do intervalo de confiança, guardando sempre
+ * um par média + tamanho do IC.
+ */
 public class ResultadoIntervaloDeConfianca {
 
 	private double mediaDasAmostras;

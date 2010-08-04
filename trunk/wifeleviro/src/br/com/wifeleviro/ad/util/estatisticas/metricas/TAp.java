@@ -1,5 +1,8 @@
 package br.com.wifeleviro.ad.util.estatisticas.metricas;
 
+/*
+ * Amostra de TAp.
+ */
 public class TAp {
 
 	private Double instanteTempoInicial;

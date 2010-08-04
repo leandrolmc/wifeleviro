@@ -118,7 +118,7 @@ public class Orquestrador {
 			double fimDaRodada = 0;
 
 			// Loop de eventos. Cada passagem no loop é o tratamento de um evento.
-			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 20000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 1000000)) {
+			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 1000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 500000)) {
 				
 				// Recupera da lista de eventos o próximo evento a ser executado.
 				ProximoEvento proximo = listaEventos.proximoEvento();

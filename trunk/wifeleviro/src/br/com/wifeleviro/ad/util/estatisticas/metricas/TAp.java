@@ -5,34 +5,27 @@ package br.com.wifeleviro.ad.util.estatisticas.metricas;
  */
 public class TAp {
 
-	private Double instanteTempoInicial;
-	private Double instanteTempoFinal;
+	private Double acumuladorTempo;
+	private Long numeroQuadros;
 	
 	public TAp (){
-		this.instanteTempoInicial = null;
-		this.instanteTempoFinal = null;
+		this.acumuladorTempo = (double)0;
+		this.numeroQuadros = (long)0;
 	}
 
-	public void setInstanteTempoInicial(double instanteTempoInicial) {
-		if(this.instanteTempoInicial == null)
-			this.instanteTempoInicial = instanteTempoInicial;
-		else
-			this.instanteTempoInicial = Math.min(this.instanteTempoInicial, instanteTempoInicial);
+	public void acumularTempo(Double tempoAAcumular) {
+		this.acumuladorTempo += tempoAAcumular;
+		++this.numeroQuadros;
 	}
 
-	public double getInstanteTempoInicial() {
-		return instanteTempoInicial;
+	public Double getAcumuladorTempo() {
+		return acumuladorTempo;
 	}
 
-	public void setInstanteTempoFinal(double instanteTempoFinal) {
-		if(this.instanteTempoFinal == null)
-			this.instanteTempoFinal = instanteTempoFinal;
-		else
-			this.instanteTempoFinal = Math.max(this.instanteTempoFinal, instanteTempoFinal);
+	public Long getNumeroQuadros() {
+		return numeroQuadros;
 	}
 
-	public Double getInstanteTempoFinal() {
-		return instanteTempoFinal;
-	}
-
+	
+	
 }

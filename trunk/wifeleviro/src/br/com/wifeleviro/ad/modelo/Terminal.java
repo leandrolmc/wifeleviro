@@ -72,7 +72,7 @@ public class Terminal{
 	}
 	
 	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, double periodo){
-		double poisson  = (-((Math.log(1-(GeradorRandomicoSingleton.getInstance().gerarProximoDoubleRandomico()%1)))/(1/periodo)));
+		double poisson  = (double) (-((Math.log(1-(GeradorRandomicoSingleton.getInstance().gerarProximoDoubleRandomico()%1)))/(1/periodo)));
 		return instanteTempoAtual + poisson;
 	}
 	

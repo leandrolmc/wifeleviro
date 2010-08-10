@@ -8,8 +8,8 @@ import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
  */
 public class Quadro {
 	
-	public static final double TEMPO_MINIMO_ENTRE_QUADROS = 0.0000096;
-	public static final double SLOT_RETRANSMISSAO = 0.0000512;
+	public static final double TEMPO_MINIMO_ENTRE_QUADROS = (double)0.0000096;
+	public static final double SLOT_RETRANSMISSAO = (double)0.0000512;
 	
 	private long id;
 	private int rodada;
@@ -21,6 +21,8 @@ public class Quadro {
 	
 	private int colisoes;
 	
+	private Double instanteTempoInicioTx;
+	
 	public Quadro(int rodada, Integer idRemetente, Integer idDestinatario, Mensagem mensagem) {
 		this.rodada = rodada;
 		this.idRemetente = idRemetente;
@@ -28,8 +30,17 @@ public class Quadro {
 		this.mensagem = mensagem;
 		this.colisoes = 0;
 		this.id = GeradorRandomicoSingleton.getInstance().gerarProximoRandomicoAuxiliar();
+		this.instanteTempoInicioTx = null;
 	}
 
+	public void setInstanteTempoInicioTx(double instante){
+		this.instanteTempoInicioTx = instante;
+	}
+	
+	public double getInstanteTempoInicioTx(){
+		return this.instanteTempoInicioTx;
+	}
+	
 	public Integer getIdRemetente() {
 		return idRemetente;
 	}

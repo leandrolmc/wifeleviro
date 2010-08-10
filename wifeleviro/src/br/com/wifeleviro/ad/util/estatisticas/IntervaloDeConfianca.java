@@ -20,28 +20,19 @@ public class IntervaloDeConfianca {
 
 	// Calcula a média da rodada e o tamanho do intervalo de confiança da TAp.
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaTap(
-			Collection<Hashtable<Long, TAp>> tapsRodadas, int numRodadas) {
+			Collection<TAp> tapsRodadas, int numRodadas) {
 
 		double somaAmostras = 0;
 		double mediaAmostras = 0;
 		double somaVariancias = 0;
 		double varianciaAmostras = 0;
 		double mediasTapsDasRodadas[] = new double[numRodadas];
-		long numeroAmostrasValidas = 0;
 
 		int i = 0;
-		for (Hashtable<Long, TAp> taps : tapsRodadas) {
-			double somatorioTaps = 0;
-			Enumeration<Long> enm = taps.keys();
-			numeroAmostrasValidas = 0;
-			while(enm.hasMoreElements()){
-				TAp tap = taps.get(enm.nextElement());
-				if(tap.getInstanteTempoFinal()==null)
-					continue;
-				somatorioTaps += tap.getInstanteTempoFinal() - tap.getInstanteTempoInicial();
-				++numeroAmostrasValidas;
-			}
-			double mediaTapsDaRodada = somatorioTaps / numeroAmostrasValidas;
+		for (TAp tap : tapsRodadas) {
+			double somatorioTaps = tap.getAcumuladorTempo();
+			long quantidadeQuadros = tap.getNumeroQuadros();
+			double mediaTapsDaRodada = somatorioTaps / quantidadeQuadros;
 			mediasTapsDasRodadas[i] = mediaTapsDaRodada;
 			somaAmostras += mediaTapsDaRodada;
 		}
@@ -64,30 +55,20 @@ public class IntervaloDeConfianca {
 
 	// Calcula a média da rodada e o tamanho do intervalo de confiança da TAm.
 	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaTam(
-			Collection<Hashtable<Long, TAm>> tamsRodadas, int numRodadas) {
+			Collection<TAm> tamsRodadas, int numRodadas) {
 
 		double somaAmostras = 0;
 		double mediaAmostras = 0;
 		double somaVariancias = 0;
 		double varianciaAmostras = 0;
 		double mediasTamsDasRodadas[] = new double[numRodadas];
-		long numeroAmostrasValidas = 0;
 		
 		int i = 0;
-		for (Hashtable<Long, TAm> tams : tamsRodadas) {
-			double somatorioTams = 0;
-			numeroAmostrasValidas = 0;
-			Enumeration<Long> enm = tams.keys();
-			while(enm.hasMoreElements()){
-				TAm tam = tams.get(enm.nextElement());
-				if(tam.getInstanteTempoFinal()==null)
-					continue;
-				somatorioTams += tam.getInstanteTempoFinal() - tam.getInstanteTempoInicial();
-				++numeroAmostrasValidas;
-			}
-			double mediaTamsDaRodada = somatorioTams / numeroAmostrasValidas;
+		for (TAm tam : tamsRodadas) {
+			double somatorioTams = tam.getAcumuladorTempo();
+			long quantidadeMensagens = tam.getNumeroMensagens();
+			double mediaTamsDaRodada = somatorioTams / quantidadeMensagens;
 			mediasTamsDasRodadas[i] = mediaTamsDaRodada;
-			i++;
 			somaAmostras += mediaTamsDaRodada;
 		}
 		
@@ -241,8 +222,8 @@ public class IntervaloDeConfianca {
 	// Recupera o resultado de todos os cálculos realizados e
 	// avalia se todos convergiram para dentro do limite.
 	public static DadosFinaisDaRodada intervalosDeConfiancaDentroDoLimiteAceitavel(
-			Collection<Hashtable<Long, TAp>> tapsRodadas,
-			Collection<Hashtable<Long, TAm>> tamsRodadas,
+			Collection<TAp> tapsRodadas,
+			Collection<TAm> tamsRodadas,
 			Collection<EstatisticasColisaoRodada> estatisticasColisaoDasRodadas,
 			Collection<EstatisticasUtilizacaoRodada> estatisticasUtilizacaoDasRodadas,
 			Collection<EstatisticasVazaoRodada> estatisticasVazaoDasRodadas,

@@ -2,7 +2,6 @@ package br.com.wifeleviro.ad.util.estatisticas;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
 
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
@@ -12,21 +11,21 @@ import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
  */
 public class EstatisticasColetadas {
 
-	Collection<Hashtable<Long, TAp>> colTap;
-	Collection<Hashtable<Long, TAm>> colTam;
+	Collection<TAp> colTap;
+	Collection<TAm> colTam;
 	Collection<EstatisticasColisaoRodada> colEstatisticaColisaoRodada;
 	Collection<EstatisticasUtilizacaoRodada> colEstatisticaUtilizacaoDaRodada; 
 	Collection<EstatisticasVazaoRodada> colEstatisticaVazaoDaRodada;
 	
 	public EstatisticasColetadas(){
-		this.colTap = new ArrayList<Hashtable<Long, TAp>>();
-		this.colTam = new ArrayList<Hashtable<Long, TAm>>();
+		this.colTap = new ArrayList<TAp>();
+		this.colTam = new ArrayList<TAm>();
 		this.colEstatisticaColisaoRodada = new ArrayList<EstatisticasColisaoRodada>();
 		this.colEstatisticaUtilizacaoDaRodada = new ArrayList<EstatisticasUtilizacaoRodada>();
 		this.colEstatisticaVazaoDaRodada = new ArrayList<EstatisticasVazaoRodada>();
 	}
 	
-	public void armazenar(Hashtable<Long, TAp> tap, Hashtable<Long, TAm> tam, EstatisticasColisaoRodada colisao, EstatisticasUtilizacaoRodada utilizacao, EstatisticasVazaoRodada vazao){
+	public void armazenar(TAp tap, TAm tam, EstatisticasColisaoRodada colisao, EstatisticasUtilizacaoRodada utilizacao, EstatisticasVazaoRodada vazao){
 		this.colTap.add(tap);  
 		this.colTam.add(tam);
 		this.colEstatisticaColisaoRodada.add(colisao);
@@ -34,10 +33,10 @@ public class EstatisticasColetadas {
 		this.colEstatisticaVazaoDaRodada.add(vazao);
 	}
 	
-	public Collection<Hashtable<Long, TAp>> getColTap() {
+	public Collection<TAp> getColTap() {
 		return colTap;
 	}
-	public Collection<Hashtable<Long, TAm>> getColTam() {
+	public Collection<TAm> getColTam() {
 		return colTam;
 	}
 	public Collection<EstatisticasColisaoRodada> getColEstatisticaColisaoRodada() {

@@ -7,7 +7,7 @@ public class MeioFisico {
 
 	// Calcula o atraso de transmissão no meio de acordo com a distância informada.
 	public static double calculaTempoPropagacao(double distancia){
-		return ((5 * 0.000001) * distancia) / 1000;
+		return (double)(((5 * 0.000001) * distancia) / 1000);
 	}
 	
 }

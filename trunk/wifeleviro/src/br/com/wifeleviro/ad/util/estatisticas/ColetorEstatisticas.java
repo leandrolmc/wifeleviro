@@ -147,8 +147,14 @@ public class ColetorEstatisticas {
 	public void iniciaColetaTap(int rodada, int idEstacao, long idQuadro, double tempoInicio) {
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
 		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Sobrescreve na Hashtable o tap inicial para o quadro idQuadro.
-			this.estatisticas[idEstacao].tapInicial.put(idQuadro, tempoInicio);
+			// Verifica se já existe medição de início de TAp para o quadro.
+			Double metricaArmazenada = this.estatisticas[idEstacao].tapInicial.get(idQuadro);
+			// Só armazena se não existe ainda medição.
+			if(metricaArmazenada == null){
+				this.estatisticas[idEstacao].tapInicial.put(idQuadro, tempoInicio);
+			}
+			
+			
 		}
 	}
 

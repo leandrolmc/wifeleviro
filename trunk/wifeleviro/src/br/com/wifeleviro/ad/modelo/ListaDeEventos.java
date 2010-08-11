@@ -1,6 +1,6 @@
 package br.com.wifeleviro.ad.modelo;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,7 +12,7 @@ public class ListaDeEventos {
 	// Árvore rubro-negra indexada pelo instante de tempo (Double) de simulação
 	// e armazena em cada instante de tempo um vetor de Evento´s a serem
 	// tratados no mesmo.
-	private TreeMap<Double, ArrayList<Evento>> tree;
+	private TreeMap<Double, LinkedList<Evento>> tree;
 	
 	// Instante de tempo atual de simulação.
 	private double instanteDeTempo;
@@ -39,7 +39,7 @@ public class ListaDeEventos {
 	
 	// Construtor inicial padrão.
 	public ListaDeEventos(){
-		tree = new TreeMap<Double, ArrayList<Evento>>();
+		tree = new TreeMap<Double, LinkedList<Evento>>();
 		this.instanteDeTempo = 0;
 	}
 	
@@ -49,9 +49,9 @@ public class ListaDeEventos {
 	public void put(double instanteDeTempo, Evento e){
 		if (instanteDeTempo < 0)
 			System.out.println("INSTANTE DE TEMPO: "+instanteDeTempo+" | EVENTO: "+e.getTipoEvento());
-		ArrayList<Evento> col = tree.get(instanteDeTempo);
+		LinkedList<Evento> col = tree.get(instanteDeTempo);
 		if(col == null){
-			col = new ArrayList<Evento>();
+			col = new LinkedList<Evento>();
 		}
 		col.add(e);
 		tree.put(instanteDeTempo, col);
@@ -60,9 +60,9 @@ public class ListaDeEventos {
 	// Recupera o próximo evento a ser tratado no simulador.
 	public ProximoEvento proximoEvento(){
 		this.instanteDeTempo = (Double)tree.firstKey();
-		ArrayList<Evento> eventos = (ArrayList<Evento>)tree.get(this.instanteDeTempo);
+		LinkedList<Evento> eventos = (LinkedList<Evento>)tree.get(this.instanteDeTempo);
 		tree.remove(this.instanteDeTempo);
-		Evento proximoEvento = eventos.remove(0);
+		Evento proximoEvento = eventos.pollFirst();
 		if(eventos.size()>0)
 			tree.put(this.instanteDeTempo, eventos);
 		return new ProximoEvento(this.instanteDeTempo, proximoEvento);
@@ -73,11 +73,11 @@ public class ListaDeEventos {
 	public Evento removeEvento(int terminal, int tipoEvento){
 		
 		Evento saida = null;
-		Map<Double, ArrayList<Evento>> treeTmp = new TreeMap<Double, ArrayList<Evento>>();
+		Map<Double, LinkedList<Evento>> treeTmp = new TreeMap<Double, LinkedList<Evento>>();
 			
 		while(saida == null && !tree.isEmpty()){
 			double instanteTmp = (Double)tree.firstKey();
-			ArrayList<Evento> eventos = (ArrayList<Evento>)tree.get(instanteTmp);
+			LinkedList<Evento> eventos = (LinkedList<Evento>)tree.get(instanteTmp);
 			tree.remove(instanteTmp);
 			for(Evento evento : eventos){
 				if(evento.getTerminalOrigem() == terminal && evento.getTipoEvento() == tipoEvento){

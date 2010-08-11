@@ -68,8 +68,18 @@ public class Orquestrador {
 		// inicializa uma variável de coleta de estatísticas para cada terminal ativo e 
 		// atualiza a variável inicioRodada para o instante de tempo mínimo gerado o evento
 		// GERAR_MENSAGEM dentre os terminais ativos.
+//		for (int i = 0; i < numTerminais; i++) {
+//			listaEventos.put(pc[i].getInstanteTempoInicial(), new Evento(Evento.GERAR_MENSAGEM, i, null));
+//			inicioRodada = Math.min(inicioRodada, pc[i].getInstanteTempoInicial());
+//			statsColetadas[i] = new EstatisticasColetadas();
+//		}
+		
+		
 		for (int i = 0; i < numTerminais; i++) {
-			listaEventos.put(pc[i].getInstanteTempoInicial(), new Evento(Evento.GERAR_MENSAGEM, i, null));
+			if(i == 0)
+				listaEventos.put(0, new Evento(Evento.GERAR_MENSAGEM, i, null));
+			else
+				listaEventos.put(0.04, new Evento(Evento.GERAR_MENSAGEM, i, null));
 			inicioRodada = Math.min(inicioRodada, pc[i].getInstanteTempoInicial());
 			statsColetadas[i] = new EstatisticasColetadas();
 		}
@@ -116,7 +126,7 @@ public class Orquestrador {
 			double fimDaRodada = 0;
 
 			// Loop de eventos. Cada passagem no loop é o tratamento de um evento.
-			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 1000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 500000)) {
+			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 10000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 1000000)) {
 				
 				// Recupera da lista de eventos o próximo evento a ser executado.
 				ProximoEvento proximo = listaEventos.proximoEvento();

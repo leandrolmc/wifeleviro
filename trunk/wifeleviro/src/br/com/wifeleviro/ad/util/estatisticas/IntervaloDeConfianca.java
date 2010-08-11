@@ -35,6 +35,7 @@ public class IntervaloDeConfianca {
 			double mediaTapsDaRodada = somatorioTaps / quantidadeQuadros;
 			mediasTapsDasRodadas[i] = mediaTapsDaRodada;
 			somaAmostras += mediaTapsDaRodada;
+			i++;
 		}
 
 		mediaAmostras = somaAmostras / numRodadas;
@@ -70,6 +71,7 @@ public class IntervaloDeConfianca {
 			double mediaTamsDaRodada = somatorioTams / quantidadeMensagens;
 			mediasTamsDasRodadas[i] = mediaTamsDaRodada;
 			somaAmostras += mediaTamsDaRodada;
+			i++;
 		}
 		
 		mediaAmostras = somaAmostras / numRodadas;

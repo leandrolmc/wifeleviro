@@ -252,11 +252,8 @@ public class IntervaloDeConfianca {
 		double mediaVazao = vazao.getMediaDasAmostras();
 		double tamanhoICVazao = vazao.getTamanhoDoIntervaloDeConfianca();
 		
-		if(numRodadas > 110)
-			System.out.print("");
-		
 		boolean dentroDoLimite = (
-			(tamanhoICTap < (0.1*mediaTap)) &&
+			(tamanhoICTap <= (0.1*mediaTap)) &&
 			(tamanhoICTam <= (0.1*mediaTam)) &&
 			(tamanhoICNcm <= (0.1*mediaNcm)) &&
 			(tamanhoICUtilizacao <= (0.1*mediaUtilizacao)) &&

@@ -23,7 +23,7 @@ public class Simulador {
 			// Cenário ZERO representa os testes de correção.
 			
 			if(cenario == -2){
-				verbose = true;
+				verbose = false;
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1);
 				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1);

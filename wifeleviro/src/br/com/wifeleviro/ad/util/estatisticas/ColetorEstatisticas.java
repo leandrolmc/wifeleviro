@@ -166,13 +166,13 @@ public class ColetorEstatisticas {
 			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
 			Double tapInicial = this.estatisticas[idEstacao].tapInicial.get(idQuadro);
 			if(tapInicial != null){
-				if(idQuadro == Long.parseLong("2264481405333146469"))
-					System.out.println("");
+//				if(idQuadro == Long.parseLong("2264481405333146469"))
+//					System.out.print("");
 				
 				// Seta o instante final de tap para o tempo indicado.
 				double tap = tempoFim - tapInicial;
-				if(tap > 0)
-					System.out.println("");
+//				if(tap > 0)
+//					System.out.print("");
 				// Acumula o valor do tap no somatório de todos os tap´s.
 				this.estatisticas[idEstacao].tap.acumularTempo(tap);
 			}

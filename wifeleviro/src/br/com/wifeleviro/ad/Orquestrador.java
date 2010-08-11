@@ -71,23 +71,23 @@ public class Orquestrador {
 		// inicializa uma variável de coleta de estatísticas para cada terminal ativo e 
 		// atualiza a variável inicioRodada para o instante de tempo mínimo gerado o evento
 		// GERAR_MENSAGEM dentre os terminais ativos.
-//		for (int i = 0; i < numTerminais; i++) {
-//			listaEventos.put(pc[i].getInstanteTempoInicial(), new Evento(Evento.GERAR_MENSAGEM, i, null));
-//			inicioRodada = Math.min(inicioRodada, pc[i].getInstanteTempoInicial());
-//			statsColetadas[i] = new EstatisticasColetadas();
-//		}
-		
-		
 		for (int i = 0; i < numTerminais; i++) {
-			if(i == 0)
-				listaEventos.put(0, new Evento(Evento.GERAR_MENSAGEM, i, null));
-			else{
-				listaEventos.put(0.0007, new Evento(Evento.GERAR_MENSAGEM, i, null));
-//				listaEventos.put(0.04, new Evento(Evento.GERAR_MENSAGEM, i, null));
-			}
+			listaEventos.put(pc[i].getInstanteTempoInicial(), new Evento(Evento.GERAR_MENSAGEM, i, null));
 			inicioRodada = Math.min(inicioRodada, pc[i].getInstanteTempoInicial());
 			statsColetadas[i] = new EstatisticasColetadas();
 		}
+		
+		
+//		for (int i = 0; i < numTerminais; i++) {
+//			if(i == 0)
+//				listaEventos.put(0, new Evento(Evento.GERAR_MENSAGEM, i, null));
+//			else{
+//				listaEventos.put(0.0007, new Evento(Evento.GERAR_MENSAGEM, i, null));
+////				listaEventos.put(0.04, new Evento(Evento.GERAR_MENSAGEM, i, null));
+//			}
+//			inicioRodada = Math.min(inicioRodada, pc[i].getInstanteTempoInicial());
+//			statsColetadas[i] = new EstatisticasColetadas();
+//		}
 
 		// Zera o coletor de estatísticas.
 		ColetorEstatisticas coletor = null;
@@ -147,6 +147,9 @@ public class Orquestrador {
 				// vinculada a este quadro.
 				if(e.getQuadro() != null){
 					msg = e.getQuadro().getMensagem();
+					if(msg.getId()==Long.parseLong("8995691935100721120"))
+						System.out.print("");
+					
 					if(e.getQuadro().getId()==Long.parseLong("2264481405333146469"))
 						System.out.print("");
 				}
@@ -159,7 +162,6 @@ public class Orquestrador {
 					case Evento.GERAR_MENSAGEM:
 						tratarEventoGerarMensagem(this.rodadaAtual, coletor, pc, listaEventos, e);
 						++this.qtdMensagensNaRodada;
-							System.out.print("------>>>");
 							verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
 									""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
 										"SEM QUADROS", "Gerar Mensagem");
@@ -364,6 +366,11 @@ public class Orquestrador {
 				pc[terminalAtual].setInstanteTempoColisao(instanteAtual);
 				
 				quadro.incColisoes();
+
+				// Caso a rodada do quadro cancelado seja igual a rodada atual,
+				// coleto amostra de colisão na mensagem.
+				if(quadro.getRodada() == rodadaAtual)
+					coletor.coletaColisaoPorMensagem(rodadaAtual, terminalAtual, quadro.getMensagem().getId());
 				
 				// Cria uma mensagem específica de colisão com um único quadro
 				// que será transmitido forçado a partir deste instante de tempo
@@ -541,6 +548,41 @@ public class Orquestrador {
 																		Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadroCancelado));
 						pc[terminalAtual].setInstanteTempoInicioUltimaTx(instanteTempoAleatorioEscolhido);
 						lista.put(instanteTempoAleatorioEscolhido, retransmissaoMensagemPendente);
+					}else{
+						Mensagem m = quadroCancelado.getMensagem();
+						// Decrementa o quadro que foi descartado.
+						m.decrementaNumeroQuadroRestantesParaTransmissao();
+						// Caso a mensagem ainda tenha quadros pendente para transmissão
+						// cria um novo evento INICIO_TX_PC e o coloca na lista de eventos.
+						if(m.getNumeroQuadroRestantesParaTransmissao() > 0){
+							Quadro novoQuadro = new Quadro(rodadaAtual, terminalAtual, null, m);	
+							pc[terminalAtual].processarMensagemServico(novoQuadro);
+							
+							// Calculo o novo instante de tempo a partir do final da transmissão do reforço de colisão.
+							double instanteTempoAleatorioEscolhido = (double)(instanteAtual + Mensagem.TEMPO_TRANSMISSAO_REFORCO_COLISAO + 
+																			Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadroCancelado));
+							double instanteTempoProximoQuadro = instanteTempoAleatorioEscolhido;
+							Evento proximoQuadro = new Evento(Evento.INICIO_TX_PC, terminalAtual, pc[terminalAtual].getQuadroEmServico());
+							lista.put(instanteTempoProximoQuadro, proximoQuadro);
+						// Do contrário, coleta o fim de TAm e verifica se há nova mensagem
+						// para ser transmitida.
+						}else{
+							if(m.getTipoMensagem() == Mensagem.MENSAGEM_PADRAO){
+								if(rodadaAtual > 0)
+									coletor.finalizaColetaTam(m.getRodada(), terminalAtual, m.getId(), quadroCancelado.getInstanteTempoInicioTx());
+								pc[terminalAtual].mensagemEmServicoFinalizada();
+								
+								if(pc[terminalAtual].temMensagemEmServico()){
+									// Calculo o novo instante de tempo a partir do final da transmissão do reforço de colisão.
+									double instanteTempoAleatorioEscolhido = (double)(instanteAtual + Mensagem.TEMPO_TRANSMISSAO_REFORCO_COLISAO + 
+																					Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadroCancelado));
+									double instanteTempoProximaMensagem = instanteTempoAleatorioEscolhido;
+									Evento proximaMensagem = new Evento(Evento.INICIO_TX_PC, terminalAtual, pc[terminalAtual].getQuadroEmServico());
+									lista.put(instanteTempoProximaMensagem, proximaMensagem);
+									coletor.iniciaColetaTam(rodadaAtual, terminalAtual, pc[terminalAtual].getQuadroEmServico().getMensagem().getId(), instanteTempoProximaMensagem);
+								}
+							}
+						}
 					}			
 				}
 			}
@@ -599,6 +641,9 @@ public class Orquestrador {
 	// Calcula o atraso do binary backoff segundo o algoritmo.
 	private static double gerarAtrasoAleatorioBinaryBackoff(Quadro quadroPendente) {
 
+		if(quadroPendente.getMensagem().getId() == Long.parseLong("8995691935100721120"))
+			System.out.print("");
+		
 		int numColisoes = quadroPendente.getColisoes();
 		numColisoes = Math.min(10, numColisoes);
 

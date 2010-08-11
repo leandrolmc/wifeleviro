@@ -18,15 +18,28 @@ public class Simulador {
 			
 			int qtdTerminais = 0;
 			Terminal[] terminais = null;
-
+			boolean verbose = false;
+			
 			// Cenário ZERO representa os testes de correção.
-			if(cenario == -1){
+			
+			if(cenario == -2){
+				verbose = true;
+				qtdTerminais = 2;
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1);
+				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1);
+				terminais = new Terminal[qtdTerminais]; 
+				terminais[0] = pc1;
+				terminais[1] = pc2;
+			
+			}else if(cenario == -1){
+				verbose = false;
 				qtdTerminais = 1;
 				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
 				terminais = new Terminal[qtdTerminais];
 				terminais[0] = pc1;
 			
 			}else if(cenario == 0){
+				verbose = false;
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
 				Terminal pc2 = new Terminal(1, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
@@ -75,7 +88,7 @@ public class Simulador {
 				System.out.println("O cenário informado não existe.");
 			}
 				
-			Orquestrador orch = new Orquestrador(qtdTerminais, terminais);
+			Orquestrador orch = new Orquestrador(qtdTerminais, terminais, verbose);
 			
 			System.out.println("INICIO DA SIMULACAO: "+(new SimpleDateFormat("HH:mm:ss").format(new GregorianCalendar().getTime())));
 			

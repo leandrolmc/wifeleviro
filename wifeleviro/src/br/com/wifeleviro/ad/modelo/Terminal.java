@@ -1,6 +1,6 @@
 package br.com.wifeleviro.ad.modelo;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 
@@ -19,8 +19,6 @@ public class Terminal{
 	
 	private double pMensagens;
 	
-	private ArrayList<Evento> quadrosPendentes; 
-	
 	private int id;
 	private double distanciaHub;
 	
@@ -36,8 +34,12 @@ public class Terminal{
 	
 	private boolean emColisao;
 	private double instanteTempoColisao;
+	private int fluxosChegando;
 	
 	private boolean forcarTransmissao;
+	
+	private LinkedList<Quadro> filaEspera;
+	private Quadro filaServico;
 	
 	public Terminal(int id, double distanciaHub, int tipo, double periodo, double pMensagens) {
 		this.id = id;
@@ -55,9 +57,54 @@ public class Terminal{
 		this.setIdTerminalUltimoRx(-1);
 		this.setEmColisao(false);
 		this.instanteTempoColisao = -1;
-		this.quadrosPendentes = new ArrayList<Evento>();
 		this.txOcupado = false;
 		this.setForcarTransmissao(false);
+		
+		this.filaEspera = new LinkedList<Quadro>();
+		this.filaServico = null;
+		
+		this.fluxosChegando = 0;
+	}
+	
+	public void incFluxosChegando(){
+		++this.fluxosChegando;
+	}
+	
+	public void decFluxosChegando(){
+		--this.fluxosChegando;
+	}
+	
+	public int getQtdFluxosChegando(){
+		return this.fluxosChegando;
+	}
+	
+	public void novaChegadaFila(Quadro q){
+		if(this.filaServico == null && this.filaEspera.isEmpty())
+			this.filaServico = q;
+		else
+			this.filaEspera.add(q);
+	}
+	
+	public void processarMensagemServico(Quadro proximoQuadro){
+		this.filaServico = proximoQuadro;
+	}
+	
+	public void mensagemEmServicoFinalizada(){
+		this.colocarProximaMensagemEmServico();
+	}
+	
+	private void colocarProximaMensagemEmServico(){
+		this.filaServico = this.filaEspera.pollFirst();
+	}
+	
+	public Quadro getQuadroEmServico(){
+		return this.filaServico;
+	}
+	
+	public boolean temMensagemEmServico(){
+		if(this.filaServico != null)
+			return true;
+		return false;
 	}
 	
 	public double getInstanteTempoInicial(){
@@ -161,21 +208,6 @@ public class Terminal{
 		return instanteTempoColisao;
 	}
 	
-	public void enfileirarQuadroPendente(Evento eventoInicioTx) throws Exception{
-		if(eventoInicioTx.getTipoEvento() != Evento.INICIO_TX_PC)
-			throw new Exception("Impossível armazenar este evento na fila de mensagens pendentes.");
-		this.quadrosPendentes.add(eventoInicioTx);
-	}
-	
-	public Evento proximoEventoQuadroPendente(){
-		Evento proximoEvento = this.quadrosPendentes.remove(0);
-		return proximoEvento;
-	}
-	
-	public boolean temQuadrosPendentes(){
-		return (this.quadrosPendentes.size()>0);
-	}
-
 	public void setTxOcupado(boolean txOcupado) {
 		this.txOcupado = txOcupado;
 	}

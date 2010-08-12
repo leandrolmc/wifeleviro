@@ -214,19 +214,9 @@ public class ColetorEstatisticas {
 	// quadro qualquer, identificando a mensagem transmitida, da qual o quadro 
 	// faz parte, e a estação, de modo que seja possível calcular a média de 
 	// colisões por mensagem, por estação.
-	public void coletaColisaoPorMensagem(int rodada, int idEstacao, long idMensagem){
+	public void coletaColisaoPorMensagem(int rodada, int idEstacao, long idMensagem, long numeroDeColisoes){
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
 		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Recupera o número de colisões registradas na hashtable para a mensagem
-			// identificada por idMensagem.
-			Long numeroDeColisoes = (Long)this.estatisticas[idEstacao].colisoesPorMensagem.get(idMensagem);
-			// Caso não haja registro na hashtable referente a colisões desta mensagem,
-			// o contador de colisões é iniciado com o valor 0 (ZERO).
-			if(numeroDeColisoes == null){
-				numeroDeColisoes = (long)0;
-			}
-			// Incrementa o número de colisões registradas.
-			numeroDeColisoes = numeroDeColisoes + 1;
 			// Armazena na hashtable as colisões contabilizadas até o momento.
 			this.estatisticas[idEstacao].colisoesPorMensagem.put(idMensagem, numeroDeColisoes);
 		}

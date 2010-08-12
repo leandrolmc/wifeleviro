@@ -74,6 +74,7 @@ public class Quadro {
 	
 	public void incColisoes(){
 		++this.colisoes;
+		this.mensagem.incNumeroColisoes();
 	}
 	
 	public long getId(){

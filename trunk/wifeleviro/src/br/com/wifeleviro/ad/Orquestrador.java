@@ -131,7 +131,7 @@ public class Orquestrador {
 			double fimDaRodada = 0;
 
 			// Loop de eventos. Cada passagem no loop é o tratamento de um evento.
-			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 1000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 300000)) {
+			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 2000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 1000000)) {
 				
 				// Recupera da lista de eventos o próximo evento a ser executado.
 				ProximoEvento proximo = listaEventos.proximoEvento();
@@ -369,8 +369,8 @@ public class Orquestrador {
 
 				// Caso a rodada do quadro cancelado seja igual a rodada atual,
 				// coleto amostra de colisão na mensagem.
-				if(quadro.getRodada() == rodadaAtual)
-					coletor.coletaColisaoPorMensagem(rodadaAtual, terminalAtual, quadro.getMensagem().getId());
+//				if(quadro.getRodada() == rodadaAtual)
+//					coletor.coletaColisaoPorMensagem(rodadaAtual, terminalAtual, quadro.getMensagem().getId());
 				
 				// Cria uma mensagem específica de colisão com um único quadro
 				// que será transmitido forçado a partir deste instante de tempo
@@ -440,9 +440,10 @@ public class Orquestrador {
 		m.decrementaNumeroQuadroRestantesParaTransmissao();
 		
 		// Coleta a amostra de transmissão de um quadro para a mensagem.
-		if(m.getRodada()==rodadaAtual)
+		if(m.getRodada()==rodadaAtual){
 			coletor.coletaQuadroPorMensagem(rodadaAtual, terminalAtual, m.getId());
-
+		}
+			
 		// Caso a mensagem ainda tenha quadros pendente para transmissão
 		// cria um novo evento INICIO_TX_PC e o coloca na lista de eventos.
 		if(m.getNumeroQuadroRestantesParaTransmissao() > 0){
@@ -456,8 +457,10 @@ public class Orquestrador {
 		// para ser transmitida.
 		}else{
 			if(m.getTipoMensagem() == Mensagem.MENSAGEM_PADRAO){
-				if(rodadaAtual > 0)
+				if(rodadaAtual > 0){
 					coletor.finalizaColetaTam(m.getRodada(), terminalAtual, m.getId(), quadro.getInstanteTempoInicioTx());
+					coletor.coletaColisaoPorMensagem(m.getRodada(), terminalAtual, m.getId(), m.getNumeroColisoes());
+				}
 				pc[terminalAtual].mensagemEmServicoFinalizada();
 				
 				if(pc[terminalAtual].temMensagemEmServico()){
@@ -515,6 +518,11 @@ public class Orquestrador {
 				pc[terminalAtual].setEmColisao(true);
 				pc[terminalAtual].setInstanteTempoColisao(instanteAtual);
 				
+				// Caso a rodada do quadro cancelado seja igual a rodada atual,
+				// coleto amostra de colisão na mensagem.
+//				if(quadro.getRodada() == rodadaAtual)
+//					coletor.coletaColisaoPorMensagem(rodadaAtual, terminalAtual, quadro.getMensagem().getId());
+				
 				// Cria uma mensagem específica de colisão com um único quadro
 				// que será transmitido forçado a partir deste instante de tempo
 				// pelo tempo de transmissão de um reforço de colisão.
@@ -531,11 +539,6 @@ public class Orquestrador {
 				if(fimTxCancelado != null){
 					// Recupero o quadro cancelado.
 					Quadro quadroCancelado = fimTxCancelado.getQuadro();
-					
-					// Caso a rodada do quadro cancelado seja igual a rodada atual,
-					// coleto amostra de colisão na mensagem.
-					if(quadroCancelado.getRodada() == rodadaAtual)
-						coletor.coletaColisaoPorMensagem(rodadaAtual, terminalAtual, quadroCancelado.getMensagem().getId());
 					
 					// Incremento o número de colisões no quadro e o coloco na lista em tempo de INICIO_TX_PC
 					// recalculado pelo binary backoff.
@@ -568,8 +571,10 @@ public class Orquestrador {
 						// para ser transmitida.
 						}else{
 							if(m.getTipoMensagem() == Mensagem.MENSAGEM_PADRAO){
-								if(rodadaAtual > 0)
+								if(rodadaAtual > 0){
 									coletor.finalizaColetaTam(m.getRodada(), terminalAtual, m.getId(), quadroCancelado.getInstanteTempoInicioTx());
+									coletor.coletaColisaoPorMensagem(m.getRodada(), terminalAtual, m.getId(), m.getNumeroColisoes());
+								}
 								pc[terminalAtual].mensagemEmServicoFinalizada();
 								
 								if(pc[terminalAtual].temMensagemEmServico()){
@@ -641,9 +646,6 @@ public class Orquestrador {
 	// Calcula o atraso do binary backoff segundo o algoritmo.
 	private static double gerarAtrasoAleatorioBinaryBackoff(Quadro quadroPendente) {
 
-		if(quadroPendente.getMensagem().getId() == Long.parseLong("8995691935100721120"))
-			System.out.print("");
-		
 		int numColisoes = quadroPendente.getColisoes();
 		numColisoes = Math.min(10, numColisoes);
 

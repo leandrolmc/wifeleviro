@@ -23,6 +23,8 @@ public class Mensagem {
 	private int numeroQuadroRestantesParaTransmissao;
 	private int tipoMensagem;
 	
+	private long numeroColisoes;
+	
 	public Mensagem(int rodada){
 		setId(new GregorianCalendar().getTimeInMillis());
 		this.setTipoMensagem(REFORCO_COLISAO);
@@ -37,6 +39,8 @@ public class Mensagem {
 		setId(GeradorRandomicoSingleton.getInstance().gerarProximoRandomicoAuxiliar());
 		this.setTipoMensagem(MENSAGEM_PADRAO);
 		
+		this.numeroColisoes = 0;
+		
 		if(p > 0 && p < 1){
 			double q = 1 - p;
 			Random r = new Random();
@@ -45,6 +49,14 @@ public class Mensagem {
 			this.numeroQuadros = (long)p;
 		}
 		this.numeroQuadroRestantesParaTransmissao = (int)this.numeroQuadros;
+	}
+	
+	public void incNumeroColisoes(){
+		++this.numeroColisoes;
+	}
+	
+	public long getNumeroColisoes(){
+		return this.numeroColisoes;
 	}
 	
 	public long getNumeroQuadros() {

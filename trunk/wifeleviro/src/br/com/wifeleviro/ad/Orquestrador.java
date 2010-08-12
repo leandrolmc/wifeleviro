@@ -77,18 +77,6 @@ public class Orquestrador {
 			statsColetadas[i] = new EstatisticasColetadas();
 		}
 		
-		
-//		for (int i = 0; i < numTerminais; i++) {
-//			if(i == 0)
-//				listaEventos.put(0, new Evento(Evento.GERAR_MENSAGEM, i, null));
-//			else{
-//				listaEventos.put(0.0007, new Evento(Evento.GERAR_MENSAGEM, i, null));
-////				listaEventos.put(0.04, new Evento(Evento.GERAR_MENSAGEM, i, null));
-//			}
-//			inicioRodada = Math.min(inicioRodada, pc[i].getInstanteTempoInicial());
-//			statsColetadas[i] = new EstatisticasColetadas();
-//		}
-
 		// Zera o coletor de estatísticas.
 		ColetorEstatisticas coletor = null;
 		// Inicializo com true para compor corretamente o and final.
@@ -131,7 +119,7 @@ public class Orquestrador {
 			double fimDaRodada = 0;
 
 			// Loop de eventos. Cada passagem no loop é o tratamento de um evento.
-			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 2000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 1000000)) {
+			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 1000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 300000)) {
 				
 				// Recupera da lista de eventos o próximo evento a ser executado.
 				ProximoEvento proximo = listaEventos.proximoEvento();

@@ -22,11 +22,11 @@ public class Simulador {
 			
 			// Cenário ZERO representa os testes de correção.
 			
-			if(cenario == -2){
+			/*if(cenario == -2){
 				verbose = false;
 				qtdTerminais = 2;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1);
-				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 10);
+				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 10);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
@@ -48,7 +48,7 @@ public class Simulador {
 				terminais[1] = pc2;
 				
 			
-			}else if(cenario == 1){
+			}else*/ if(cenario == 1){
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
 				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);

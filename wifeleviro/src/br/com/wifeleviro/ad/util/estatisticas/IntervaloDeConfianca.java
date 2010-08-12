@@ -255,7 +255,7 @@ public class IntervaloDeConfianca {
 		boolean dentroDoLimite = (
 			(tamanhoICTap <= (0.1*mediaTap)) &&
 			(tamanhoICTam <= (0.1*mediaTam)) &&
-			(tamanhoICNcm <= (0.1*mediaNcm)) &&
+//			(tamanhoICNcm <= (0.1*mediaNcm)) &&
 			(tamanhoICUtilizacao <= (0.1*mediaUtilizacao)) &&
 			(tamanhoICVazao < (0.1*mediaVazao))
 		);

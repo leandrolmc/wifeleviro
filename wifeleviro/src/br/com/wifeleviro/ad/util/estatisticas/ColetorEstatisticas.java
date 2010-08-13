@@ -1,12 +1,9 @@
 package br.com.wifeleviro.ad.util.estatisticas;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Hashtable;
 
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
-import br.com.wifeleviro.ad.util.estatisticas.metricas.Utilizacao;
 
 // Classe única de coleta dos dados estatísticos para avaliação do programa.
 // O padrão singleton utilizado garante que não exista mais que uma intância 
@@ -53,15 +50,7 @@ public class ColetorEstatisticas {
 
 		protected TAp tap;
 		
-		// Hashtable que irá armazenar as coletas dos tempos de acesso de cada
-		// quadro para medição dos TAp´s.
-		protected Hashtable<Long, Double> tapInicial;
-
 		protected TAm tam;		
-		
-		// Hashtable que irá armazenar as coletas dos tempos de acesso de cada
-		// mensagem para medição dos TAm´s.
-		protected Hashtable<Long, Double> tamInicial;
 		
 		// Hashtable indexada pelo identificador da mensagem que armazena
 		// o número de colisões ocorridas na mensagem.
@@ -72,10 +61,10 @@ public class ColetorEstatisticas {
 		
 		// Armazena os instantes de tempo iniciais de utilização por quadro,
 		// independente se este é um quadro normal ou de reforço de colisão.
-		protected Hashtable<Long, Double> utilizacaoInicial;
+		protected Hashtable<Integer, Double> utilizacaoInicial;
 		
 		// Armazena os pares de início e fim de utilização do meio.
-		protected Collection<Utilizacao> utilizacao;
+		protected double utilizacao;
 		
 		// Contador inicializado em zero do número de quadros que
 		// atingiram RX do HUB com sucesso durante a rodada.
@@ -84,30 +73,18 @@ public class ColetorEstatisticas {
 		// Inicialização com valores padrão ou instanciação de classe.
 		protected Estatisticas(){
 			tap = new TAp();
-			tapInicial = new Hashtable<Long, Double>();
 			tam = new TAm();
-			tamInicial = new Hashtable<Long, Double>();
 			colisoesPorMensagem = new Hashtable<Long, Long>();
 			quadrosPorMensagem = new Hashtable<Long, Long>();
-			utilizacaoInicial = new Hashtable<Long, Double>();
-			utilizacao = new ArrayList<Utilizacao>();
+			utilizacaoInicial = new Hashtable<Integer, Double>();
+			utilizacao = 0;
 			numeroQuadrosTransmitidosComSucesso = (long)0;
-		}
-		
-		// Método de simples recuperação da Hashtable de TAp's iniciais.
-		public Hashtable<Long, Double> getTapInicial() {
-			return tapInicial;
 		}
 		
 		public TAp getTap(){
 			return this.tap; 
 		}
 
-		// Método de simples recuperação da coleção de TAm's.
-		public Hashtable<Long, Double> getTamInicial() {
-			return tamInicial;
-		}
-		
 		public TAm getTam(){
 			return this.tam;
 		}
@@ -128,7 +105,7 @@ public class ColetorEstatisticas {
 
 		// Método simples para recuperação da coleção
 		// de instantes iniciais e finais de períodos ocupados.
-		public Collection<Utilizacao> getUtilizacao() {
+		public double getUtilizacao() {
 			return this.utilizacao;
 		}
 
@@ -140,71 +117,29 @@ public class ColetorEstatisticas {
 	}
 
 	// Coleta de E[Tap(i)] (tempo de acesso de um quadro na estação i)
-
-	// Coleta o valor do tempo quando do início do acesso de um quadro na
-	// estação i. Todo quadro tem um identificador único que irá indexá-lo
-	// na hash de armazenamento do tempo.
-	public void iniciaColetaTap(int rodada, int idEstacao, long idQuadro, double tempoInicio) {
+	// Coleta os valores do tempo quando do fim do acesso de um quadro na estação i.
+	public void coletaTap(int rodadaDoQuadro, int idEstacao, double inicioAcesso, double fimAcesso) {
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Verifica se já existe medição de início de TAp para o quadro.
-			Double metricaArmazenada = this.estatisticas[idEstacao].tapInicial.get(idQuadro);
-			// Só armazena se não existe ainda medição.
-			if(metricaArmazenada == null){
-				this.estatisticas[idEstacao].tapInicial.put(idQuadro, tempoInicio);
-			}
-			
-			
-		}
-	}
+		if(rodadaDoQuadro==this.rodadaAtual && this.rodadaAtual > 0){
 
-	// Coleta o valor do tempo quando do fim do acesso 
-	// de um quadro na estação i. Lógica similar a iniciaColetaTap.
-	public void finalizaColetaTap(int rodada, int idEstacao, long idQuadro, double tempoFim) {
-		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Recupera da hashtable as medições de TAp para o quadro idQuadro.
-			Double tapInicial = this.estatisticas[idEstacao].tapInicial.get(idQuadro);
-			if(tapInicial != null){
-//				if(idQuadro == Long.parseLong("2264481405333146469"))
-//					System.out.print("");
-				
-				// Seta o instante final de tap para o tempo indicado.
-				double tap = tempoFim - tapInicial;
-//				if(tap > 0)
-//					System.out.print("");
-				// Acumula o valor do tap no somatório de todos os tap´s.
-				this.estatisticas[idEstacao].tap.acumularTempo(tap);
-			}
+			double tap = fimAcesso - inicioAcesso;
+
+			// Acumula o valor do tap no somatório de todos os tap´s.
+			this.estatisticas[idEstacao].tap.acumularTempo(tap);
 		}
 	}
 	
-	// Coleta de E[Tam(i)]
-
-	// Coleta o valor do tempo quando do início do acesso de uma mensagem na
-	// estação i. Toda mensagem tem um identificador único que irá indexá-la
-	// na hash de armazenamento do tempo.
-	public void iniciaColetaTam(int rodada, int idEstacao, long idMensagem, double tempoInicio) {
-		// Só armazena estatísticas quando a mensagem é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Sobrescreve na Hashtable o tam inicial para a mensagem idMensagem.
-			this.estatisticas[idEstacao].tamInicial.put(idMensagem, tempoInicio);
-		}
-	}
-
+	// Coleta de E[Tam(i)] (tempo de acesso de uma mensagem na estação i)
 	// Coleta o valor do tempo quando do fim do acesso 
-	// de uma mensagem na estação i. Lógica similar a iniciaColetaTam.
-	public void finalizaColetaTam(int rodada, int idEstacao, long idMensagem, double tempoFim) {
+	// de uma mensagem na estação i. Lógica similar a coletaTap.
+	public void coletaTam(int rodadaDaMensagem, int idEstacao, double inicioAcesso, double fimAcesso) {
 		// Só armazena estatísticas quando a mensagem é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Recupera da hashtable as medições de TAm para a mensagem idMensagem.
-			Double tamInicial = this.estatisticas[idEstacao].tamInicial.get(idMensagem);
-			if(tamInicial != null){
-				// Seta o instante final de tam para o tempo indicado.
-				double tam = tempoFim - tamInicial;
-				// Acumula o valor do tam no somatório de todos os tam´s.
-				this.estatisticas[idEstacao].tam.acumularTempo(tam);
-			}
+		if(rodadaDaMensagem==this.rodadaAtual && this.rodadaAtual > 0){
+
+			double tam = fimAcesso - inicioAcesso;
+			
+			// Acumula o valor do tam no somatório de todos os tam´s.
+			this.estatisticas[idEstacao].tam.acumularTempo(tam);
 		}
 	}
 	
@@ -253,15 +188,17 @@ public class ColetorEstatisticas {
 	}
 	
 	// Coleta valor de início de período de utilização e armazena na hash indexada pelo id do quadro.
-	public void coletaInicioPeriodoUtilizacao(int idEstacao, long idQuadro, double instanteDeTempo){
-		this.estatisticas[idEstacao].utilizacaoInicial.put(idQuadro, instanteDeTempo);
+	public void coletaInicioPeriodoUtilizacao(int idEstacao, int idEstacaoRemetente, double instanteDeTempo){
+		if(this.estatisticas[idEstacao].utilizacaoInicial.get(idEstacaoRemetente)==null)
+			this.estatisticas[idEstacao].utilizacaoInicial.put(idEstacaoRemetente, instanteDeTempo);
 	}
 
 	// Coleta valor de início de período de utilização na hash pelo id do quadro informado e
 	// cria uma instância de Utilizacao para armazenar no array de início e fim de utilização.
-	public void coletaFimPeriodoUtilizacao(int idEstacao, long idQuadro, double instanteFinal){
-		double instanteInicial = this.estatisticas[idEstacao].utilizacaoInicial.remove(idQuadro);
-		this.estatisticas[idEstacao].utilizacao.add(new Utilizacao(instanteInicial, instanteFinal));
+	public void coletaFimPeriodoUtilizacao(int idEstacao, int idEstacaoRemetente, double instanteFinal){
+		double instanteInicial = this.estatisticas[idEstacao].utilizacaoInicial.remove(idEstacaoRemetente);
+		double utilizacao = instanteFinal - instanteInicial;
+		this.estatisticas[idEstacao].utilizacao += utilizacao;
 	}
 	
 	// Incrementa o número de quadros transmitidos com sucesso

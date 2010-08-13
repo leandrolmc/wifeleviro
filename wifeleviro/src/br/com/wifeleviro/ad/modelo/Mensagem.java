@@ -25,6 +25,9 @@ public class Mensagem {
 	
 	private long numeroColisoes;
 	
+	private Double instanteTempoInicioAcesso;
+	private Double instanteTempoFimAcesso;
+	
 	public Mensagem(int rodada){
 		setId(new GregorianCalendar().getTimeInMillis());
 		this.setTipoMensagem(REFORCO_COLISAO);
@@ -49,6 +52,23 @@ public class Mensagem {
 			this.numeroQuadros = (long)p;
 		}
 		this.numeroQuadroRestantesParaTransmissao = (int)this.numeroQuadros;
+		
+		this.instanteTempoInicioAcesso = null;
+		this.instanteTempoFimAcesso = null;
+	}
+	
+	public void setInstanteTempoInicioTxQuadro(double instanteTempo) {
+		if(this.instanteTempoInicioAcesso == null)
+			this.instanteTempoInicioAcesso = instanteTempo;
+		this.instanteTempoFimAcesso = instanteTempo;
+	}
+
+	public double getInstanteTempoFimAcesso() {
+		return instanteTempoFimAcesso;
+	}
+
+	public double getInstanteTempoInicioAcesso() {
+		return instanteTempoInicioAcesso;
 	}
 	
 	public void incNumeroColisoes(){
@@ -90,5 +110,5 @@ public class Mensagem {
 	public int getRodada(){
 		return this.rodada;
 	}
-	
+
 }

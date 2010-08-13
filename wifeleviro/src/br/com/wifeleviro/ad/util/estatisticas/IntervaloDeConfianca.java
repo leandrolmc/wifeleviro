@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
-import br.com.wifeleviro.ad.util.estatisticas.metricas.Utilizacao;
 
 /*
  * Classe responsável por calcular os intervalos de confiança a partir
@@ -155,12 +154,7 @@ public class IntervaloDeConfianca {
 		for (int i = 0; it.hasNext(); i++) {
 			EstatisticasUtilizacaoRodada estatisticaUtilizacaoDaRodada = (EstatisticasUtilizacaoRodada) it.next();
 
-			double periodosUtilizacao = 0;
-			Collection<Utilizacao> medicoes = estatisticaUtilizacaoDaRodada.getUtilizacao();
-			for (Utilizacao medicao : medicoes) {
-				double periodoUtilizacao = medicao.getFim() - medicao.getInicio();
-				periodosUtilizacao += periodoUtilizacao;
-			}
+			double periodosUtilizacao = estatisticaUtilizacaoDaRodada.getUtilizacao();
 			double tempoTotalRodada = estatisticaUtilizacaoDaRodada.getFimDaRodada() - estatisticaUtilizacaoDaRodada.getInicioDaRodada();
 			utilizacaoDasRodadas[i] = periodosUtilizacao / tempoTotalRodada;
 
@@ -255,7 +249,7 @@ public class IntervaloDeConfianca {
 		boolean dentroDoLimite = (
 			(tamanhoICTap <= (0.1*mediaTap)) &&
 			(tamanhoICTam <= (0.1*mediaTam)) &&
-//			(tamanhoICNcm <= (0.1*mediaNcm)) &&
+			(tamanhoICNcm <= (0.1*mediaNcm)) &&
 			(tamanhoICUtilizacao <= (0.1*mediaUtilizacao)) &&
 			(tamanhoICVazao < (0.1*mediaVazao))
 		);

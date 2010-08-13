@@ -15,26 +15,32 @@ public class Quadro {
 	private int rodada;
 	
 	private Integer idRemetente;
-	private Integer idDestinatario;
 	
 	private Mensagem mensagem;
 	
 	private int colisoes;
 	
+	private Double instanteTempoInicioAcesso;
 	private Double instanteTempoInicioTx;
 	
-	public Quadro(int rodada, Integer idRemetente, Integer idDestinatario, Mensagem mensagem) {
+	public Quadro(int rodada, Integer idRemetente, Mensagem mensagem) {
 		this.rodada = rodada;
 		this.idRemetente = idRemetente;
-		this.idDestinatario = idDestinatario;
 		this.mensagem = mensagem;
 		this.colisoes = 0;
 		this.id = GeradorRandomicoSingleton.getInstance().gerarProximoRandomicoAuxiliar();
 		this.instanteTempoInicioTx = null;
+		this.instanteTempoInicioAcesso = null;
 	}
 
-	public void setInstanteTempoInicioTx(double instante){
-		this.instanteTempoInicioTx = instante;
+	public Double getInstanteTempoInicioAcesso() {
+		return this.instanteTempoInicioAcesso;
+	}
+
+	public void setInstanteTempoInicioTx(double instanteTempo){
+		if(this.instanteTempoInicioAcesso == null)
+			this.instanteTempoInicioAcesso = instanteTempo;
+		this.instanteTempoInicioTx = instanteTempo;
 	}
 	
 	public double getInstanteTempoInicioTx(){
@@ -46,14 +52,6 @@ public class Quadro {
 	}
 	public void setIdRemetente(Integer idRemetente) {
 		this.idRemetente = idRemetente;
-	}
-
-	public void setIdDestinatario(Integer idDestinatario) {
-		this.idDestinatario = idDestinatario;
-	}
-
-	public Integer getIdDestinatario() {
-		return idDestinatario;
 	}
 
 	public void setMensagem(Mensagem mensagem) {
@@ -84,4 +82,5 @@ public class Quadro {
 	public int getRodada(){
 		return this.rodada;
 	}
+
 }

@@ -26,56 +26,46 @@ public class Terminal{
 	private double instanteTempoAtual;
 
 	private boolean txOcupado;
-	private boolean isMeioOcupado;
-	private double instanteTempoInicioUltimaTx;
-	private double instanteTempoFimUltimaTx;
-	private double instanteTempoFimUltimoRx;
-	private int idTerminalUltimoRx;
 	
-	private boolean emColisao;
-	private double instanteTempoColisao;
-	private int fluxosChegando;
+	private int fluxosMeioOcupado;
 	
 	private boolean forcarTransmissao;
+	
+	private boolean colidiu;
 	
 	private LinkedList<Quadro> filaEspera;
 	private Quadro filaServico;
 	
-	public Terminal(int id, double distanciaHub, int tipo, double periodo, double pMensagens) {
+	public Terminal(int id, double distanciaHub, int tipo, double periodo, double pMensagens, double instanteTempoInicializacao) {
 		this.id = id;
 		this.distanciaHub = distanciaHub;
-		this.instanteTempoAtual = 0;
+		this.instanteTempoAtual = instanteTempoInicializacao;
 		if(this.tipo == TIPO_EXPONENCIAL)
 			this.instanteTempoAtual = this.gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.periodo);
 		this.instanteTempoInicial = this.instanteTempoAtual;
 		this.periodo = periodo;
 		this.setpMensagens(pMensagens);
-		this.setMeioOcupado(false);
-		this.instanteTempoInicioUltimaTx = -1;
-		this.instanteTempoFimUltimaTx = -1;
-		this.instanteTempoFimUltimoRx = -1;
-		this.setIdTerminalUltimoRx(-1);
-		this.setEmColisao(false);
-		this.instanteTempoColisao = -1;
 		this.txOcupado = false;
 		this.setForcarTransmissao(false);
 		
 		this.filaEspera = new LinkedList<Quadro>();
 		this.filaServico = null;
 		
-		this.fluxosChegando = 0;
+		this.fluxosMeioOcupado = 0;
+		
+		this.colidiu = false;
 	}
 	
-	public void incFluxosChegando(){
-		++this.fluxosChegando;
+	public void incFluxosOcupado(){
+		++this.fluxosMeioOcupado;
 	}
 	
-	public void decFluxosChegando(){
-		--this.fluxosChegando;
+	public void decFluxosOcupado(){
+		--this.fluxosMeioOcupado;
 	}
 	
-	public int getQtdFluxosChegando(){
-		return this.fluxosChegando;
+	public int getQtdFluxosOcupado(){
+		return this.fluxosMeioOcupado;
 	}
 	
 	public void novaChegadaFila(Quadro q){
@@ -85,7 +75,7 @@ public class Terminal{
 			this.filaEspera.add(q);
 	}
 	
-	public void processarMensagemServico(Quadro proximoQuadro){
+	public void colocarQuadroEmServico(Quadro proximoQuadro){
 		this.filaServico = proximoQuadro;
 	}
 	
@@ -152,62 +142,6 @@ public class Terminal{
 		return pMensagens;
 	}
 
-	public void setMeioOcupado(boolean isMeioOcupado) {
-		this.isMeioOcupado = isMeioOcupado;
-	}
-
-	public boolean isMeioOcupado() {
-		return isMeioOcupado;
-	}
-
-	public void setInstanteTempoFimUltimaTx(double instanteTempoFimUltimaTx) {
-		this.instanteTempoFimUltimaTx = instanteTempoFimUltimaTx;
-	}
-
-	public double getInstanteTempoFimUltimaTx() {
-		return instanteTempoFimUltimaTx;
-	}
-
-	public void setInstanteTempoInicioUltimaTx(double instanteTempoInicioUltimaTx) {
-		this.instanteTempoInicioUltimaTx = instanteTempoInicioUltimaTx;
-	}
-
-	public double getInstanteTempoInicioUltimaTx() {
-		return instanteTempoInicioUltimaTx;
-	}
-
-	public void setInstanteTempoFimUltimoRx(double instanteTempoFimUltimoRx) {
-		this.instanteTempoFimUltimoRx = instanteTempoFimUltimoRx;
-	}
-
-	public double getInstanteTempoFimUltimoRx() {
-		return instanteTempoFimUltimoRx;
-	}
-
-	public void setIdTerminalUltimoRx(int idTerminalUltimoRx) {
-		this.idTerminalUltimoRx = idTerminalUltimoRx;
-	}
-
-	public int getIdTerminalUltimoRx() {
-		return idTerminalUltimoRx;
-	}
-
-	public void setEmColisao(boolean emColisao) {
-		this.emColisao = emColisao;
-	}
-
-	public boolean isEmColisao() {
-		return emColisao;
-	}
-
-	public void setInstanteTempoColisao(double instanteTempoColisao) {
-		this.instanteTempoColisao = instanteTempoColisao;
-	}
-
-	public double getInstanteTempoColisao() {
-		return instanteTempoColisao;
-	}
-	
 	public void setTxOcupado(boolean txOcupado) {
 		this.txOcupado = txOcupado;
 	}
@@ -224,6 +158,20 @@ public class Terminal{
 		return forcarTransmissao;
 	}
 
+	public boolean isMeioOcupado() {
+		if(this.fluxosMeioOcupado > 0)
+			return true;
+		return false;
+	}
+	
+	public void setColidiu(boolean colidiu){
+		this.colidiu = colidiu;
+	}
+	
+	public boolean colidiu(){
+		return this.colidiu;
+	}
+	
 }
 
 

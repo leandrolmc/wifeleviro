@@ -3,6 +3,7 @@ package br.com.wifeleviro.ad.modelo;
 import java.util.LinkedList;
 
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
+import br.com.wifeleviro.ad.util.estatisticas.ColetorEstatisticas;
 
 /*
  * Classe que representa um Terminal e todas os dados
@@ -28,8 +29,11 @@ public class Terminal{
 	private boolean txOcupado;
 	
 	private int fluxosMeioOcupado;
+	private int fluxosEntrantes;
+	private double inicioPeriodoOcupado;
 	
 	private boolean forcarTransmissao;
+	private boolean retransmissaoAgendada;
 	
 	private boolean colidiu;
 	
@@ -47,13 +51,31 @@ public class Terminal{
 		this.setpMensagens(pMensagens);
 		this.txOcupado = false;
 		this.setForcarTransmissao(false);
+		this.setRetransmissaoAgendada(false);
 		
 		this.filaEspera = new LinkedList<Quadro>();
 		this.filaServico = null;
 		
 		this.fluxosMeioOcupado = 0;
+		this.fluxosEntrantes = 0;
+		this.inicioPeriodoOcupado = 0;
 		
 		this.colidiu = false;
+	}
+	
+	public void incFluxosEntrantes(double instante){
+		if(this.fluxosEntrantes == 0){
+			this.inicioPeriodoOcupado = instante;
+		}
+		++this.fluxosEntrantes;
+	}
+	
+	public void decFluxosEntrantes(double instante, ColetorEstatisticas coletor){
+		--this.fluxosEntrantes;
+		if(this.fluxosEntrantes == 0){
+			double subPeriodoOcupado = instante - this.inicioPeriodoOcupado;
+			coletor.coletaUtilizacao(id, subPeriodoOcupado);
+		}
 	}
 	
 	public void incFluxosOcupado(){
@@ -101,11 +123,11 @@ public class Terminal{
 		return this.instanteTempoInicial;
 	}
 	
-	public double gerarProximoInstanteDeTempoDeMensagem(){
+	public double gerarProximoInstanteDeTempoDeMensagem(double instanteAtual){
 		if(this.tipo == Terminal.TIPO_DETERMINISTICO)
-			return gerarInstanteTempoProximoEventoDeterministico(this.instanteTempoAtual, this.periodo);
+			return gerarInstanteTempoProximoEventoDeterministico(instanteAtual, this.periodo);
 		else
-			return gerarInstanteTempoProximoEventoPoisson(this.instanteTempoAtual, this.periodo);
+			return gerarInstanteTempoProximoEventoPoisson(instanteAtual, this.periodo);
 	}
 	
 	private double gerarInstanteTempoProximoEventoPoisson(double instanteTempoAtual, double periodo){
@@ -170,6 +192,14 @@ public class Terminal{
 	
 	public boolean colidiu(){
 		return this.colidiu;
+	}
+
+	public void setRetransmissaoAgendada(boolean retransmissaoAgendada) {
+		this.retransmissaoAgendada = retransmissaoAgendada;
+	}
+
+	public boolean isRetransmissaoAgendada() {
+		return retransmissaoAgendada;
 	}
 	
 }

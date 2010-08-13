@@ -14,11 +14,11 @@ import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
 import br.com.wifeleviro.ad.util.estatisticas.ColetorEstatisticas;
 import br.com.wifeleviro.ad.util.estatisticas.DadosFinaisDaRodada;
 import br.com.wifeleviro.ad.util.estatisticas.EstatisticasColetadas;
-import br.com.wifeleviro.ad.util.estatisticas.EstatisticasColisaoRodada;
 import br.com.wifeleviro.ad.util.estatisticas.EstatisticasUtilizacaoRodada;
 import br.com.wifeleviro.ad.util.estatisticas.EstatisticasVazaoRodada;
 import br.com.wifeleviro.ad.util.estatisticas.IntervaloDeConfianca;
 import br.com.wifeleviro.ad.util.estatisticas.ColetorEstatisticas.Estatisticas;
+import br.com.wifeleviro.ad.util.estatisticas.metricas.NCm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 /*
@@ -138,7 +138,7 @@ public class Orquestrador {
 					if(msg.getId()==Long.parseLong("8995691935100721120"))
 						System.out.print("");
 					
-					if(e.getQuadro().getId()==Long.parseLong("2264481405333146469"))
+					if(e.getQuadro().getId()==Long.parseLong("-3161264910536798674"))
 						System.out.print("");
 				}
 				
@@ -172,14 +172,6 @@ public class Orquestrador {
 							verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getTerminalDestino(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"FIM TX PC");
 						++numEventosDaRodada;
 						break;
-//					case Evento.CHEGADA_QUADRO_NO_RX_HUB:
-//						tratarEventoChegadaDeQuadroNoRxDoHub(this.rodadaAtual, numTerminais, pc, listaEventos, e);
-//							verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
-//									""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
-//										"SEM QUADROS", "Chegada Quadro no RX do HUB");
-//							verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getTerminalDestino(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(), "CHEGADA QUADRO NO RX HUB");
-//						++numEventosDaRodada;
-//						break;
 					case Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL:
 						tratarEventoInicioChegadaDeQuadroNoRxDoTerminal(this.rodadaAtual, coletor, pc, listaEventos, e);
 							verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
@@ -233,16 +225,16 @@ public class Orquestrador {
 				for(int i = 0; i < numTerminais; i++){
 					TAp tap = estatisticas[i].getTap();
 					TAm tam = estatisticas[i].getTam();
-					EstatisticasColisaoRodada colisao = new EstatisticasColisaoRodada(estatisticas[i].getColisoesPorMensagem(), estatisticas[i].getQuadrosPorMensagem());
+					NCm ncm = estatisticas[i].getNCm(); 
 					EstatisticasUtilizacaoRodada utilizacao = new EstatisticasUtilizacaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getUtilizacao()); 
 					EstatisticasVazaoRodada vazao = new EstatisticasVazaoRodada(coletor.getInstanteInicioRodada(), coletor.getInstanteFimRodada(), estatisticas[i].getNumeroQuadrosTransmitidosComSucesso());
-					statsColetadas[i].armazenar(tap, tam, colisao, utilizacao, vazao);
+					statsColetadas[i].armazenar(tap, tam, ncm, utilizacao, vazao);
 					
 					// Calcula se o intervalo de confiança está dentro do limite aceitável para o terminal i.					
 					DadosFinaisDaRodada dados = IntervaloDeConfianca.intervalosDeConfiancaDentroDoLimiteAceitavel(
 							statsColetadas[i].getColTap(), 
 							statsColetadas[i].getColTam(), 
-							statsColetadas[i].getColEstatisticaColisaoRodada(), 
+							statsColetadas[i].getColNCm(), 
 							statsColetadas[i].getColEstatisticaUtilizacaoDaRodada(), 
 							statsColetadas[i].getColEstatisticaVazaoDaRodada(), 
 							this.rodadaAtual);
@@ -313,7 +305,7 @@ public class Orquestrador {
 		// Crio a próxima mensagem.
 		Evento proximaMensagem = new Evento(Evento.GERAR_MENSAGEM, terminalOrigem, null);
 		// Calculo o instante de tempo da próxima mensagem.
-		double instanteDeTempoDaProximaMensagem = instanteDeTempo + pc[terminalOrigem].gerarProximoInstanteDeTempoDeMensagem();
+		double instanteDeTempoDaProximaMensagem = pc[terminalOrigem].gerarProximoInstanteDeTempoDeMensagem(instanteDeTempo);
 		// Coloco a próxima mensagem na lista.
 		lista.put(instanteDeTempoDaProximaMensagem, proximaMensagem);
 
@@ -325,6 +317,10 @@ public class Orquestrador {
 
 		int terminalAtual = e.getTerminalOrigem();
 		double instanteAtual = lista.getInstanteDeTempoAtual();
+
+		// Sempre que um INICIO_TX_PC acontece, posso setar o flag de agendamento de retransmissão
+		// para falso, de modo que outras retransmissões possam ser agendadas.
+		pc[terminalAtual].setRetransmissaoAgendada(false);
 		
 		// Recupero o quadro para tratamento do mesmo.
 		Quadro quadro = e.getQuadro();
@@ -402,11 +398,6 @@ public class Orquestrador {
 		// Decrementa o número de quadros que faltam ser transmitidos para a mensagem.
 		m.decrementaNumeroQuadroRestantesParaTransmissao();
 		
-		// Coleta a amostra de transmissão de um quadro para a mensagem.
-		if(m.getRodada()==rodadaAtual){
-			coletor.coletaQuadroPorMensagem(rodadaAtual, terminalAtual, m.getId());
-		}
-			
 		// Caso a mensagem ainda tenha quadros pendente para transmissão
 		// cria um novo evento INICIO_TX_PC e o coloca na lista de eventos.
 		if(m.getNumeroQuadroRestantesParaTransmissao() > 0){
@@ -422,7 +413,7 @@ public class Orquestrador {
 			if(m.getTipoMensagem() == Mensagem.MENSAGEM_PADRAO){
 				if(rodadaAtual > 0){
 					coletor.coletaTam(m.getRodada(), terminalAtual, m.getInstanteTempoInicioAcesso(), m.getInstanteTempoFimAcesso());
-					coletor.coletaColisaoPorMensagem(m.getRodada(), terminalAtual, m.getId(), m.getNumeroColisoes());
+					coletor.coletaColisaoPorMensagem(terminalAtual, m);
 				}
 				pc[terminalAtual].mensagemEmServicoFinalizada();
 				
@@ -445,11 +436,8 @@ public class Orquestrador {
 		Quadro quadro = e.getQuadro();
 		int terminalAtual = e.getTerminalDestino();
 
-		// Caso esteja fora da fase transiente e o quadro seja da rodada, 
-		// coleta amostra de início de utilização.
-		if (terminalAtual == 0 && rodadaAtual > 0 && quadro.getRodada() == rodadaAtual)
-			coletor.coletaInicioPeriodoUtilizacao(terminalAtual, e.getTerminalOrigem(), instanteAtual);
-
+		pc[terminalAtual].incFluxosEntrantes(instanteAtual);
+		
 		// Avalia se id do remetente é o terminal atual, do contrário, trata colisão.
 		if(terminalAtual != quadro.getIdRemetente()){
 			// Avisa ao terminal atual que tem um fluxo entrante e, caso este não seja do terminal atual,
@@ -489,6 +477,8 @@ public class Orquestrador {
 		double instanteAtual = lista.getInstanteDeTempoAtual();
 		int terminalAtual = e.getTerminalDestino();
 		
+		pc[terminalAtual].decFluxosEntrantes(instanteAtual, coletor);
+		
 		if(terminalAtual != e.getTerminalOrigem()){
 			pc[terminalAtual].decFluxosOcupado();
 			// Se for reforço de colisão, decrementa o fluxo que foi suspenso gerando o reforço. 
@@ -496,18 +486,13 @@ public class Orquestrador {
 				pc[terminalAtual].decFluxosOcupado();
 		}
 
-		// Caso não esteja na fase transiente e a rodada seja a mesma da rodada atual
-		// coleto uma amostra de fim de utilização.
-		if (terminalAtual == 0 && rodadaAtual > 0 && e.getQuadro().getRodada() == rodadaAtual)
-			coletor.coletaFimPeriodoUtilizacao(terminalAtual, e.getTerminalOrigem(), lista.getInstanteDeTempoAtual());
-		
 		// Verifico se o meio ficou livre para tratamento de pendências.
 		if(!pc[terminalAtual].isMeioOcupado()){ // <<---- MEIO LIVRE
 			
 			// Vou avaliar se tem alguém pronto para forçar transmissão,
 			// que identifica que alguém foi suspenso e deve entrar em transmissão 
 			// agora que o meio está livre novamente.
-			if(pc[terminalAtual].isForcarTransmissao()){
+			if(pc[terminalAtual].isForcarTransmissao() && !pc[terminalAtual].isRetransmissaoAgendada()){
 				
 				Quadro quadroSuspenso = pc[terminalAtual].getQuadroEmServico();
 				
@@ -515,6 +500,8 @@ public class Orquestrador {
 				Evento novoAgendamento = new Evento(Evento.INICIO_TX_PC, terminalAtual, quadroSuspenso);
 				
 				lista.put(instanteNovoAgendamento, novoAgendamento);
+				
+				pc[terminalAtual].setRetransmissaoAgendada(true);
 			}
 		}
 	}
@@ -548,11 +535,16 @@ public class Orquestrador {
 		Quadro quadroCancelado = pc[terminalAtual].getQuadroEmServico();
 		
 		if (quadroCancelado.getColisoes() < 16) {
-			// Crio um novo evento de INICIO TX para o terminal atual com o quadro retirado de FIM TX.
-			Evento retransmissaoMensagemPendente = new Evento(Evento.INICIO_TX_PC, terminalAtual, quadroCancelado);
-			// Calculo o novo instante de tempo a partir do final da transmissão do reforço de colisão.
-			double instanteTempoAleatorioEscolhido = instanteAtual + Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadroCancelado);
-			lista.put(instanteTempoAleatorioEscolhido, retransmissaoMensagemPendente);
+			
+			if(!pc[terminalAtual].isRetransmissaoAgendada()){
+				// Crio um novo evento de INICIO TX para o terminal atual com o quadro retirado de FIM TX.
+				Evento retransmissaoMensagemPendente = new Evento(Evento.INICIO_TX_PC, terminalAtual, quadroCancelado);
+				// Calculo o novo instante de tempo a partir do final da transmissão do reforço de colisão.
+				double instanteTempoAleatorioEscolhido = instanteAtual + Orquestrador.gerarAtrasoAleatorioBinaryBackoff(quadroCancelado);
+				lista.put(instanteTempoAleatorioEscolhido, retransmissaoMensagemPendente);
+				
+				pc[terminalAtual].setRetransmissaoAgendada(true);
+			}
 			
 		}else{
 			Mensagem m = quadroCancelado.getMensagem();
@@ -575,7 +567,7 @@ public class Orquestrador {
 				if(m.getTipoMensagem() == Mensagem.MENSAGEM_PADRAO){
 					if(rodadaAtual > 0){
 						coletor.coletaTam(m.getRodada(), terminalAtual, m.getInstanteTempoInicioAcesso(), m.getInstanteTempoFimAcesso());
-						coletor.coletaColisaoPorMensagem(m.getRodada(), terminalAtual, m.getId(), m.getNumeroColisoes());
+						coletor.coletaColisaoPorMensagem(terminalAtual, m);
 					}
 					pc[terminalAtual].mensagemEmServicoFinalizada();
 					

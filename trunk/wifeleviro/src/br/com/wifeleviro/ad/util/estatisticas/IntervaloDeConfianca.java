@@ -1,10 +1,9 @@
 package br.com.wifeleviro.ad.util.estatisticas;
 
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 
+import br.com.wifeleviro.ad.util.estatisticas.metricas.NCm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 
@@ -90,7 +89,7 @@ public class IntervaloDeConfianca {
 	}
 	
 	// Calcula a média da rodada e o tamanho do intervalo de confiança da NCm.
-	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaNcm(Collection<EstatisticasColisaoRodada> estatisticas, int numRodadas) {
+	public static ResultadoIntervaloDeConfianca calculaTamanhoIntervaloConfiancaNcm(Collection<NCm> ncmsRodadas, int numRodadas) {
 
 		double somaAmostras = 0;
 		double mediaAmostras = 0;
@@ -99,24 +98,11 @@ public class IntervaloDeConfianca {
 		double mediasNcmsDasRodadas[] = new double[numRodadas];
 
 		int i = 0;
-		for (EstatisticasColisaoRodada estatistica : estatisticas) {
-			Hashtable<Long, Long> quadrosPorMensagem = estatistica.getQuadros();
-			Hashtable<Long, Long> colisoesPorMensagem = estatistica.getColisoes();
-
-			double somatorioNcm = 0;
-			int numeroDeMensagens = 0;
+		for (NCm ncm : ncmsRodadas) {
 			
-			Enumeration<Long> idMensagens = quadrosPorMensagem.keys();
-			while (idMensagens.hasMoreElements()) {
-				Long idMensagem = idMensagens.nextElement();
-				Long numQuadrosPorMensagem = quadrosPorMensagem.get(idMensagem);
-				Long numColisoesPorMensagem = colisoesPorMensagem.get(idMensagem);
-				
-				double ncm = numColisoesPorMensagem==null?0:numColisoesPorMensagem / numQuadrosPorMensagem;
-
-				++numeroDeMensagens;
-				somatorioNcm += ncm;
-			}
+			double somatorioNcm = ncm.getAcumulador();
+			long numeroDeMensagens = ncm.getNumeroMensagens();
+			
 			double ncmRodada = somatorioNcm / numeroDeMensagens;
 			mediasNcmsDasRodadas[i] = ncmRodada;
 			++i;
@@ -220,7 +206,7 @@ public class IntervaloDeConfianca {
 	public static DadosFinaisDaRodada intervalosDeConfiancaDentroDoLimiteAceitavel(
 			Collection<TAp> tapsRodadas,
 			Collection<TAm> tamsRodadas,
-			Collection<EstatisticasColisaoRodada> estatisticasColisaoDasRodadas,
+			Collection<NCm> estatisticasColisaoDasRodadas,
 			Collection<EstatisticasUtilizacaoRodada> estatisticasUtilizacaoDasRodadas,
 			Collection<EstatisticasVazaoRodada> estatisticasVazaoDasRodadas,
 			int numRodadas){

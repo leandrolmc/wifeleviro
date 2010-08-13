@@ -47,8 +47,7 @@ public class ListaDeEventos {
 	// no instante de tempo informado,
 	// o evento dado como parâmetro.
 	public void put(double instanteDeTempo, Evento e){
-		if (instanteDeTempo < 0)
-			System.out.println("INSTANTE DE TEMPO: "+instanteDeTempo+" | EVENTO: "+e.getTipoEvento());
+		
 		LinkedList<Evento> col = tree.get(instanteDeTempo);
 		if(col == null){
 			col = new LinkedList<Evento>();

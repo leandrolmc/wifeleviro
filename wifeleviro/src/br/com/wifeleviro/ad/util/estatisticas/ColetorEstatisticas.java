@@ -1,7 +1,7 @@
 package br.com.wifeleviro.ad.util.estatisticas;
 
-import java.util.Hashtable;
-
+import br.com.wifeleviro.ad.modelo.Mensagem;
+import br.com.wifeleviro.ad.util.estatisticas.metricas.NCm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAm;
 import br.com.wifeleviro.ad.util.estatisticas.metricas.TAp;
 
@@ -52,16 +52,7 @@ public class ColetorEstatisticas {
 		
 		protected TAm tam;		
 		
-		// Hashtable indexada pelo identificador da mensagem que armazena
-		// o número de colisões ocorridas na mensagem.
-		protected Hashtable<Long, Long> colisoesPorMensagem;
-		// Hashtable indexada pelo identificador da mensagem que armazena
-		// o número de quadros que foram necessários para transmitir a mensagem.
-		protected Hashtable<Long, Long> quadrosPorMensagem;
-		
-		// Armazena os instantes de tempo iniciais de utilização por quadro,
-		// independente se este é um quadro normal ou de reforço de colisão.
-		protected Hashtable<Integer, Double> utilizacaoInicial;
+		protected NCm ncm;
 		
 		// Armazena os pares de início e fim de utilização do meio.
 		protected double utilizacao;
@@ -74,9 +65,7 @@ public class ColetorEstatisticas {
 		protected Estatisticas(){
 			tap = new TAp();
 			tam = new TAm();
-			colisoesPorMensagem = new Hashtable<Long, Long>();
-			quadrosPorMensagem = new Hashtable<Long, Long>();
-			utilizacaoInicial = new Hashtable<Integer, Double>();
+			ncm = new NCm();
 			utilizacao = 0;
 			numeroQuadrosTransmitidosComSucesso = (long)0;
 		}
@@ -89,18 +78,8 @@ public class ColetorEstatisticas {
 			return this.tam;
 		}
 
-		// Método simples para recuperação do
-		// Hashtable indexada pelo id da mensagem contendo o
-		// número de colisões sofridas em cada mensagem.
-		public Hashtable<Long, Long> getColisoesPorMensagem() {
-			return colisoesPorMensagem;
-		}
-
-		// Método simples para recuperação do
-		// Hashtable indexada pelo id da mensagem contendo o
-		// número de quadros gerados por mensagem.
-		public Hashtable<Long, Long> getQuadrosPorMensagem() {
-			return quadrosPorMensagem;
+		public NCm getNCm(){
+			return this.ncm;
 		}
 
 		// Método simples para recuperação da coleção
@@ -149,32 +128,21 @@ public class ColetorEstatisticas {
 	// quadro qualquer, identificando a mensagem transmitida, da qual o quadro 
 	// faz parte, e a estação, de modo que seja possível calcular a média de 
 	// colisões por mensagem, por estação.
-	public void coletaColisaoPorMensagem(int rodada, int idEstacao, long idMensagem, long numeroDeColisoes){
+	public void coletaColisaoPorMensagem(int idEstacao, Mensagem m){
 		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Armazena na hashtable as colisões contabilizadas até o momento.
-			this.estatisticas[idEstacao].colisoesPorMensagem.put(idMensagem, numeroDeColisoes);
-		}
-	}
-	
-	// Coleta geração de quadro para transmissão de mensagem.
-	// Invocado sempre que há um evento de geração de um quadro para transmissão.
-	public void coletaQuadroPorMensagem(int rodada, int idEstacao, long idMensagem){
-		// Só armazena estatísticas quando o quadro é da mesma "cor" da rodada.
-		if(rodada==this.rodadaAtual && this.rodadaAtual > 0){
-			// Recupera o número de quadros registrados na hashtable para a mensagem
-			// identificada por idMensagem.
-			Long numeroDeQuadros = (Long)this.estatisticas[idEstacao].quadrosPorMensagem.get(idMensagem);
-			// Caso não haja registro na hashtable referente a quadros desta mensagem,
-			// o contador de quadros é iniciado com o valor 0 (ZERO).
-			if(numeroDeQuadros == null){
-				numeroDeQuadros = (long)0;
-			}
-			// Incrementa o número de quadros registrados.
-			numeroDeQuadros = numeroDeQuadros + 1;
-			// Armazena na hashtable os quadros contabilizados até o momento.
-			this.estatisticas[idEstacao].quadrosPorMensagem.put(idMensagem, numeroDeQuadros);
-		}
+//		if(m.getRodada()==this.rodadaAtual && this.rodadaAtual > 0){
+			
+			long numColisoes = m.getNumeroColisoes();
+			long numQuadros = m.getNumeroQuadros();
+			
+			double amostraNumeroColisoesPorMensagem = (double)numColisoes/(double)numQuadros;
+
+//			System.out.println("Estacao "+idEstacao+" | numColisoes: "+numColisoes+" | numQuadros: "+numQuadros+" | amostra: "+amostraNumeroColisoesPorMensagem);
+			
+			// Armazena no acumulador de amostras de colisões.
+			this.estatisticas[idEstacao].ncm.acumularTempo(amostraNumeroColisoesPorMensagem);
+			
+//		}
 	}
 
 	// Coleta instante de tempo inicial da rodada.
@@ -187,18 +155,11 @@ public class ColetorEstatisticas {
 		this.setInstanteFimRodada(instanteDeTempo);
 	}
 	
-	// Coleta valor de início de período de utilização e armazena na hash indexada pelo id do quadro.
-	public void coletaInicioPeriodoUtilizacao(int idEstacao, int idEstacaoRemetente, double instanteDeTempo){
-		if(this.estatisticas[idEstacao].utilizacaoInicial.get(idEstacaoRemetente)==null)
-			this.estatisticas[idEstacao].utilizacaoInicial.put(idEstacaoRemetente, instanteDeTempo);
-	}
 
 	// Coleta valor de início de período de utilização na hash pelo id do quadro informado e
 	// cria uma instância de Utilizacao para armazenar no array de início e fim de utilização.
-	public void coletaFimPeriodoUtilizacao(int idEstacao, int idEstacaoRemetente, double instanteFinal){
-		double instanteInicial = this.estatisticas[idEstacao].utilizacaoInicial.remove(idEstacaoRemetente);
-		double utilizacao = instanteFinal - instanteInicial;
-		this.estatisticas[idEstacao].utilizacao += utilizacao;
+	public void coletaUtilizacao(int idEstacao, double periodoOcupado){
+		this.estatisticas[idEstacao].utilizacao += periodoOcupado;
 	}
 	
 	// Incrementa o número de quadros transmitidos com sucesso

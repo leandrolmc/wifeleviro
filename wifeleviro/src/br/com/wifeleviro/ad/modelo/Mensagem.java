@@ -1,6 +1,5 @@
 package br.com.wifeleviro.ad.modelo;
 
-import java.util.GregorianCalendar;
 import java.util.Random;
 
 import br.com.wifeleviro.ad.util.GeradorRandomicoSingleton;
@@ -29,7 +28,7 @@ public class Mensagem {
 	private Double instanteTempoFimAcesso;
 	
 	public Mensagem(int rodada){
-		setId(new GregorianCalendar().getTimeInMillis());
+		setId(GeradorRandomicoSingleton.getInstance().gerarProximoRandomicoAuxiliar());
 		this.setTipoMensagem(REFORCO_COLISAO);
 		this.numeroQuadros = 1;
 		this.numeroQuadroRestantesParaTransmissao = 0;

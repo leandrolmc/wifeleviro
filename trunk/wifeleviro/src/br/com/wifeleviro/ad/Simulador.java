@@ -22,52 +22,52 @@ public class Simulador {
 			
 			// Cenário ZERO representa os testes de correção.
 			
-			/*if(cenario == -2){
-				verbose = false;
+			if(cenario == -2){
+				verbose = true;
 				qtdTerminais = 2;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 10);
-				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 10);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1, 0);
+				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 1, 0);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
 			
 			}else if(cenario == -1){
-				verbose = false;
+				verbose = true;
 				qtdTerminais = 1;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40 ,0);
 				terminais = new Terminal[qtdTerminais];
 				terminais[0] = pc1;
 			
 			}else if(cenario == 0){
 				verbose = false;
 				qtdTerminais = 2;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
-				Terminal pc2 = new Terminal(1, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40, 0);
+				Terminal pc2 = new Terminal(1, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40, 0);
 				terminais = new Terminal[qtdTerminais];
 				terminais[0] = pc1;
 				terminais[1] = pc2;
 				
 			
-			}else*/ if(cenario == 1){
+			}else if(cenario == 1){
 				qtdTerminais = 2;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
-				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40, 0);
+				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40, 0);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
 			}else if(cenario == 2){
 				qtdTerminais = 2;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_EXPONENCIAL, (float)0.08, 40);
-				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_EXPONENCIAL, (float)0.08, 40);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_EXPONENCIAL, (float)0.08, 40, 0);
+				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_EXPONENCIAL, (float)0.08, 40, 0);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
 			}else if(cenario == 3){
 				qtdTerminais = 4;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
-				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.016, 1);
-				Terminal pc3 = new Terminal(2, 60, Terminal.TIPO_DETERMINISTICO, (float)0.016, 1);
-				Terminal pc4 = new Terminal(3, 40, Terminal.TIPO_DETERMINISTICO, (float)0.016, 1);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40, 0);
+				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_DETERMINISTICO, (float)0.016, 1, 0);
+				Terminal pc3 = new Terminal(2, 60, Terminal.TIPO_DETERMINISTICO, (float)0.016, 1, 0);
+				Terminal pc4 = new Terminal(3, 40, Terminal.TIPO_DETERMINISTICO, (float)0.016, 1, 0);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
@@ -75,10 +75,10 @@ public class Simulador {
 				terminais[3] = pc4;
 			}else if(cenario == 4){
 				qtdTerminais = 4;
-				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40);
-				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_EXPONENCIAL, (float)0.016, 1);
-				Terminal pc3 = new Terminal(2, 60, Terminal.TIPO_EXPONENCIAL, (float)0.016, 1);
-				Terminal pc4 = new Terminal(3, 40, Terminal.TIPO_EXPONENCIAL, (float)0.016, 1);
+				Terminal pc1 = new Terminal(0, 100, Terminal.TIPO_DETERMINISTICO, (float)0.08, 40, 0);
+				Terminal pc2 = new Terminal(1, 80, Terminal.TIPO_EXPONENCIAL, (float)0.016, 1, 0);
+				Terminal pc3 = new Terminal(2, 60, Terminal.TIPO_EXPONENCIAL, (float)0.016, 1, 0);
+				Terminal pc4 = new Terminal(3, 40, Terminal.TIPO_EXPONENCIAL, (float)0.016, 1, 0);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;

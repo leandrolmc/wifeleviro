@@ -1,5 +1,6 @@
 package br.com.wifeleviro.ad.util;
 
+import java.util.GregorianCalendar;
 import java.util.Random;
 
 /*
@@ -18,11 +19,15 @@ public class GeradorRandomicoSingleton {
 	
 	private GeradorRandomicoSingleton (){
 		// Semente inicial travada.
-		this.semente = Long.parseLong("474820800000");
+//		this.semente = Long.parseLong("474820800000");
+		long seed1 = new GregorianCalendar().getTimeInMillis();
+		this.semente = seed1;
 		this.random = new Random(this.semente);
 		// Construtor do gerador randômico auxiliar
 		// também com semente inicial travada.
-		this.randomAux = new Random(Long.parseLong("514695600000"));
+//		this.randomAux = new Random(Long.parseLong("514695600000"));
+		long seed2 = seed1*seed1;
+		this.randomAux = new Random(seed2);
 	}
 	
 	// Única forma de recuperar a instância do gerador randômico.

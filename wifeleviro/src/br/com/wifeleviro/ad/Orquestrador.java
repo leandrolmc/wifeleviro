@@ -166,10 +166,10 @@ public class Orquestrador {
 						break;
 					case Evento.FIM_TX_PC:
 						tratarEventoFimTxPc(this.rodadaAtual, coletor, pc, listaEventos, e);
-							verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
-									""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
-										"SEM QUADROS", "Fim TX do PC");
-							verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getTerminalDestino(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"FIM TX PC");
+						verbosePorEvento(""+fimDaRodada, ""+numEventosDaRodada, ""+e.getTerminalOrigem(), ""+rodadaAtual, msg!=null?
+								""+msg.getId():"MENSAGEM NAO IDENTIFICADA", msg!=null?""+msg.getNumeroQuadroRestantesParaTransmissao():
+								"SEM QUADROS", "Fim TX do PC");
+						verbosePorQuadro(""+fimDaRodada, ""+e.getTerminalOrigem(), ""+e.getTerminalDestino(), ""+msg.getId(), ""+e.getQuadro().getId(), ""+msg.getNumeroQuadroRestantesParaTransmissao(),"FIM TX PC");
 						++numEventosDaRodada;
 						break;
 					case Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL:

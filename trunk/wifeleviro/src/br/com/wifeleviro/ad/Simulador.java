@@ -21,27 +21,29 @@ public class Simulador {
 			boolean verbose = false;
 			
 			// Cenário ZERO representa os testes de correção.
-			
 			if(cenario == -4){
 				verbose = false;
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0);
-				Terminal pc2 = new Terminal(1, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 3, 0);
+				Terminal pc2 = new Terminal(1, qtdTerminais, 80, Terminal.TIPO_DETERMINISTICO, 0.08, 1, 0);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
 				
 			}else if(cenario == -3){
 				verbose = true;
-				qtdTerminais = 2;
-				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.016, 1, 0);
-				Terminal pc2 = new Terminal(1, qtdTerminais, 80, Terminal.TIPO_DETERMINISTICO, 0.016, 1, 0);
+				qtdTerminais = 4;
+				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 1, 0);
+				Terminal pc2 = new Terminal(1, qtdTerminais, 80, Terminal.TIPO_DETERMINISTICO, 0.08, 1, 0.08);
+				Terminal pc3 = new Terminal(2, qtdTerminais, 60, Terminal.TIPO_DETERMINISTICO, 0.08, 1, 0.08);
+				Terminal pc4 = new Terminal(3, qtdTerminais, 40, Terminal.TIPO_DETERMINISTICO, 0.08, 1, 0.08);
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
+				terminais[2] = pc3;
+				terminais[3] = pc4;
 			
 			}else if(cenario == -2){
-				verbose = true;
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 2, 0);
 				Terminal pc2 = new Terminal(1, qtdTerminais, 80, Terminal.TIPO_DETERMINISTICO, 0.08, 2, 0);
@@ -50,14 +52,13 @@ public class Simulador {
 				terminais[1] = pc2;
 			
 			}else if(cenario == -1){
-				verbose = false;
 				qtdTerminais = 1;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40 ,0);
 				terminais = new Terminal[qtdTerminais];
 				terminais[0] = pc1;
 			
 			}else if(cenario == 0){
-				verbose = true;
+				verbose = false;
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0);
 				Terminal pc2 = new Terminal(1, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0.04);
@@ -65,9 +66,7 @@ public class Simulador {
 				terminais[0] = pc1;
 				terminais[1] = pc2;
 				
-			
 			}else if(cenario == 1){
-//				verbose = true;
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0);
 				Terminal pc2 = new Terminal(1, qtdTerminais, 80, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0);
@@ -84,7 +83,6 @@ public class Simulador {
 				terminais[1] = pc2;
 				
 			}else if(cenario == 3){
-//				verbose = true;
 				qtdTerminais = 4;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0);
 				Terminal pc2 = new Terminal(1, qtdTerminais, 80, Terminal.TIPO_DETERMINISTICO, 0.016, 1, 0);

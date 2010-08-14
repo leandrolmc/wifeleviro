@@ -1,8 +1,10 @@
 package br.com.wifeleviro.ad.modelo;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 
 /*
  * Classe que representa a lista de eventos única do programa.
@@ -58,10 +60,40 @@ public class ListaDeEventos {
 	
 	// Recupera o próximo evento a ser tratado no simulador.
 	public ProximoEvento proximoEvento(){
+		Evento proximoEvento = null;
+		
 		this.instanteDeTempo = (Double)tree.firstKey();
 		LinkedList<Evento> eventos = (LinkedList<Evento>)tree.get(this.instanteDeTempo);
 		tree.remove(this.instanteDeTempo);
-		Evento proximoEvento = eventos.pollFirst();
+		
+		Collection<Evento> col = new Vector<Evento>();
+		while(!eventos.isEmpty()){
+			Evento e = eventos.pollFirst();
+			if(e.getTipoEvento()==Evento.INICIO_CHEGADA_QUADRO_NO_RX_TERMINAL){
+				proximoEvento = e;
+				break;
+			}
+			col.add(e);
+		}
+		eventos.addAll(col);
+		
+		if(proximoEvento == null){
+			
+			col = new Vector<Evento>();
+			while(!eventos.isEmpty()){
+				Evento e = eventos.pollFirst();
+				if(e.getTipoEvento()==Evento.FIM_CHEGADA_QUADRO_NO_RX_TERMINAL){
+					proximoEvento = e;
+					break;
+				}
+				col.add(e);
+			}
+			eventos.addAll(col);
+			
+			if(proximoEvento == null)
+				proximoEvento = eventos.pollFirst();
+		}
+		
 		if(eventos.size()>0)
 			tree.put(this.instanteDeTempo, eventos);
 		return new ProximoEvento(this.instanteDeTempo, proximoEvento);

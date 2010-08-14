@@ -119,7 +119,7 @@ public class Orquestrador {
 			double fimDaRodada = 0;
 
 			// Loop de eventos. Cada passagem no loop é o tratamento de um evento.
-			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 1000000) || (this.rodadaAtual > 0 && numEventosDaRodada < 300000)) {
+			while ((this.rodadaAtual == 0 && numEventosDaRodada <= 500000) || (this.rodadaAtual > 0 && numEventosDaRodada < 100000)) {
 				
 				// Recupera da lista de eventos o próximo evento a ser executado.
 				ProximoEvento proximo = listaEventos.proximoEvento();
@@ -276,7 +276,7 @@ public class Orquestrador {
 		// Os critério de parada do loop principal da simulação estão aqui. Estes são:
 		// caso a rodada atual seja maior que 30 e menor ou igual a 100 e tenha atingido o intervalo de
 		// confiança desejado, pára. Caso a rodada ultrapasse a 100ª para após sua execução. 
-		} while ((this.rodadaAtual <= 30) || (this.rodadaAtual > 30 && rodadaAtual <= 100 && !intervaloDeConfiancaOK));
+		} while ((this.rodadaAtual < 30) || (this.rodadaAtual >= 30 && rodadaAtual <= 100 && !intervaloDeConfiancaOK));
 	}
 
 	// Trata o evento do tipo GERAR_MENSAGEM
@@ -436,7 +436,10 @@ public class Orquestrador {
 		Quadro quadro = e.getQuadro();
 		int terminalAtual = e.getTerminalDestino();
 
-		pc[terminalAtual].incFluxosEntrantes(instanteAtual);
+		pc[terminalAtual].incFluxosEntrantes(e.getTerminalOrigem(), quadro.getMensagem().getTipoMensagem(), instanteAtual);
+
+//		if(terminalAtual == 1)
+//			System.out.println("Terminal: "+terminalAtual+" | Fluxos Entrantes: "+pc[terminalAtual].getFluxosEntrantes());
 		
 		// Avalia se id do remetente é o terminal atual, do contrário, trata colisão.
 		if(terminalAtual != quadro.getIdRemetente()){
@@ -477,7 +480,12 @@ public class Orquestrador {
 		double instanteAtual = lista.getInstanteDeTempoAtual();
 		int terminalAtual = e.getTerminalDestino();
 		
-		pc[terminalAtual].decFluxosEntrantes(instanteAtual, coletor);
+		pc[terminalAtual].decFluxosEntrantes(e.getTerminalOrigem(), e.getQuadro().getMensagem().getTipoMensagem(), instanteAtual, coletor);
+		
+//		if(terminalAtual == 1)
+//			System.out.println("Terminal: "+terminalAtual+" | Fluxos Entrantes: "+pc[terminalAtual].getFluxosEntrantes());
+		if(pc[terminalAtual].getFluxosEntrantes() < 0)
+			System.out.print("");
 		
 		if(terminalAtual != e.getTerminalOrigem()){
 			pc[terminalAtual].decFluxosOcupado();

@@ -40,7 +40,7 @@ public class Terminal{
 	private LinkedList<Quadro> filaEspera;
 	private Quadro filaServico;
 	
-	public Terminal(int id, double distanciaHub, int tipo, double periodo, double pMensagens, double instanteTempoInicializacao) {
+	public Terminal(int id, int qtdTerminais, double distanciaHub, int tipo, double periodo, double pMensagens, double instanteTempoInicializacao) {
 		this.id = id;
 		this.distanciaHub = distanciaHub;
 		this.instanteTempoAtual = instanteTempoInicializacao;
@@ -57,25 +57,32 @@ public class Terminal{
 		this.filaServico = null;
 		
 		this.fluxosMeioOcupado = 0;
-		this.fluxosEntrantes = 0;
+		this.fluxosEntrantes = 0; 
 		this.inicioPeriodoOcupado = 0;
 		
 		this.colidiu = false;
 	}
 	
-	public void incFluxosEntrantes(double instante){
-		if(this.fluxosEntrantes == 0){
+	public void incFluxosEntrantes(int terminal, int tipoMensagem, double instante){
+		if(this.fluxosEntrantes == 0)
 			this.inicioPeriodoOcupado = instante;
-		}
+
 		++this.fluxosEntrantes;
 	}
 	
-	public void decFluxosEntrantes(double instante, ColetorEstatisticas coletor){
+	public void decFluxosEntrantes(int terminal, int tipoMensagem, double instante, ColetorEstatisticas coletor){
 		--this.fluxosEntrantes;
+		if(tipoMensagem == Mensagem.REFORCO_COLISAO)
+			--this.fluxosEntrantes;
+		
 		if(this.fluxosEntrantes == 0){
 			double subPeriodoOcupado = instante - this.inicioPeriodoOcupado;
 			coletor.coletaUtilizacao(id, subPeriodoOcupado);
 		}
+	}
+	
+	public int getFluxosEntrantes(){
+		return this.fluxosEntrantes;
 	}
 	
 	public void incFluxosOcupado(){

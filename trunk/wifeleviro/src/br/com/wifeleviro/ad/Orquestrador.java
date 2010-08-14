@@ -438,8 +438,7 @@ public class Orquestrador {
 
 		pc[terminalAtual].incFluxosEntrantes(e.getTerminalOrigem(), quadro.getMensagem().getTipoMensagem(), instanteAtual);
 
-//		if(terminalAtual == 1)
-//			System.out.println("Terminal: "+terminalAtual+" | Fluxos Entrantes: "+pc[terminalAtual].getFluxosEntrantes());
+//		System.out.println("Terminal: "+terminalAtual+" | Fluxos Entrantes: "+pc[terminalAtual].getFluxosEntrantes());
 		
 		// Avalia se id do remetente é o terminal atual, do contrário, trata colisão.
 		if(terminalAtual != quadro.getIdRemetente()){
@@ -450,6 +449,7 @@ public class Orquestrador {
 			if(pc[terminalAtual].isTxOcupado()){
 				// C O L I D I U //
 				pc[terminalAtual].setColidiu(true);
+				pc[terminalAtual].setTxOcupado(false);
 				
 				// Cria uma mensagem específica de colisão com um único quadro
 				// que será transmitido forçado a partir deste instante de tempo
@@ -482,8 +482,7 @@ public class Orquestrador {
 		
 		pc[terminalAtual].decFluxosEntrantes(e.getTerminalOrigem(), e.getQuadro().getMensagem().getTipoMensagem(), instanteAtual, coletor);
 		
-//		if(terminalAtual == 1)
-//			System.out.println("Terminal: "+terminalAtual+" | Fluxos Entrantes: "+pc[terminalAtual].getFluxosEntrantes());
+//		System.out.println("Terminal: "+terminalAtual+" | Fluxos Entrantes: "+pc[terminalAtual].getFluxosEntrantes());
 		if(pc[terminalAtual].getFluxosEntrantes() < 0)
 			System.out.print("");
 		

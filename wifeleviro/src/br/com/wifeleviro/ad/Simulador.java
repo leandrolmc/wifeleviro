@@ -74,6 +74,7 @@ public class Simulador {
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
+				
 			}else if(cenario == 2){
 				qtdTerminais = 2;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_EXPONENCIAL, 0.08, 40, 0);
@@ -81,7 +82,9 @@ public class Simulador {
 				terminais = new Terminal[qtdTerminais]; 
 				terminais[0] = pc1;
 				terminais[1] = pc2;
+				
 			}else if(cenario == 3){
+//				verbose = true;
 				qtdTerminais = 4;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0);
 				Terminal pc2 = new Terminal(1, qtdTerminais, 80, Terminal.TIPO_DETERMINISTICO, 0.016, 1, 0);
@@ -92,6 +95,7 @@ public class Simulador {
 				terminais[1] = pc2;
 				terminais[2] = pc3;
 				terminais[3] = pc4;
+				
 			}else if(cenario == 4){
 				qtdTerminais = 4;
 				Terminal pc1 = new Terminal(0, qtdTerminais, 100, Terminal.TIPO_DETERMINISTICO, 0.08, 40, 0);
